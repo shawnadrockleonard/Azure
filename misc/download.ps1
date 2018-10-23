@@ -1,6 +1,6 @@
 ﻿<#
     .SYNOPSIS
-        Preps Windows Machine
+        Download files from a File Server (NTLM)
 #>
 
 [CmdletBinding()]
@@ -25,7 +25,8 @@ PROCESS {
 
     $uri = [System.Uri]::new($mediaUrl)
     $rooturl = ("{0}://{1}" -f $uri.Scheme, $uri.Authority)
-    $folderPaths = [System.Web.HttpUtility]::UrlDecode($uri.AbsolutePath)
+    $decoded = [System.Web.HttpUtility]::UrlDecode($uri)
+    $folderPaths = $decoded.replace($rooturl, "")
 
     $outputDir = Join-Path -Path $fileDirectory -ChildPath $folderPaths
     if (!(Test-Path -Path $outputDir -PathType Container)) {
@@ -34,7 +35,7 @@ PROCESS {
 
 
 
-    $httpreq = Invoke-WebRequest -Uri $url -Credential $creds
+    $httpreq = Invoke-WebRequest -Uri $mediaUrl -Credential $creds
     $httpreq.Links | ForEach-Object {
         $file = ("{0}{1}" -f $rooturl, $_.href)
         if ($_.innerText -notcontains "[To Parent Directory]") {
