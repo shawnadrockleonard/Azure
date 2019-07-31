@@ -1,0 +1,563 @@
+{
+"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+"contentVersion": "1.0.0.0",
+"parameters": {
+    "virtualNetworks_ASEv2_VNet_name": {
+        "defaultValue": "ASEv2-VNet",
+        "type": "String"
+    },
+    "hostingEnvironments_ASE_v2_name": {
+        "defaultValue": "ASE-v2",
+        "type": "String"
+    },
+    "serverfarms_ASEv2_SERVICE_PLAN_name": {
+        "defaultValue": "ASEv2-SERVICE-PLAN",
+        "type": "String"
+    },
+    "sites_ASEv2_WEB_APP_name": {
+        "defaultValue": "ASEv2-WEB-APP",
+        "type": "String"
+    },
+    "subnets_ASE_v2_subnet_name": {
+        "defaultValue": "ASEv2-VNet/ASE-v2-subnet",
+        "type": "String"
+    },
+    "multiRolePools_default_name": {
+        "defaultValue": "ASE-v2/default",
+        "type": "String"
+    },
+    "config_web_name": {
+        "defaultValue": "ASEv2-WEB-APP/web",
+        "type": "String"
+    },
+    "hostNameBindings_asev2_web_app.ase_v2.p.azurewebsites.net_name": {
+        "defaultValue": "ASEv2-WEB-APP/asev2-web-app.ase-v2.p.azurewebsites.net",
+        "type": "String"
+    },
+    "slots_WEB_APP_deployment_slot1_name": {
+        "defaultValue": "ASEv2-WEB-APP/WEB-APP-deployment-slot1",
+        "type": "String"
+    },
+    "config_web_name_1": {
+        "defaultValue": "ASEv2-WEB-APP/WEB-APP-deployment-slot1/web",
+        "type": "String"
+    },
+    "hostNameBindings_asev2_web_app_web_app_deployment_slot1.ase_v2.p.azurewebsites.net_name": {
+        "defaultValue": "ASEv2-WEB-APP/WEB-APP-deployment-slot1/asev2-web-app-web-app-deployment-slot1.ase-v2.p.azurewebsites.net",
+        "type": "String"
+    }
+},
+"variables": {},
+"resources": [
+    {
+        "comments": "Generalized from resource: '/subscriptions/a261b2a5-86f5-4b9e-812f-1566a7ea696a/resourceGroups/ASEv2-test/providers/Microsoft.Network/virtualNetworks/ASEv2-VNet'.",
+        "type": "Microsoft.Network/virtualNetworks",
+        "name": "[parameters('virtualNetworks_ASEv2_VNet_name')]",
+        "apiVersion": "2017-06-01",
+        "location": "northeurope",
+        "scale": null,
+        "properties": {
+            "provisioningState": "Succeeded",
+            "resourceGuid": "91980e04-c707-4acb-ab83-4283ca29fdf6",
+            "addressSpace": {
+                "addressPrefixes": [
+                    "192.168.250.0/23"
+                ]
+            },
+            "subnets": [
+                {
+                    "name": "ASE-v2-subnet",
+                    "etag": "W/\"1f4dca2a-e8e2-4b92-add6-72bad6aa40a9\"",
+                    "properties": {
+                        "provisioningState": "Succeeded",
+                        "addressPrefix": "192.168.250.0/24",
+                        "resourceNavigationLinks": [
+                            {
+                                "name": "MicrosoftWeb_HostingEnvironments_ASE-v2",
+                                "properties": {
+                                    "linkedResourceType": "Microsoft.Web/hostingEnvironments",
+                                    "link": "[resourceId('Microsoft.Web/hostingEnvironments', parameters('hostingEnvironments_ASE_v2_name'))]"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ],
+            "virtualNetworkPeerings": []
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Web/hostingEnvironments', parameters('hostingEnvironments_ASE_v2_name'))]"
+        ]
+    },
+    {
+        "comments": "Generalized from resource: '/subscriptions/a261b2a5-86f5-4b9e-812f-1566a7ea696a/resourceGroups/ASEv2-test/providers/Microsoft.Web/hostingEnvironments/ASE-v2'.",
+        "type": "Microsoft.Web/hostingEnvironments",
+        "kind": "ASEV2",
+        "name": "[parameters('hostingEnvironments_ASE_v2_name')]",
+        "apiVersion": "2016-09-01",
+        "location": "North Europe",
+        "tags": {},
+        "scale": null,
+        "properties": {
+            "name": "[parameters('hostingEnvironments_ASE_v2_name')]",
+            "location": "North Europe",
+            "vnetName": "ASEv2-VNet",
+            "vnetResourceGroupName": "ASEv2-test",
+            "vnetSubnetName": "[concat(parameters('hostingEnvironments_ASE_v2_name'),'-subnet')]",
+            "virtualNetwork": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_ASEv2_VNet_name'))]",
+                "subnet": "[concat(parameters('hostingEnvironments_ASE_v2_name'),'-subnet')]"
+            },
+            "internalLoadBalancingMode": "None",
+            "multiSize": "Standard_D1_V2",
+            "multiRoleCount": 2,
+            "workerPools": null,
+            "ipsslAddressCount": 2,
+            "dnsSuffix": "[concat(parameters('hostingEnvironments_ASE_v2_name'),'.p.azurewebsites.net')]",
+            "networkAccessControlList": [],
+            "frontEndScaleFactor": 15,
+            "apiManagementAccountId": null,
+            "suspended": false,
+            "dynamicCacheEnabled": null,
+            "clusterSettings": null
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_ASEv2_VNet_name'))]"
+        ]
+    },
+    {
+        "comments": "Generalized from resource: '/subscriptions/a261b2a5-86f5-4b9e-812f-1566a7ea696a/resourceGroups/ASEv2-test/providers/Microsoft.Web/serverfarms/ASEv2-SERVICE-PLAN'.",
+        "type": "Microsoft.Web/serverfarms",
+        "sku": {
+            "name": "I1",
+            "tier": "Isolated",
+            "size": "I1",
+            "family": "I",
+            "capacity": 1
+        },
+        "kind": "app",
+        "name": "[parameters('serverfarms_ASEv2_SERVICE_PLAN_name')]",
+        "apiVersion": "2016-09-01",
+        "location": "North Europe",
+        "scale": null,
+        "properties": {
+            "name": "[parameters('serverfarms_ASEv2_SERVICE_PLAN_name')]",
+            "workerTierName": null,
+            "adminSiteName": null,
+            "hostingEnvironmentProfile": {
+                "id": "[resourceId('Microsoft.Web/hostingEnvironments', parameters('hostingEnvironments_ASE_v2_name'))]"
+            },
+            "perSiteScaling": false,
+            "reserved": false,
+            "targetWorkerCount": 0,
+            "targetWorkerSizeId": 0
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Web/hostingEnvironments', parameters('hostingEnvironments_ASE_v2_name'))]"
+        ]
+    },
+    {
+        "comments": "Generalized from resource: '/subscriptions/a261b2a5-86f5-4b9e-812f-1566a7ea696a/resourceGroups/ASEv2-test/providers/Microsoft.Web/sites/ASEv2-WEB-APP'.",
+        "type": "Microsoft.Web/sites",
+        "kind": "app",
+        "name": "[parameters('sites_ASEv2_WEB_APP_name')]",
+        "apiVersion": "2016-08-01",
+        "location": "North Europe",
+        "tags": {
+            "hidden-related:/subscriptions/a261b2a5-86f5-4b9e-812f-1566a7ea696a/resourcegroups/ASEv2-test/providers/Microsoft.Web/serverfarms/ASEv2-SERVICE-PLAN": "empty"
+        },
+        "scale": null,
+        "properties": {
+            "enabled": true,
+            "hostNameSslStates": [
+                {
+                    "name": "[concat(parameters('sites_ASEv2_WEB_APP_name'),'asev2-web-app.ase-v2.p.azurewebsites.net')]",
+                    "sslState": "Disabled",
+                    "virtualIP": null,
+                    "thumbprint": null,
+                    "toUpdate": null,
+                    "hostType": "Standard"
+                },
+                {
+                    "name": "[concat(parameters('sites_ASEv2_WEB_APP_name'),'asev2-web-app.scm.ASE-v2.p.azurewebsites.net')]",
+                    "sslState": "Disabled",
+                    "virtualIP": null,
+                    "thumbprint": null,
+                    "toUpdate": null,
+                    "hostType": "Repository"
+                }
+            ],
+            "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASEv2_SERVICE_PLAN_name'))]",
+            "reserved": false,
+            "siteConfig": null,
+            "scmSiteAlsoStopped": false,
+            "hostingEnvironmentProfile": {
+                "id": "[resourceId('Microsoft.Web/hostingEnvironments', parameters('hostingEnvironments_ASE_v2_name'))]"
+            },
+            "clientAffinityEnabled": true,
+            "clientCertEnabled": false,
+            "hostNamesDisabled": false,
+            "containerSize": 0,
+            "dailyMemoryTimeQuota": 0,
+            "cloningInfo": null
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASEv2_SERVICE_PLAN_name'))]",
+            "[resourceId('Microsoft.Web/hostingEnvironments', parameters('hostingEnvironments_ASE_v2_name'))]"
+        ]
+    },
+    {
+        "comments": "Generalized from resource: '/subscriptions/a261b2a5-86f5-4b9e-812f-1566a7ea696a/resourceGroups/ASEv2-test/providers/Microsoft.Network/virtualNetworks/ASEv2-VNet/subnets/ASE-v2-subnet'.",
+        "type": "Microsoft.Network/virtualNetworks/subnets",
+        "name": "[parameters('subnets_ASE_v2_subnet_name')]",
+        "apiVersion": "2017-06-01",
+        "scale": null,
+        "properties": {
+            "provisioningState": "Succeeded",
+            "addressPrefix": "192.168.250.0/24",
+            "resourceNavigationLinks": [
+                {
+                    "name": "MicrosoftWeb_HostingEnvironments_ASE-v2",
+                    "properties": {
+                        "linkedResourceType": "Microsoft.Web/hostingEnvironments",
+                        "link": "[resourceId('Microsoft.Web/hostingEnvironments', parameters('hostingEnvironments_ASE_v2_name'))]"
+                    }
+                }
+            ]
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_ASEv2_VNet_name'))]",
+            "[resourceId('Microsoft.Web/hostingEnvironments', parameters('hostingEnvironments_ASE_v2_name'))]"
+        ]
+    },
+    {
+        "comments": "Generalized from resource: '/subscriptions/a261b2a5-86f5-4b9e-812f-1566a7ea696a/resourceGroups/ASEv2-test/providers/Microsoft.Web/hostingEnvironments/ASE-v2/multiRolePools/default'.",
+        "type": "Microsoft.Web/hostingEnvironments/multiRolePools",
+        "sku": {
+            "name": "Q1",
+            "tier": "Quantum",
+            "size": "Q1",
+            "family": "Q",
+            "capacity": 2
+        },
+        "name": "[parameters('multiRolePools_default_name')]",
+        "apiVersion": "2016-09-01",
+        "location": "North Europe",
+        "scale": null,
+        "properties": {
+            "workerSize": "Standard_D1_V2",
+            "workerCount": 2,
+            "instanceNames": [
+                "192.168.250.7",
+                "192.168.250.6"
+            ]
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Web/hostingEnvironments', parameters('hostingEnvironments_ASE_v2_name'))]"
+        ]
+    },
+    {
+        "comments": "Generalized from resource: '/subscriptions/a261b2a5-86f5-4b9e-812f-1566a7ea696a/resourceGroups/ASEv2-test/providers/Microsoft.Web/sites/ASEv2-WEB-APP/config/web'.",
+        "type": "Microsoft.Web/sites/config",
+        "name": "[parameters('config_web_name')]",
+        "apiVersion": "2016-08-01",
+        "location": "North Europe",
+        "tags": {
+            "hidden-related:/subscriptions/a261b2a5-86f5-4b9e-812f-1566a7ea696a/resourcegroups/ASEv2-test/providers/Microsoft.Web/serverfarms/ASEv2-SERVICE-PLAN": "empty"
+        },
+        "scale": null,
+        "properties": {
+            "numberOfWorkers": 1,
+            "defaultDocuments": [
+                "Default.htm",
+                "Default.html",
+                "Default.asp",
+                "index.htm",
+                "index.html",
+                "iisstart.htm",
+                "default.aspx",
+                "index.php",
+                "hostingstart.html"
+            ],
+            "netFrameworkVersion": "v4.0",
+            "phpVersion": "5.6",
+            "pythonVersion": "",
+            "nodeVersion": "",
+            "linuxFxVersion": "",
+            "requestTracingEnabled": false,
+            "remoteDebuggingEnabled": false,
+            "remoteDebuggingVersion": null,
+            "httpLoggingEnabled": false,
+            "logsDirectorySizeLimit": 35,
+            "detailedErrorLoggingEnabled": false,
+            "publishingUsername": "$ASEv2-WEB-APP",
+            "publishingPassword": null,
+            "appSettings": null,
+            "metadata": null,
+            "connectionStrings": null,
+            "machineKey": null,
+            "handlerMappings": null,
+            "documentRoot": null,
+            "scmType": "None",
+            "use32BitWorkerProcess": true,
+            "webSocketsEnabled": false,
+            "alwaysOn": false,
+            "javaVersion": null,
+            "javaContainer": null,
+            "javaContainerVersion": null,
+            "appCommandLine": "",
+            "managedPipelineMode": "Integrated",
+            "virtualApplications": [
+                {
+                    "virtualPath": "/",
+                    "physicalPath": "site\\wwwroot",
+                    "preloadEnabled": false,
+                    "virtualDirectories": null
+                }
+            ],
+            "winAuthAdminState": 0,
+            "winAuthTenantState": 0,
+            "customAppPoolIdentityAdminState": false,
+            "customAppPoolIdentityTenantState": false,
+            "runtimeADUser": null,
+            "runtimeADUserPassword": null,
+            "loadBalancing": "LeastRequests",
+            "routingRules": [],
+            "experiments": {
+                "rampUpRules": []
+            },
+            "limits": null,
+            "autoHealEnabled": false,
+            "autoHealRules": null,
+            "tracingOptions": null,
+            "vnetName": "",
+            "siteAuthEnabled": false,
+            "siteAuthSettings": {
+                "enabled": null,
+                "unauthenticatedClientAction": null,
+                "tokenStoreEnabled": null,
+                "allowedExternalRedirectUrls": null,
+                "defaultProvider": null,
+                "clientId": null,
+                "clientSecret": null,
+                "issuer": null,
+                "allowedAudiences": null,
+                "additionalLoginParams": null,
+                "isAadAutoProvisioned": false,
+                "googleClientId": null,
+                "googleClientSecret": null,
+                "googleOAuthScopes": null,
+                "facebookAppId": null,
+                "facebookAppSecret": null,
+                "facebookOAuthScopes": null,
+                "twitterConsumerKey": null,
+                "twitterConsumerSecret": null,
+                "microsoftAccountClientId": null,
+                "microsoftAccountClientSecret": null,
+                "microsoftAccountOAuthScopes": null
+            },
+            "cors": null,
+            "push": null,
+            "apiDefinition": null,
+            "autoSwapSlotName": null,
+            "localMySqlEnabled": false,
+            "ipSecurityRestrictions": null
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('sites_ASEv2_WEB_APP_name'))]"
+        ]
+    },
+    {
+        "comments": "Generalized from resource: '/subscriptions/a261b2a5-86f5-4b9e-812f-1566a7ea696a/resourceGroups/ASEv2-test/providers/Microsoft.Web/sites/ASEv2-WEB-APP/hostNameBindings/asev2-web-app.ase-v2.p.azurewebsites.net'.",
+        "type": "Microsoft.Web/sites/hostNameBindings",
+        "name": "[parameters('hostNameBindings_asev2_web_app.ase_v2.p.azurewebsites.net_name')]",
+        "apiVersion": "2016-08-01",
+        "location": "North Europe",
+        "scale": null,
+        "properties": {
+            "siteName": "ASEv2-WEB-APP",
+            "domainId": null,
+            "hostNameType": "Verified"
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('sites_ASEv2_WEB_APP_name'))]"
+        ]
+    },
+    {
+        "comments": "Generalized from resource: '/subscriptions/a261b2a5-86f5-4b9e-812f-1566a7ea696a/resourceGroups/ASEv2-test/providers/Microsoft.Web/sites/ASEv2-WEB-APP/slots/WEB-APP-deployment-slot1'.",
+        "type": "Microsoft.Web/sites/slots",
+        "kind": "app",
+        "name": "[parameters('slots_WEB_APP_deployment_slot1_name')]",
+        "apiVersion": "2016-08-01",
+        "location": "North Europe",
+        "scale": null,
+        "properties": {
+            "enabled": true,
+            "hostNameSslStates": [
+                {
+                    "name": "asev2-web-app-web-app-deployment-slot1.ase-v2.p.azurewebsites.net",
+                    "sslState": "Disabled",
+                    "virtualIP": null,
+                    "thumbprint": null,
+                    "toUpdate": null,
+                    "hostType": "Standard"
+                },
+                {
+                    "name": "asev2-web-app-web-app-deployment-slot1.scm.ASE-v2.p.azurewebsites.net",
+                    "sslState": "Disabled",
+                    "virtualIP": null,
+                    "thumbprint": null,
+                    "toUpdate": null,
+                    "hostType": "Repository"
+                }
+            ],
+            "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASEv2_SERVICE_PLAN_name'))]",
+            "reserved": false,
+            "siteConfig": null,
+            "scmSiteAlsoStopped": false,
+            "hostingEnvironmentProfile": {
+                "id": "[resourceId('Microsoft.Web/hostingEnvironments', parameters('hostingEnvironments_ASE_v2_name'))]"
+            },
+            "clientAffinityEnabled": true,
+            "clientCertEnabled": false,
+            "hostNamesDisabled": false,
+            "containerSize": 0,
+            "dailyMemoryTimeQuota": 0,
+            "cloningInfo": null
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('sites_ASEv2_WEB_APP_name'))]",
+            "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASEv2_SERVICE_PLAN_name'))]",
+            "[resourceId('Microsoft.Web/hostingEnvironments', parameters('hostingEnvironments_ASE_v2_name'))]"
+        ]
+    },
+    {
+        "comments": "Generalized from resource: '/subscriptions/a261b2a5-86f5-4b9e-812f-1566a7ea696a/resourceGroups/ASEv2-test/providers/Microsoft.Web/sites/ASEv2-WEB-APP/slots/WEB-APP-deployment-slot1/config/web'.",
+        "type": "Microsoft.Web/sites/slots/config",
+        "name": "[parameters('config_web_name_1')]",
+        "apiVersion": "2016-08-01",
+        "location": "North Europe",
+        "scale": null,
+        "properties": {
+            "numberOfWorkers": 1,
+            "defaultDocuments": [
+                "Default.htm",
+                "Default.html",
+                "Default.asp",
+                "index.htm",
+                "index.html",
+                "iisstart.htm",
+                "default.aspx",
+                "index.php",
+                "hostingstart.html"
+            ],
+            "netFrameworkVersion": "v4.0",
+            "phpVersion": "5.6",
+            "pythonVersion": "",
+            "nodeVersion": "",
+            "linuxFxVersion": "",
+            "requestTracingEnabled": false,
+            "remoteDebuggingEnabled": false,
+            "remoteDebuggingVersion": "VS2012",
+            "httpLoggingEnabled": false,
+            "logsDirectorySizeLimit": 35,
+            "detailedErrorLoggingEnabled": false,
+            "publishingUsername": "$ASEv2-WEB-APP__WEB-APP-deployment-slot1",
+            "publishingPassword": null,
+            "appSettings": null,
+            "metadata": null,
+            "connectionStrings": null,
+            "machineKey": null,
+            "handlerMappings": null,
+            "documentRoot": null,
+            "scmType": "None",
+            "use32BitWorkerProcess": true,
+            "webSocketsEnabled": false,
+            "alwaysOn": false,
+            "javaVersion": null,
+            "javaContainer": null,
+            "javaContainerVersion": null,
+            "appCommandLine": "",
+            "managedPipelineMode": "Integrated",
+            "virtualApplications": [
+                {
+                    "virtualPath": "/",
+                    "physicalPath": "site\\wwwroot",
+                    "preloadEnabled": false,
+                    "virtualDirectories": null
+                }
+            ],
+            "winAuthAdminState": 0,
+            "winAuthTenantState": 0,
+            "customAppPoolIdentityAdminState": false,
+            "customAppPoolIdentityTenantState": false,
+            "runtimeADUser": null,
+            "runtimeADUserPassword": null,
+            "loadBalancing": "LeastRequests",
+            "routingRules": [],
+            "experiments": {
+                "rampUpRules": []
+            },
+            "limits": null,
+            "autoHealEnabled": false,
+            "autoHealRules": {
+                "triggers": null,
+                "actions": null
+            },
+            "tracingOptions": null,
+            "vnetName": "",
+            "siteAuthEnabled": false,
+            "siteAuthSettings": {
+                "enabled": null,
+                "unauthenticatedClientAction": null,
+                "tokenStoreEnabled": null,
+                "allowedExternalRedirectUrls": null,
+                "defaultProvider": null,
+                "clientId": null,
+                "clientSecret": null,
+                "issuer": null,
+                "allowedAudiences": null,
+                "additionalLoginParams": null,
+                "isAadAutoProvisioned": false,
+                "googleClientId": null,
+                "googleClientSecret": null,
+                "googleOAuthScopes": null,
+                "facebookAppId": null,
+                "facebookAppSecret": null,
+                "facebookOAuthScopes": null,
+                "twitterConsumerKey": null,
+                "twitterConsumerSecret": null,
+                "microsoftAccountClientId": null,
+                "microsoftAccountClientSecret": null,
+                "microsoftAccountOAuthScopes": null
+            },
+            "cors": null,
+            "push": null,
+            "apiDefinition": null,
+            "autoSwapSlotName": "production",
+            "localMySqlEnabled": false,
+            "ipSecurityRestrictions": null
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('sites_ASEv2_WEB_APP_name'))]",
+            "[resourceId('Microsoft.Web/sites/slots', parameters('slots_WEB_APP_deployment_slot1_name'))]"
+        ]
+    },
+    {
+        "comments": "Generalized from resource: '/subscriptions/a261b2a5-86f5-4b9e-812f-1566a7ea696a/resourceGroups/ASEv2-test/providers/Microsoft.Web/sites/ASEv2-WEB-APP/slots/WEB-APP-deployment-slot1/hostNameBindings/asev2-web-app-web-app-deployment-slot1.ase-v2.p.azurewebsites.net'.",
+        "type": "Microsoft.Web/sites/slots/hostNameBindings",
+        "name": "[parameters('hostNameBindings_asev2_web_app_web_app_deployment_slot1.ase_v2.p.azurewebsites.net_name')]",
+        "apiVersion": "2016-08-01",
+        "location": "North Europe",
+        "scale": null,
+        "properties": {
+            "siteName": "ASEv2-WEB-APP(WEB-APP-deployment-slot1)",
+            "domainId": null,
+            "hostNameType": "Verified"
+        },
+        "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('sites_ASEv2_WEB_APP_name'))]",
+            "[resourceId('Microsoft.Web/sites/slots', parameters('slots_WEB_APP_deployment_slot1_name'))]"
+        ]
+    }
+]
