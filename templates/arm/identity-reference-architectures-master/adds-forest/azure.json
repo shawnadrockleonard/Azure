@@ -1,0 +1,383 @@
+{
+  "$schema": "https://raw.githubusercontent.com/mspnp/template-building-blocks/master/schemas/buildingBlocks.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "buildingBlocks": {
+      "value": [
+        {
+          "type": "VirtualNetwork",
+          "settings": [
+            {
+              "name": "ra-adtrust-vnet",
+              "addressPrefixes": [
+                "10.0.0.0/16"
+              ],
+              "subnets": [
+                {
+                  "name": "mgmt",
+                  "addressPrefix": "10.0.0.128/25"
+                },
+                {
+                  "name": "web",
+                  "addressPrefix": "10.0.1.0/24"
+                },
+                {
+                  "name": "adds",
+                  "addressPrefix": "10.0.4.0/27"
+                },
+                {
+                  "name": "GatewaySubnet",
+                  "addressPrefix": "10.0.255.224/27"
+                }
+              ],
+              "dnsServers": [
+                "10.0.4.4",
+                "10.0.4.5",
+                "168.63.129.16"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "VirtualNetworkGateway",
+          "settings":{
+            "name": "ra-adt-vpn-vgw",
+            "gatewayType": "Vpn",
+            "vpnType": "RouteBased",
+            "sku": "VpnGw1",
+            "isPublic": true,
+            "virtualNetwork": {
+              "name": "ra-adtrust-vnet"
+            }
+          }
+        },
+        {
+          "type": "Connection",
+          "settings":{
+            "name": "ra-adt-vpn-cn",
+            "connectionType": "Vnet2Vnet",
+            "sharedKey": "",
+            "routingWeight": 100,
+            "virtualNetworkGateway1": {
+              "name": "ra-adt-vpn-vgw"
+            },
+            "virtualNetworkGateway2": {
+              "name": "ra-adtrust-onpremise-vpn-vgw"
+            }
+          }
+        },
+        {
+          "type": "Connection",
+          "settings":
+          {
+            "name": "ra-adt-onpremise-vpn-cn",
+            "connectionType": "Vnet2Vnet",
+            "sharedKey": "",
+            "routingWeight": 100,
+            "virtualNetworkGateway1": {
+              "name": "ra-adtrust-onpremise-vpn-vgw"
+            },
+            "virtualNetworkGateway2": {
+              "name": "ra-adt-vpn-vgw"
+            }               
+          }
+        },
+        {
+          "type": "VirtualMachine",
+          "settings": {
+            "vmCount": 2,
+            "namePrefix": "ra-adt-ad",
+            "computerNamePrefix": "aad",
+            "virtualNetwork": {
+              "name": "ra-adtrust-vnet"
+            },
+            "size": "Standard_DS3_v2",
+            "adminUsername": "testuser",
+            "adminPassword": "",
+            "osType": "windows",
+            "nics": [
+              {
+                "isPublic": false,
+                "subnetName": "adds",
+                "privateIPAllocationMethod": "Static",
+                "startingIPAddress": "10.0.4.4"
+              }
+            ],
+            "dataDisks": {
+              "count": 1
+            }    
+          }
+        },
+        {
+          "type": "VirtualMachine",
+          "settings":{
+            "namePrefix": "ra-adt-mgmt",
+            "computerNamePrefix": "jumpbox",
+            "virtualNetwork": {
+              "name": "ra-adtrust-vnet"
+            },            
+            "osType": "windows",
+            "adminUsername": "testuser",
+            "adminPassword": "",
+            "nics": [
+              {
+                "subnetName": "mgmt",
+                "privateIPAllocationMethod": "Static",
+                "startingIPAddress": "10.0.0.132"
+              }
+            ]
+          }
+        },
+        {
+          "type": "VirtualMachineExtension",
+          "settings": [
+            {
+              "vms": [
+                "ra-adt-ad-vm1"
+              ],
+              "extensions": [
+                {
+                  "name": "addsc",
+                  "publisher": "Microsoft.Powershell",
+                  "type": "DSC",
+                  "typeHandlerVersion": "2.7",
+                  "autoUpgradeMinorVersion": true,
+                  "settings": {
+                      "configuration": {
+                        "url": "https://github.com/mspnp/reference-architectures/raw/master/identity/adds-forest/adds-forest-v2.zip",
+                        "script":"create-forest-2.ps1",
+                        "function": "CreateForest"
+                    }
+                  },
+                  "protectedSettings": {
+                    "configurationArguments": {
+                      "DomainName": "treyresearch.net",
+                      "DomainNetbiosName": "TREYRESEARCH",
+                      "TargetDomainName": "contoso.com",
+                      "ForwardIpAddress": "192.168.0.4,192.168.0.5",                      
+                      "AdminCreds": {
+                        "UserName": "testuser",
+                        "Password": ""
+                      },
+                      "SafeModeAdminCreds": {
+                        "UserName": "safeadminuser",
+                        "Password": ""
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "VirtualMachineExtension",
+          "settings": [
+            {
+              "vms": [
+                "ra-adt-ad-vm2"
+              ],
+              "extensions": [
+                {
+                  "name": "addsc",
+                  "publisher": "Microsoft.Powershell",
+                  "type": "DSC",
+                  "typeHandlerVersion": "2.7",
+                  "autoUpgradeMinorVersion": true,
+                  "settings": {
+                    "configuration": {
+                        "url": "https://github.com/mspnp/reference-architectures/raw/master/identity/adds-forest/adds-forest-v2.zip",
+                        "script":"add-controller.ps1",
+                        "function": "CreateDomainController"
+                    }
+                  },
+                  "protectedSettings": {
+                    "configurationArguments": {
+                      "DomainName": "treyresearch.net",
+                      "DomainNetbiosName": "TREYRESEARCH",
+                      "PrimaryDcIpAddress": "10.0.4.4",
+                      "AdminCreds": {
+                        "UserName": "testuser",
+                        "Password": ""
+                      },
+                      "SafeModeAdminCreds": {
+                        "UserName": "safeadminuser",
+                        "Password": ""
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "VirtualMachine",
+          "settings": {
+            "vmCount": 2,
+            "namePrefix": "ra-adt-web",
+            "size": "Standard_DS1_v2",
+            "computerNamePrefix": "web",
+            "adminUsername": "testuser",
+            "adminPassword": "",
+            "osType": "windows",
+            "virtualNetwork": {
+              "name": "ra-adtrust-vnet"
+            },
+            "nics": [
+              {
+                "isPublic": false,
+                "privateIPAllocationMethod": "Dynamic",
+                "subnetName": "web",
+                "backendPoolsNames": [
+                  "ra-adt-web-lb-bep"
+                ]
+              }
+            ],
+            "dataDisks": {
+              "count": 1
+            },
+            "extensions": [
+              {
+                "name": "iis-config-ext",
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.7",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                  "configuration": {
+                    "url": "https://github.com/mspnp/reference-architectures/raw/master/identity/adds-forest/adds-forest-v2.zip",
+                    "script": "config.ps1",
+                    "function": "Config"
+                  }
+                },
+                "protectedSettings": { 
+                  "configurationArguments": {
+                    "DomainName": "treyresearch.net",
+                    "PrimaryDcIpAddress": "10.0.4.4",
+                    "AdminCreds": {
+                          "UserName": "testuser",
+                          "Password": ""
+                    }                  
+                  }
+                }
+              }
+            ],
+            "loadBalancerSettings": {
+              "frontendIPConfigurations": [
+                {
+                  "name": "ra-adt-web-lb-fe",
+                  "loadBalancerType": "Internal",
+                  "internalLoadBalancerSettings": {
+                    "privateIPAddress": "10.0.1.254",
+                    "subnetName": "web"
+                  }
+                }
+              ],
+              "backendPools": [
+                {
+                  "name": "ra-adt-web-lb-bep",
+                  "nicIndex": 0                        
+                }
+              ],              
+              "loadBalancingRules": [
+                {
+                  "name": "http-rule",
+                  "frontendPort": 80,
+                  "backendPort": 80,
+                  "protocol": "Tcp",
+                  "backendPoolName": "ra-adt-web-lb-bep",
+                  "frontendIPConfigurationName": "ra-adt-web-lb-fe",
+                  "probeName": "http-probe",
+                  "enableFloatingIP": false
+                },
+                {
+                  "name": "https-rule",
+                  "frontendPort": 443,
+                  "backendPort": 443,
+                  "protocol": "Tcp",
+                  "backendPoolName": "ra-adt-web-lb-bep",
+                  "frontendIPConfigurationName": "ra-adt-web-lb-fe",
+                  "probeName": "https-probe",
+                  "enableFloatingIP": false
+                }      
+              ],
+              "probes": [
+                {
+                  "name": "http-probe",
+                  "port": 80,
+                  "protocol": "Tcp",
+                  "requestPath": null
+                },
+                {
+                  "name": "https-probe",
+                  "port": 443,
+                  "protocol": "Tcp",
+                  "requestPath": null
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "VirtualMachineExtension",
+          "settings":[
+            {
+              "vms": [ "ra-adt-web-vm1", "ra-adt-web-vm2" ],
+              "extensions": [
+                {
+                  "name": "enable-windows-auth",
+                  "publisher": "Microsoft.Compute",
+                  "type": "CustomScriptExtension",
+                  "typeHandlerVersion": "1.8",
+                  "autoUpgradeMinorVersion": false,
+                  "settings": {
+                    "fileUris": [
+                      "https://raw.githubusercontent.com/mspnp/reference-architectures/master/identity/adds-forest/enable-windows-auth.ps1"
+                    ]
+                  },
+                  "protectedSettings": {
+                    "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File enable-windows-auth.ps1"
+                  }
+                }
+              ]            
+            }
+          ]
+        },
+        {
+          "type": "VirtualNetwork",
+          "settings": [
+            {
+              "name": "ra-adtrust-vnet",
+              "addressPrefixes": [
+                "10.0.0.0/16"
+              ],
+              "subnets": [
+                {
+                  "name": "mgmt",
+                  "addressPrefix": "10.0.0.128/25"
+                },
+                {
+                  "name": "web",
+                  "addressPrefix": "10.0.1.0/24"
+                },
+                {
+                  "name": "adds",
+                  "addressPrefix": "10.0.4.0/27"
+                },
+                {
+                  "name": "GatewaySubnet",
+                  "addressPrefix": "10.0.255.224/27"
+                }
+              ],
+              "dnsServers": [
+                "10.0.4.4",
+                "10.0.4.5"
+              ]
+            }
+          ]
+        }        
+      ]
+    }
+  }
+}

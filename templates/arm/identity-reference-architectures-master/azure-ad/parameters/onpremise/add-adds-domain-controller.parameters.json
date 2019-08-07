@@ -1,0 +1,55 @@
+﻿  {
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualMachinesExtensionSettings": {
+      "value": [
+        {
+          "vms": [ "ra-aad-onpremise-ad-vm2" ],
+          "extensions": [
+            {
+              "name": "join-ad-domain",
+              "publisher": "Microsoft.Compute",
+              "type": "JsonADDomainExtension",
+              "typeHandlerVersion": "1.3",
+              "autoUpgradeMinorVersion": true,
+              "settingsConfigMapperUri": "https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/templates/resources/Microsoft.Compute/virtualMachines/extensions/vm-extension-passthrough-settings-mapper.json",
+              "settingsConfig": {
+                "Name": "contoso.com",
+                "OUPath": "",
+                "User": "contoso.com\\testuser",
+                "Restart": true,
+                "Options": 3
+              },
+              "protectedSettingsConfig": {
+                "Password": "AweS0me@PW"
+              }
+            },
+            {
+              "name": "install-adds",
+              "publisher": "Microsoft.Compute",
+              "type": "CustomScriptExtension",
+              "typeHandlerVersion": "1.8",
+              "autoUpgradeMinorVersion": false,
+              "settingsConfigMapperUri": "https://raw.githubusercontent.com/mspnp/reference-architectures/master/identity/azure-ad/templates/onpremise/adds-domain-controller-extension-settings-mapper.json",
+              "settingsConfig": {
+                "activeDirectorySettings": {
+                  "domainName": "contoso.com",
+                  "adminUser": "testuser",
+                  "adminPassword": "AweS0me@PW",
+                  "siteName": "Default-First-Site-Name",
+                  "safeModePassword": "Saf3M0de@PW"
+                },
+                "fileUris": [
+                  "https://raw.githubusercontent.com/mspnp/reference-architectures/master/identity/azure-ad/extensions/adds.ps1"
+                ]
+              },
+              "protectedSettingsConfig": {
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

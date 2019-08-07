@@ -1,0 +1,65 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualMachinesSettings": {
+      "value": {
+        "namePrefix": "ra-aad-ntier-data",
+        "computerNamePrefix": "cn",
+        "size": "Standard_DS1_v2",
+        "adminUsername": "testuser",
+        "adminPassword": "AweS0me@PW",
+        "osType": "windows",
+        "osAuthenticationType": "password",
+        "sshPublicKey": "",
+        "nics": [
+          {
+            "isPublic": "false",
+            "isPrimary": "true",
+            "subnetName": "data",
+            "privateIPAllocationMethod": "dynamic",
+            "enableIPForwarding": false,
+            "domainNameLabelPrefix": "",
+            "dnsServers": [ ]
+          }
+        ],
+        "imageReference": {
+          "publisher": "MicrosoftWindowsServer",
+          "offer": "WindowsServer",
+          "sku": "2012-R2-Datacenter",
+          "version": "latest"
+        },
+        "dataDisks": {
+          "count": 1,
+          "properties": {
+            "diskSizeGB": 128,
+            "caching": "None",
+            "createOption": "Empty"
+          }
+        },
+        "osDisk": {
+          "caching": "ReadWrite"
+        },
+        "extensions": [ ],
+        "availabilitySet": {
+          "useExistingAvailabilitySet": "No",
+          "name": "ra-aad-ntier-data-as"
+        }
+      }
+    },
+    "virtualNetworkSettings": {
+      "value": {
+        "name": "ra-aad-ntier-vnet",
+        "resourceGroup": "ra-aad-ntier-rg"
+      }
+    },
+    "buildingBlockSettings": {
+      "value": {
+        "storageAccountsCount": 2,
+        "vmCount": 2,
+        "vmStartIndex": 1
+      }
+    }
+  }
+}
+

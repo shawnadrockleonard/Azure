@@ -1,0 +1,221 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualNetworkSettings": {
+      "value": {
+        "name": "ra-aad-ntier-vnet",
+        "resourceGroup": "ra-aad-ntier-rg"
+      }
+    },
+    "networkSecurityGroupsSettings": {
+      "value": [
+        {
+          "name": "ra-aad-ntier-biz-nsg",
+          "subnets": [
+            "biz"
+          ],
+          "networkInterfaces": [
+          ],
+          "securityRules": [
+            {
+              "name": "allow-web-traffic",
+              "description": "Allow traffic originating from web layer.",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "10.0.1.0/24",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            },
+            {
+              "name": "allow-mgmt-rdp",
+              "direction": "Inbound",
+              "priority": 110,
+              "sourceAddressPrefix": "10.0.0.128/25",
+              "destinationAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "access": "Allow",
+              "protocol": "Tcp"
+            },
+            {
+              "name": "deny-other-traffic",
+              "description": "Deny all other traffic",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 120,
+              "direction": "Inbound"
+            }
+          ]
+        },
+        {
+          "name": "ra-aad-ntier-data-nsg",
+          "subnets": [
+            "data"
+          ],
+          "networkInterfaces": [
+          ],
+          "securityRules": [
+            {
+              "name": "allow-biz-traffic",
+              "description": "Allow traffic originating from biz layer.",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "1433",
+              "sourceAddressPrefix": "10.0.2.0/24",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            },
+            {
+              "name": "allow-mgmt-rdp",
+              "direction": "Inbound",
+              "priority": 110,
+              "sourceAddressPrefix": "10.0.0.128/25",
+              "destinationAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "access": "Allow",
+              "protocol": "Tcp"
+            },
+            {
+              "name": "deny-other-traffic",
+              "description": "Deny all other traffic",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 120,
+              "direction": "Inbound"
+            }
+          ]
+        },
+        {
+          "name": "ra-aad-ntier-web-nsg",
+          "subnets": [
+            "web"
+          ],
+          "networkInterfaces": [
+          ],
+          "securityRules": [
+            {
+              "name": "allow-http-traffic-from-external",
+              "description": "Allow http traffic originating externally.",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            },
+            {
+              "name": "allow-https-traffic-from-external",
+              "description": "Allow https traffic originating externally.",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 110,
+              "direction": "Inbound"
+            },
+            {
+              "name": "allow-http-traffic-from-vnet",
+              "description": "Allow http traffic originating from vnet.",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "10.0.0.0/16",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 120,
+              "direction": "Inbound"
+            },
+            {
+              "name": "allow-https-traffic-from-vnet",
+              "description": "Allow https traffic originating from vnet.",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "10.0.0.0/16",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 130,
+              "direction": "Inbound"
+            },
+            {
+              "name": "allow-mgmt-rdp",
+              "direction": "Inbound",
+              "priority": 140,
+              "sourceAddressPrefix": "10.0.0.128/25",
+              "destinationAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "access": "Allow",
+              "protocol": "Tcp"
+            },
+            {
+              "name": "deny-other-traffic",
+              "description": "Deny all other traffic",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 150,
+              "direction": "Inbound"
+            }
+          ]
+        },
+        {
+          "name": "ra-aad-ntier-mgmt-nsg",
+          "subnets": [ ],
+          "networkInterfaces": [
+            "ra-aad-ntier-mgmt-vm1-nic1"
+          ],
+          "securityRules": [
+            {
+              "name": "default-allow-rdp",
+              "description": "Allow RDP Subnet",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            },
+            {
+              "name": "deny-other-traffic",
+              "description": "Deny all other traffic",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Deny",
+              "priority": 120,
+              "direction": "Inbound"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+

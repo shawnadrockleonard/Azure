@@ -1,0 +1,108 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "loadBalancerSettings": {
+      "value": {
+        "name": "ra-aad-ntier-biz-lb",
+        "frontendIPConfigurations": [
+          {
+            "name": "ra-aad-ntier-biz-lb-fe-config1",
+            "loadBalancerType": "internal",
+            "domainNameLabel": "",
+            "internalLoadBalancerSettings": {
+              "privateIPAddress": "10.0.2.250",
+              "subnetName": "biz"
+            }
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "lbr1",
+            "frontendPort": 80,
+            "backendPort": 80,
+            "protocol": "Tcp",
+            "backendPoolName": "lb-bep1",
+            "frontendIPConfigurationName": "ra-aad-ntier-biz-lb-fe-config1",
+            "enableFloatingIP": false,
+            "probeName": "lbp1"
+          }
+        ],
+        "probes": [
+          {
+            "name": "lbp1",
+            "port": 80,
+            "protocol": "Http",
+            "requestPath": "/"
+          }
+        ],
+        "backendPools": [
+          {
+            "name": "lb-bep1",
+            "nicIndex": 0
+          }
+        ],
+        "inboundNatRules": [ ]
+      }
+    },
+    "virtualMachinesSettings": {
+      "value": {
+        "namePrefix": "ra-aad-ntier-biz",
+        "computerNamePrefix": "cn",
+        "size": "Standard_DS1_v2",
+        "adminUsername": "testuser",
+        "adminPassword": "AweS0me@PW",
+        "osType": "windows",
+        "osAuthenticationType": "password",
+        "sshPublicKey": "",
+        "nics": [
+          {
+            "isPublic": "false",
+            "isPrimary": "true",
+            "subnetName": "biz",
+            "privateIPAllocationMethod": "dynamic",
+            "enableIPForwarding": false,
+            "domainNameLabelPrefix": "",
+            "dnsServers": [ ]
+          }
+        ],
+        "imageReference": {
+          "publisher": "MicrosoftWindowsServer",
+          "offer": "WindowsServer",
+          "sku": "2012-R2-Datacenter",
+          "version": "latest"
+        },
+        "dataDisks": {
+          "count": 1,
+          "properties": {
+            "diskSizeGB": 128,
+            "caching": "None",
+            "createOption": "Empty"
+          }
+        },
+        "osDisk": {
+          "caching": "ReadWrite"
+        },
+        "extensions": [ ],
+        "availabilitySet": {
+          "useExistingAvailabilitySet": "No",
+          "name": "ra-aad-ntier-biz-as"
+        }
+      }
+    },
+    "virtualNetworkSettings": {
+      "value": {
+        "name": "ra-aad-ntier-vnet",
+        "resourceGroup": "ra-aad-ntier-rg"
+      }
+    },
+    "buildingBlockSettings": {
+      "value": {
+        "storageAccountsCount": 3,
+        "vmCount": 3,
+        "vmStartIndex": 1
+      }
+    }
+  }
+}
+

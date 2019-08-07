@@ -1,0 +1,66 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualMachinesSettings": {
+      "value": {
+        "namePrefix": "ra-aad-onpremise-ad",
+        "computerNamePrefix": "ad",
+        "size": "Standard_DS3_v2",
+        "osType": "Windows",
+        "adminUsername": "testuser",
+        "adminPassword": "AweS0me@PW",
+        "osAuthenticationType": "password",
+        "nics": [
+          {
+            "isPublic": "true",
+            "subnetName": "adds",
+            "privateIPAllocationMethod": "Static",
+            "publicIPAllocationMethod": "static",
+            "startingIPAddress": "192.168.0.4",
+            "enableIPForwarding": false,
+            "domainNameLabelPrefix": "",
+            "dnsServers": [
+            ],
+            "isPrimary": "true"
+          }
+        ],
+        "imageReference": {
+          "publisher": "MicrosoftWindowsServer",
+          "offer": "WindowsServer",
+          "sku": "2012-R2-Datacenter",
+          "version": "latest"
+        },
+        "dataDisks": {
+          "count": 1,
+          "properties": {
+            "diskSizeGB": 127,
+            "caching": "None",
+            "createOption": "Empty"
+          }
+        },
+        "osDisk": {
+          "caching": "ReadWrite"
+        },
+        "extensions": [ ],
+        "availabilitySet": {
+          "useExistingAvailabilitySet": "No",
+          "name": "ra-aad-onpremise-ad-as"
+        }
+      }
+    },
+    "virtualNetworkSettings": {
+      "value": {
+        "name": "ra-aad-onpremise-vnet",
+        "resourceGroup": "ra-aad-onpremise-rg"
+      }
+    },
+    "buildingBlockSettings": {
+      "value": {
+        "storageAccountsCount": 2,
+        "vmCount": 2,
+        "vmStartIndex": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,300 @@
+{
+  "$schema": "https://raw.githubusercontent.com/mspnp/template-building-blocks/master/schemas/buildingBlocks.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "buildingBlocks": {
+      "value": [
+        {
+          "type": "VirtualNetwork",
+          "settings": [
+            {
+              "name": "adds-vnet",
+              "addressPrefixes": [
+                "10.0.0.0/16"
+              ],
+              "subnets": [
+                {
+                  "name": "mgmt",
+                  "addressPrefix": "10.0.0.128/25"
+                },
+                {
+                  "name": "web",
+                  "addressPrefix": "10.0.1.0/24"
+                },
+                {
+                  "name": "adds",
+                  "addressPrefix": "10.0.4.0/27"
+                },
+                {
+                  "name": "GatewaySubnet",
+                  "addressPrefix": "10.0.255.224/27"
+                }
+              ],
+              "dnsServers": [
+                "168.63.129.16",
+                "10.0.4.4",
+                "10.0.4.5",
+                "192.168.0.4",
+                "192.168.0.5"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "VirtualNetworkGateway",
+          "settings":{
+            "name": "ra-adds-vpn-vgw",
+            "gatewayType": "Vpn",
+            "vpnType": "RouteBased",
+            "sku": "VpnGw1",
+            "isPublic": true,
+            "virtualNetwork": {
+              "name": "adds-vnet"
+            }
+          }
+        },
+        {
+          "type": "Connection",
+          "settings":{
+            "name": "ra-adds-vpn-cn",
+            "connectionType": "Vnet2Vnet",
+            "sharedKey": "",
+            "routingWeight": 100,
+            "virtualNetworkGateway1": {
+              "name": "ra-adds-vpn-vgw"
+            },
+            "virtualNetworkGateway2": {
+              "name": "ra-adds-onpremise-vpn-vgw"
+            }
+          }
+        },
+        {
+          "type": "Connection",
+          "settings":
+          {
+            "name": "ra-adds-onpremise-vpn-cn",
+            "connectionType": "Vnet2Vnet",
+            "sharedKey": "",
+            "routingWeight": 100,
+            "virtualNetworkGateway1": {
+              "name": "ra-adds-onpremise-vpn-vgw"
+            },
+            "virtualNetworkGateway2": {
+              "name": "ra-adds-vpn-vgw"
+            }               
+          }
+        },
+        {
+          "type": "VirtualMachine",
+          "settings": {
+            "vmCount": 2,
+            "namePrefix": "adds",
+            "computerNamePrefix": "adds",
+            "virtualNetwork": {
+              "name": "adds-vnet"
+            },
+            "size": "Standard_DS3_v2",
+            "adminUsername": "testadminuser",
+            "adminPassword": "",
+            "osType": "windows",
+            "imageReference": {
+              "publisher": "MicrosoftWindowsServer",
+              "offer": "WindowsServer",
+              "sku": "2016-Datacenter",
+              "version": "latest"
+            },
+            "nics": [
+              {
+                "isPublic": false,
+                "subnetName": "adds",
+                "privateIPAllocationMethod": "Static",
+                "startingIPAddress": "10.0.4.4"
+              }
+            ],
+            "dataDisks": {
+              "count": 1,
+              "diskSizeGB": 127,
+              "caching": "None",
+              "createOption": "empty"
+            },
+            "storageAccounts": {
+              "count": 2
+            },
+            "extensions": [
+              {
+                "name": "addsc",
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.7",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                      "configuration": 
+                      {
+                      "url": "https://github.com/mspnp/reference-architectures/raw/master/identity/adds-extend-domain/adds.zip",
+                      "script":"azure.ps1",
+                      "function": "CreateDomainController"
+                      }
+                  },
+                  "protectedSettings": {
+                    "configurationArguments": {
+                      "DomainName": "contoso.com",
+                      "SiteName": "Azure-Vnet-Site",
+                      "PrimaryDcIpAddress": "192.168.0.4",
+                      "AdminCreds": {
+                            "UserName": "testadminuser",
+                            "Password": ""
+                      },
+                      "SafeModeAdminCreds": {
+                            "UserName": "safeadminuser",
+                            "Password": ""
+                      }
+                    }
+                  }
+                }
+            ]     
+          }
+        },
+        {
+          "type": "VirtualMachine",
+          "settings": {
+            "vmCount": 2,
+            "namePrefix": "web",
+            "size": "Standard_DS1_v2",
+            "computerNamePrefix": "web",
+            "adminUsername": "testadminuser",
+            "adminPassword": "",
+            "virtualNetwork": {
+              "name": "adds-vnet"
+            },
+            "diagnosticStorageAccounts": {
+              "count": 1,
+              "encryptBlobStorage": true,
+              "encryptFileStorage": true
+            },
+            "nics": [
+              {
+                "isPrimary": true,
+                "isPublic": false,
+                "privateIPAllocationMethod": "Static",
+                "startingIPAddress": "10.0.1.5",
+                "subnetName": "web",
+                "backendPoolsNames": [
+                  "dmz-vm-lb-bep1"
+                ]
+              }
+            ],
+            "osType": "windows",
+            "dataDisks": {
+              "count": 1,
+              "properties": {
+                "diskSizeGB": 128,
+                "caching": "None",
+                "createOption": "empty"
+              }
+            },
+            "extensions": [
+              {
+                "name": "config",
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.7",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                  "configuration": {
+                    "url": "https://github.com/mspnp/reference-architectures/raw/master/identity/adds-extend-domain/adds.zip",
+                    "script": "config.ps1",
+                    "function": "Config"
+                  }
+                },
+                "protectedSettings": { 
+                  "configurationArguments": {
+                    "DomainName": "contoso.com",
+                    "PrimaryDcIpAddress": "192.168.0.4",
+                    "AdminCreds": {
+                          "UserName": "testadminuser",
+                          "Password": ""
+                    }                  
+                  }
+                }
+              }
+            ],
+            "loadBalancerSettings": {
+              "frontendIPConfigurations": [
+                {
+                  "name": "dmz-lb-fe-config1",
+                  "loadBalancerType": "Internal",
+                  "internalLoadBalancerSettings": {
+                    "privateIPAddress": "10.0.1.100",
+                    "subnetName": "web"
+                  }
+                }
+              ],
+              "loadBalancingRules": [
+                {
+                  "name": "lbr1",
+                  "frontendPort": 80,
+                  "backendPort": 80,
+                  "protocol": "Tcp",
+                  "backendPoolName": "dmz-vm-lb-bep1",
+                  "frontendIPConfigurationName": "dmz-lb-fe-config1",
+                  "enableFloatingIP": false,
+                  "probeName": "lbp1"
+                },
+                {
+                  "name": "lbr2",
+                  "frontendPort": 443,
+                  "backendPort": 443,
+                  "protocol": "Tcp",
+                  "backendPoolName": "dmz-vm-lb-bep1",
+                  "frontendIPConfigurationName": "dmz-lb-fe-config1",
+                  "enableFloatingIP": false,
+                  "probeName": "lbp2"
+                }                
+              ],
+              "probes": [
+                {
+                  "name": "lbp1",
+                  "port": 80,
+                  "protocol": "Tcp",
+                  "requestPath": null
+                },
+                {
+                  "name": "lbp2",
+                  "port": 443,
+                  "protocol": "Tcp",
+                  "requestPath": null
+                }
+              ],
+              "backendPools": [
+                {
+                  "name": "dmz-vm-lb-bep1",
+                  "nicIndex": 0
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "VirtualMachine",
+          "settings":{
+            "namePrefix": "ra-adds-mgmt",
+            "computerNamePrefix": "jumpbox",
+            "virtualNetwork": {
+              "name": "adds-vnet"
+            },            
+            "osType": "windows",
+            "adminUsername": "testuser",
+            "adminPassword": "",
+            "nics": [
+              {
+                "subnetName": "mgmt",
+                "privateIPAllocationMethod": "Static",
+                "startingIPAddress": "10.0.0.132"
+              }
+            ]
+          }
+        }        
+      ]
+    }
+  }
+}

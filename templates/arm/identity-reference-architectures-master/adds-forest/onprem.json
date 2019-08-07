@@ -1,0 +1,211 @@
+{
+  "$schema": "https://raw.githubusercontent.com/mspnp/template-building-blocks/master/schemas/buildingBlocks.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "buildingBlocks": {
+      "value": [  
+        {
+          "type": "VirtualNetwork",
+          "settings": [
+            {
+              "name": "ra-adtrust-onpremise-vnet",
+              "addressPrefixes": [
+                "192.168.0.0/16"
+              ],
+              "subnets": [
+                {
+                  "name": "adds",
+                  "addressPrefix": "192.168.0.0/24"
+                },
+                {
+                  "name": "mgmt",
+                  "addressPrefix": "192.168.1.128/25"
+                },
+                {
+                  "name": "GatewaySubnet",
+                  "addressPrefix": "192.168.255.224/27"
+                }
+              ],
+              "dnsServers": [
+                "192.168.0.4",
+                "192.168.0.5",
+                "168.63.129.16"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "VirtualMachine",
+          "settings":{
+            "namePrefix": "ra-onpremise-mgmt",
+            "computerNamePrefix": "jumpbox",
+            "virtualNetwork": {
+              "name": "ra-adtrust-onpremise-vnet"
+            },            
+            "osType": "windows",
+            "adminUsername": "testuser",
+            "adminPassword": "",
+            "nics": [
+              {
+                "subnetName": "mgmt",
+                "privateIPAllocationMethod": "Static",
+                "startingIPAddress": "192.168.1.139"
+              }
+            ]
+          }
+        },        
+        {
+          "type": "VirtualMachine",
+          "settings":{
+            "vmCount": 2,
+            "namePrefix": "ra-adtrust-onpremise-ad",
+            "computerNamePrefix": "ad",
+            "size": "Standard_DS3_v2",
+            "osType": "windows",
+            "adminUsername": "testuser",
+            "adminPassword": "",
+            "virtualNetwork": {
+              "name": "ra-adtrust-onpremise-vnet"
+            },
+            "nics": [
+              {
+                "isPublic": false,
+                "subnetName": "adds",
+                "privateIPAllocationMethod": "Static",
+                "startingIPAddress": "192.168.0.4"
+              }
+            ],
+            "dataDisks": {
+              "count": 1
+            }              
+          }
+        },
+        {
+          "type": "VirtualNetworkGateway",
+          "settings":{
+            "name": "ra-adtrust-onpremise-vpn-vgw",
+            "gatewayType": "Vpn",
+            "vpnType": "RouteBased",
+            "sku": "VpnGw1",
+            "isPublic": true,
+            "virtualNetwork": {
+              "name": "ra-adtrust-onpremise-vnet"
+            }
+          }
+        },
+        {
+          "type": "VirtualMachineExtension",
+          "settings": [
+            {
+              "vms": [
+                "ra-adtrust-onpremise-ad-vm1"
+              ],
+              "extensions": [
+                {
+                  "name": "addsc",
+                  "publisher": "Microsoft.Powershell",
+                  "type": "DSC",
+                  "typeHandlerVersion": "2.7",
+                  "autoUpgradeMinorVersion": true,
+                  "settings": {
+                      "configuration": {
+                        "url": "https://github.com/mspnp/reference-architectures/raw/master/identity/adds-forest/adds-forest-v2.zip",
+                        "script":"create-forest.ps1",
+                        "function": "CreateForest"
+                    }
+                  },
+                  "protectedSettings": {
+                    "configurationArguments": {
+                      "DomainName": "contoso.com",
+                      "DomainNetbiosName": "CONTOSO",
+                      "TargetDomainName": "treyresearch.net",
+                      "ForwardIpAddress": "10.0.4.4,10.0.4.5",
+                      "AdminCreds": {
+                        "UserName": "testuser",
+                        "Password": ""
+                      },
+                      "SafeModeAdminCreds": {
+                        "UserName": "safeadminuser",
+                        "Password": ""
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "VirtualMachineExtension",
+          "settings": [
+            {
+              "vms": [
+                "ra-adtrust-onpremise-ad-vm2"
+              ],
+              "extensions": [
+                {
+                  "name": "addsc",
+                  "publisher": "Microsoft.Powershell",
+                  "type": "DSC",
+                  "typeHandlerVersion": "2.7",
+                  "autoUpgradeMinorVersion": true,
+                  "settings": {
+                    "configuration": {
+                        "url": "https://github.com/mspnp/reference-architectures/raw/master/identity/adds-forest/adds-forest-v2.zip",
+                        "script":"add-controller.ps1",
+                        "function": "CreateDomainController"
+                    }
+                  },
+                  "protectedSettings": {
+                    "configurationArguments": {
+                      "DomainName": "contoso.com",
+                      "DomainNetbiosName": "CONTOSO",
+                      "PrimaryDcIpAddress": "192.168.0.4",
+                      "AdminCreds": {
+                        "UserName": "testuser",
+                        "Password": ""
+                      },
+                      "SafeModeAdminCreds": {
+                        "UserName": "testsafeadminuser",
+                        "Password": ""
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "VirtualNetwork",
+          "settings": [
+            {
+              "name": "ra-adtrust-onpremise-vnet",
+              "addressPrefixes": [
+                "192.168.0.0/16"
+              ],
+              "subnets": [
+                {
+                  "name": "adds",
+                  "addressPrefix": "192.168.0.0/24"
+                },
+                {
+                  "name": "mgmt",
+                  "addressPrefix": "192.168.1.128/25"
+                },
+                {
+                  "name": "GatewaySubnet",
+                  "addressPrefix": "192.168.255.224/27"
+                }
+              ],
+              "dnsServers": [
+                "192.168.0.4",
+                "192.168.0.5"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

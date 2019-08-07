@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|AnyCPU">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|AnyCPU">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>a4d8b97a-55f9-44e5-8e04-ebfab0b43b37</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworkIdentifier>Deployment</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>1.0</TargetFrameworkVersion>
+    <PrepareForBuildDependsOn>
+    </PrepareForBuildDependsOn>
+  </PropertyGroup>
+  <Import Condition=" Exists('Deployment.targets') " Project="Deployment.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+  <!-- vertag<:>start tokens<:>maj.min -->
+  <Import Condition=" Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets') " Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets" />
+  <!-- vertag<:>end -->
+  <ItemGroup>
+    <None Include="azuredeploy.parameters.json" />
+    <None Include="Deploy-ReferenceArchitecture.ps1" />
+    <None Include="Deployment.targets">
+      <Visible>False</Visible>
+    </None>
+    <None Include="extensions\adds-forest.ps1" />
+    <None Include="extensions\adds.ps1" />
+    <None Include="extensions\linux\install-apache.sh" />
+    <None Include="extensions\windows\iisaspnet.ps1.zip" />
+    <None Include="parameters\linux\businessTier.parameters.json" />
+    <None Include="parameters\linux\dataTier.parameters.json" />
+    <None Include="parameters\linux\managementTier.parameters.json" />
+    <None Include="parameters\linux\networkSecurityGroups.parameters.json" />
+    <None Include="parameters\linux\virtualNetwork.parameters.json" />
+    <None Include="parameters\linux\webTier.parameters.json" />
+    <None Include="parameters\onpremise\virtualMachines-adc-joindomain.parameters.json" />
+    <None Include="parameters\onpremise\add-adds-domain-controller.parameters.json" />
+    <None Include="parameters\onpremise\create-adds-forest-extension.parameters.json" />
+    <None Include="parameters\onpremise\virtualMachines-adc.parameters.json" />
+    <None Include="parameters\onpremise\virtualMachines-adds.parameters.json" />
+    <None Include="parameters\onpremise\virtualNetwork-adds-dns.parameters.json" />
+    <None Include="parameters\onpremise\virtualNetwork.parameters.json" />
+    <None Include="parameters\windows\businessTier.parameters.json" />
+    <None Include="parameters\windows\dataTier.parameters.json" />
+    <None Include="parameters\windows\managementTier.parameters.json" />
+    <None Include="parameters\windows\networkSecurityGroups.parameters.json" />
+    <None Include="parameters\windows\virtualNetwork.parameters.json" />
+    <None Include="parameters\windows\webTier.parameters.json" />
+    <None Include="templates\onpremise\ad-forest-extension-settings-mapper.json" />
+    <None Include="templates\onpremise\adds-domain-controller-extension-settings-mapper.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="azuredeploy.json" />
+  </ItemGroup>
+  <Target Name="GetReferenceAssemblyPaths" />
+</Project>

@@ -1,0 +1,223 @@
+{
+  "$schema": "https://raw.githubusercontent.com/mspnp/template-building-blocks/master/schemas/buildingBlocks.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "buildingBlocks": {
+      "value": [  
+        {
+          "type": "VirtualNetwork",
+          "settings": [
+            {
+              "name": "onpremise-vnet",
+              "addressPrefixes": [
+                "192.168.0.0/16"
+              ],
+              "subnets": [
+                {
+                  "name": "mgmt",
+                  "addressPrefix": "192.168.1.128/25"
+                },
+                {
+                  "name": "adds",
+                  "addressPrefix": "192.168.0.0/24"
+                },
+                {
+                  "name": "GatewaySubnet",
+                  "addressPrefix": "192.168.255.224/27"
+                }
+              ],
+              "dnsServers": [
+                "192.168.0.4",
+                "192.168.0.5",
+                "168.63.129.16"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "VirtualNetworkGateway",
+          "settings":{
+            "name": "ra-adds-onpremise-vpn-vgw",
+            "gatewayType": "Vpn",
+            "vpnType": "RouteBased",
+            "sku": "VpnGw1",
+            "isPublic": true,
+            "virtualNetwork": {
+              "name": "onpremise-vnet"
+            }
+          }
+        },
+        {
+          "type": "VirtualMachine",
+          "settings":{
+            "namePrefix": "ra-onpremise-mgmt",
+            "computerNamePrefix": "jumpbox",
+            "virtualNetwork": {
+              "name": "onpremise-vnet"
+            },            
+            "osType": "windows",
+            "adminUsername": "testuser",
+            "adminPassword": "",
+            "nics": [
+              {
+                "subnetName": "mgmt",
+                "privateIPAllocationMethod": "Static",
+                "startingIPAddress": "192.168.1.139"
+              }
+            ]
+          }
+        },        
+        {
+          "type": "VirtualMachine",
+          "settings": {
+            "vmCount": 2,
+            "computerNamePrefix": "ad",
+            "namePrefix": "ad",
+            "size": "Standard_DS3_v2",
+            "adminUsername": "testadminuser",
+            "adminPassword": "",
+            "virtualNetwork": {
+              "name": "onpremise-vnet"
+            },
+            "storageAccounts": {
+              "count": 2,
+              "managed": true
+            },
+            "diagnosticStorageAccounts": {
+              "count": 1,
+              "encryptBlobStorage": true,
+              "encryptFileStorage": true
+            },
+            "nics": [
+              {
+                "isPublic": false,
+                "isPrimary": true,
+                "privateIPAllocationMethod": "Static",
+                "subnetName": "adds",
+                "startingIPAddress": "192.168.0.4"
+              }
+            ],
+            "osType": "windows",
+            "dataDisks": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "type": "VirtualMachineExtension",
+          "settings": [
+            {
+              "vms": [
+                "ad-vm1"
+              ],
+              "extensions": [
+                {
+                  "name": "addsc",
+                  "publisher": "Microsoft.Powershell",
+                  "type": "DSC",
+                  "typeHandlerVersion": "2.7",
+                  "autoUpgradeMinorVersion": true,
+                  "settings": {
+                      "configuration": {
+                        "url": "https://github.com/mspnp/reference-architectures/raw/master/identity/adds-extend-domain/adds.zip",
+                        "script":"onprem-primary.ps1",
+                        "function": "CreateForest"
+                    }
+                  },
+                  "protectedSettings": {
+                    "configurationArguments": {
+                      "DomainName": "contoso.com",
+                      "DomainNetbiosName": "CONTOSO",
+                      "SiteName": "Azure-Vnet-Site",
+                      "OnpremSiteName": "Default-First-Site-Name",
+                      "Cidr": "10.0.0.0/16",
+                      "ReplicationFrequency": 10,
+                      "AdminCreds": {
+                        "UserName": "testadminuser",
+                        "Password": ""
+                      },
+                      "SafeModeAdminCreds": {
+                        "UserName": "testsafeadminuser",
+                        "Password": ""
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "VirtualMachineExtension",
+          "settings": [
+            {
+              "vms": [
+                "ad-vm2"
+              ],
+              "extensions": [
+                {
+                  "name": "addsc",
+                  "publisher": "Microsoft.Powershell",
+                  "type": "DSC",
+                  "typeHandlerVersion": "2.7",
+                  "autoUpgradeMinorVersion": true,
+                  "settings": {
+                    "configuration": {
+                        "url": "https://github.com/mspnp/reference-architectures/raw/master/identity/adds-extend-domain/adds.zip",
+                        "script":"onprem-secondary.ps1",
+                        "function": "CreateDomainController"
+                    }
+                  },
+                  "protectedSettings": {
+                    "configurationArguments": {
+                      "DomainName": "contoso.com",
+                      "DomainNetbiosName": "CONTOSO",
+                      "PrimaryDcIpAddress": "192.168.0.4",
+                      "AdminCreds": {
+                        "UserName": "testadminuser",
+                        "Password": ""
+                      },
+                      "SafeModeAdminCreds": {
+                        "UserName": "testsafeadminuser",
+                        "Password": ""
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "VirtualNetwork",
+          "settings": [
+            {
+              "name": "onpremise-vnet",
+              "addressPrefixes": [
+                "192.168.0.0/16"
+              ],
+              "subnets": [
+                {
+                  "name": "mgmt",
+                  "addressPrefix": "192.168.1.128/25"
+                },
+                {
+                  "name": "adds",
+                  "addressPrefix": "192.168.0.0/24"
+                },
+                {
+                  "name": "GatewaySubnet",
+                  "addressPrefix": "192.168.255.224/27"
+                }
+              ],
+              "dnsServers": [
+                "192.168.0.4",
+                "192.168.0.5"
+              ]
+            }
+          ]
+        }        
+      ]
+    }
+  }
+}

@@ -1,0 +1,204 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "StorageAccount": {
+            "type": "string",
+            "metadata": {
+                "description": "Storage Account Name for all VM disks"
+            }
+        },
+        "ArtifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "Location of template Artifacts"
+            }
+        },
+        "ArtifactsLocationSASToken": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the template Artifacts SAS token"
+            }
+        },
+        "VMName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Virtual Machine"
+            }
+        },
+	"DomainName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the AD Domain"
+            }
+        },    
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin user name for the virtual machine"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin user password for virtual machine"
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "metadata": {
+                "description": "Size of VM"
+            }
+        },
+        "imagePublisher": {
+            "type": "string",
+            "defaultValue": "MicrosoftWindowsServer"
+        },
+        "imageOffer": {
+            "type": "string",
+            "defaultValue": "WindowsServer"
+        },
+        "osSku": {
+            "type": "string",
+            "defaultValue": "2016-Datacenter",
+            "metadata": {
+                "description": "OS sku for VM"
+            }
+        },
+        "nicId": {
+            "type": "string",
+            "metadata": {
+                "description": "Network interface id."
+            }
+        },
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "VM deployment location."
+            }
+        },
+	    "tz": {
+                "type": "string",
+                "metadata": {
+                    "description": "Time Zone"
+                }
+	    }
+     },
+    "variables": {
+	    "DomainController": {
+            	"type": "string",
+            	"defaultValue": "DC1"
+        	}
+    },
+    "resources": [
+        {
+		"type": "Microsoft.Storage/storageAccounts",
+		"name": "[parameters('StorageAccount')]",
+		"apiVersion": "2019-40-01",
+		"location": "[resourceGroup().location]",
+		"sku": {
+			"name": "Standard_LRS"
+			},
+		"Properties": {}
+		},
+	    
+        {
+            "type":  "Microsoft.Compute/virtualMachines/extensions",
+            "name":  "[concat(parameters('vmName'),'/BGInfo')]",
+            "apiVersion":  "2019-03-01",
+            "location":  "[parameters('location')]",
+            "dependsOn":  [
+                            "[resourceId('Microsoft.Compute/virtualMachines', parameters('Vmname'))]"
+                        ],
+            "properties":  {
+                                "publisher":  "Microsoft.Compute",
+                                "autoUpgradeMinorVersion":  "true",
+                                "typeHandlerVersion":  "2.1",
+                                "type":  "BGInfo"
+                            },
+            
+            "comments":  "VM Extension to display Background Information."
+                  },
+        {
+            "apiVersion": "2019-03-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('vmName')]",
+            "dependsOn": [
+				"[resourceId('Microsoft.Storage/storageAccounts/', parameters('StorageAccount'))]"
+			],
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                 },
+                "osProfile": {
+                    "computerName": "[parameters('vmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
+			    "windowsConfiguration": {
+                            "provisionVMAgent": "true",
+                            "enableAutomaticUpdates": "true",
+                            "timeZone": "[parameters('tz')]"
+                    	}
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[parameters('imagePublisher')]",
+                        "offer": "[parameters('imageOffer')]",
+                        "sku": "[parameters('osSku')]",
+                        "version": "latest"
+                 },
+                 "osDisk": {
+                     "createOption": "FromImage",
+                     "name": "[concat(parameters('vmName'), '-OSdisk')]",
+                     "vhd": {
+                         "uri": "[concat('https://', parameters('StorageAccount'), '.blob.core.windows.net/vhds/', parameters('VMName'),'disk1.vhd')]"
+                     },
+                     "caching": "ReadWrite"
+                    }
+                 },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[parameters('nicId')]"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "[concat(parameters('VMName'),'/CreateADForest')]",
+                    "apiVersion": "2019-03-01",
+                    "condition": "[equals(parameters('VMName'), 'DC1')]",
+		    "location": "[resourceGroup().location]",
+		    "dependsOn": [
+                        		"[resourceId('Microsoft.Compute/virtualMachines', parameters('VMname'))]"
+                    		],
+                    "properties": {
+                        "publisher": "Microsoft.Powershell",
+                        "type": "DSC",
+                        "typeHandlerVersion": "2.19",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "ModulesUrl": "[concat(parameters('artifactsLocation'), '/master/DSC/createADPDC.zip', parameters('artifactsLocationSasToken'))]",
+                            "ConfigurationFunction": "createadpdc.ps1\\CreateADPDC",
+                            "Properties": {
+                                "DomainName": "[parameters('domainName')]",
+                                "AdminCreds": {
+                                    "UserName": "[parameters('adminUsername')]",
+                                    "Password": "PrivateSettingsRef:AdminPassword"
+                                }
+                            }
+                        },
+                        "protectedSettings": {
+                            "Items": {
+                                "AdminPassword": "[parameters('adminPassword')]"
+                            }
+                        }
+		    }
+                }
+            ]
+        }
+    ]
+}

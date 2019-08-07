@@ -1,0 +1,216 @@
+﻿{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "templateRootUri": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/mspnp/template-building-blocks/v1.0.0/",
+      "metadata": {
+        "description": "Root path for templates"
+      }
+    },
+    "parameterRootUri": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/mspnp/reference-architectures/master/identity/azure-ad/parameters/",
+      "metadata": {
+        "decription": "Root path for parameters"
+      }
+    },
+    "osType": {
+      "type": "string",
+      "allowedValues": [
+        "windows",
+        "linux"
+      ],
+      "defaultValue": "linux",
+      "metadata": {
+        "description": "Relative path decider for the template parameters."
+      }
+    }
+  },
+  "variables": {
+    "onpremise": {
+      "deployment": {
+        "virtualNetwork": "[concat(parameters('templateRootUri'), 'templates/buildingBlocks/vnet-n-subnet/azuredeploy.json')]",
+        "virtualMachine": "[concat(parameters('templateRootUri'), 'templates/buildingBlocks/multi-vm-n-nic-m-storage/azuredeploy.json')]",
+
+
+        "networkSecurityGroup": "[concat(parameters('templateRootUri'), 'templates/buildingBlocks/networkSecurityGroups/azuredeploy.json')]"
+      },
+      "parameter": {
+        "virtualNetwork": "[concat(parameters('parameterRootUri'), 'onpremise', '/virtualNetwork.parameters.json')]",
+        "virtualMachine": "[concat(parameters('parameterRootUri'), 'onpremise', '/virtualMachines-adc.parameters.json')]",
+
+
+        "networkSecurityGroup": "[concat(parameters('parameterRootUri'), parameters('osType'), '/networkSecurityGroups.parameters.json')]",
+        "webTier": "[concat(parameters('parameterRootUri'), parameters('osType'), '/webTier.parameters.json')]",
+        "dataTier": "[concat(parameters('parameterRootUri'), parameters('osType'), '/dataTier.parameters.json')]",
+        "businessTier": "[concat(parameters('parameterRootUri'), parameters('osType'), '/businessTier.parameters.json')]",
+        "managementTier": "[concat(parameters('parameterRootUri'), parameters('osType'), '/managementTier.parameters.json')]"
+      }
+    },
+    "ntier": {
+      "deployment": {
+        "loadBalancer": "[concat(parameters('templateRootUri'), 'templates/buildingBlocks/loadBalancer-backend-n-vm/azuredeploy.json')]",
+        "virtualNetwork": "[concat(parameters('templateRootUri'), 'templates/buildingBlocks/vnet-n-subnet/azuredeploy.json')]",
+        "virtualMachine": "[concat(parameters('templateRootUri'), 'templates/buildingBlocks/multi-vm-n-nic-m-storage/azuredeploy.json')]",
+        "networkSecurityGroup": "[concat(parameters('templateRootUri'), 'templates/buildingBlocks/networkSecurityGroups/azuredeploy.json')]"
+      },
+      "parameter": {
+        "virtualNetwork": "[concat(parameters('parameterRootUri'), parameters('osType'), '/virtualNetwork.parameters.json')]",
+        "networkSecurityGroup": "[concat(parameters('parameterRootUri'), parameters('osType'), '/networkSecurityGroups.parameters.json')]",
+        "webTier": "[concat(parameters('parameterRootUri'), parameters('osType'), '/webTier.parameters.json')]",
+        "dataTier": "[concat(parameters('parameterRootUri'), parameters('osType'), '/dataTier.parameters.json')]",
+        "businessTier": "[concat(parameters('parameterRootUri'), parameters('osType'), '/businessTier.parameters.json')]",
+        "managementTier": "[concat(parameters('parameterRootUri'), parameters('osType'), '/managementTier.parameters.json')]"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "name": "ra-aad-onpremise-vnet-deployment",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('onpremise').deployment.virtualNetwork]"
+        },
+        "parametersLink": {
+          "uri": "[variables('onpremise').parameter.virtualNetwork]",
+          "contentVersion": "1.0.0.0"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "name": "ra-aad-onpremise-adc-deployment",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('onpremise').deployment.virtualMachine]"
+        },
+        "parametersLink": {
+          "uri": "[variables('onpremise').parameter.virtualMachine]",
+          "contentVersion": "1.0.0.0"
+        }
+      }
+    },
+
+
+
+
+
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "name": "ra-aad-ntier-vnet-deployment",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('ntier').deployment.virtualNetwork]"
+        },
+        "parametersLink": {
+          "uri": "[variables('ntier').parameter.virtualNetwork]",
+          "contentVersion": "1.0.0.0"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "name": "ra-aad-ntier-web-deployment",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/ra-aad-ntier-vnet-deployment"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('ntier').deployment.loadBalancer]"
+        },
+        "parametersLink": {
+          "uri": "[variables('ntier').parameter.webTier]",
+          "contentVersion": "1.0.0.0"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "name": "ra-aad-ntier-biz-deployment",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/ra-aad-ntier-vnet-deployment"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('ntier').deployment.loadBalancer]"
+        },
+        "parametersLink": {
+          "uri": "[variables('ntier').parameter.businessTier]",
+          "contentVersion": "1.0.0.0"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "name": "ra-aad-ntier-data-deployment",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/ra-aad-ntier-vnet-deployment"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('ntier').deployment.virtualMachine]"
+        },
+        "parametersLink": {
+          "uri": "[variables('ntier').parameter.dataTier]",
+          "contentVersion": "1.0.0.0"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "name": "ra-aad-ntier-mgmt-deployment",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/ra-aad-ntier-vnet-deployment"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('ntier').deployment.virtualMachine]"
+        },
+        "parametersLink": {
+          "uri": "[variables('ntier').parameter.managementTier]",
+          "contentVersion": "1.0.0.0"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "name": "ra-aad-ntier-nsg-deployment",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "Microsoft.Resources/deployments/ra-aad-ntier-vnet-deployment",
+        "Microsoft.Resources/deployments/ra-aad-ntier-mgmt-deployment",
+        "Microsoft.Resources/deployments/ra-aad-ntier-data-deployment",
+        "Microsoft.Resources/deployments/ra-aad-ntier-biz-deployment",
+        "Microsoft.Resources/deployments/ra-aad-ntier-web-deployment"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('ntier').deployment.networkSecurityGroup]"
+        },
+        "parametersLink": {
+          "uri": "[variables('ntier').parameter.networkSecurityGroup]",
+          "contentVersion": "1.0.0.0"
+        }
+      }
+    }
+  ]
+}
+

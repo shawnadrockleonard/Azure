@@ -1,0 +1,48 @@
+﻿## Instructions
+
+- run azbb onprem.json
+- run azbb azure.json
+- run adfs-farm-first.json
+- run adfs-farm-rest.json
+- run manually into ra-adfs-proxy-vm1
+
+```
+. .\adfs-webproxy.ps1
+
+ $cd = @{
+    AllNodes = @(
+        @{
+            NodeName = 'localhost'
+            PSDscAllowPlainTextPassword = $true
+            PSDscAllowDomainUser = $true
+        }
+    )
+}
+
+$c1 = Get-Credential -UserName testuser -Message "AweS0me@PW"
+InstallWebProxyApp -DomainName contoso.com -FederationName adfs.contoso.com -WebApplicationProxyName "Contoso App" -AdminCreds $c1 -ConfigurationData $cd
+Start-DscConfiguration .InstallWebProxyApp
+Get-DscConfigurationStatus
+```
+
+- run manually into ra-adfs-proxy-vm2
+```
+. .\adfs-webproxy-rest.ps1
+
+ $cd = @{
+    AllNodes = @(
+        @{
+            NodeName = 'localhost'
+            PSDscAllowPlainTextPassword = $true
+            PSDscAllowDomainUser = $true
+        }
+    )
+}
+
+$c1 = Get-Credential -UserName testuser -Message "AweS0me@PW"
+InstallWebProxy -DomainName contoso.com -FederationName adfs.contoso.com -AdminCreds $c1 -ConfigurationData $cd
+Start-DscConfiguration .InstallWebProxy
+Get-DscConfigurationStatus
+```
+
+Note that cADFS is not the version on the PsGallery but a custom one with added resources: https://github.com/woodp/cADFS
