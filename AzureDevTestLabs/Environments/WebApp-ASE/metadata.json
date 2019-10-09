@@ -1,0 +1,6 @@
+{
+  "itemDisplayName": "Web App in an App Service Environment",
+  "description": "This template creates an Azure Web App without a data store inside an App Service Environment.",
+  "githubUsername": "shawnadrockleonard",
+  "summary": "Deploys an Azure Web App as an environment in a DevTest Lab."
+}

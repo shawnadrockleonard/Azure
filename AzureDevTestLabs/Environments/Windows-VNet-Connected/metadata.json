@@ -1,0 +1,6 @@
+{
+  "itemDisplayName": "Windows OS Connected to Lab Virtual Network",
+  "description": "This template creates an virtual machine attached to the default subnet of the Virtual Network.",
+  "githubUsername": "shawnadrockleonard",
+  "summary": "Deploys a virtual machine into the virtual network of the DevTest Lab."
+}

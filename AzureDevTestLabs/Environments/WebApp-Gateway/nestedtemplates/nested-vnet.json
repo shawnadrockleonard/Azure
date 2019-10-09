@@ -1,0 +1,143 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworkName": {
+            "defaultValue": "shared-vnet",
+            "type": "string"
+        },
+        "vnetSegmentPrefix": {
+            "type": "string",
+            "defaultValue": "172.10",
+            "metadata": {
+                "description": "The IP Prefix range"
+            }
+        },
+        "purpose": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string",
+            "allowedValues": [
+                "prod",
+                "qa",
+                "test",
+                "dev"
+            ],
+            "defaultValue": "dev"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2019-07-01",
+            "name": "[parameters('virtualNetworkName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "purpose": "[parameters('purpose')]"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[concat(parameters('vnetSegmentPrefix'), '.0.0/16')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "addressPrefix": "[concat(parameters('vnetSegmentPrefix'), '.0.0/22')]",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    },
+                    {
+                        "name": "GatewaySubnet",
+                        "properties": {
+                            "addressPrefix": "[concat(parameters('vnetSegmentPrefix'), '.4.0/24')]",
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.Web",
+                                    "locations": [
+                                        "*"
+                                    ]
+                                }
+                            ],
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Enabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2019-07-01",
+            "name": "[concat(parameters('virtualNetworkName'), '/default')]",
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "purpose": "[parameters('purpose')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[concat(parameters('vnetSegmentPrefix'), '.0.0/22')]",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2019-07-01",
+            "name": "[concat(parameters('virtualNetworkName'), '/GatewaySubnet')]",
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "purpose": "[parameters('purpose')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+            ],
+            "properties": {
+                "addressPrefix": "[concat(parameters('vnetSegmentPrefix'), '.4.0/24')]",
+                "serviceEndpoints": [
+                    {
+                        "service": "Microsoft.Web",
+                        "locations": [
+                            "*"
+                        ]
+                    }
+                ],
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Enabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        }
+    ],
+    "outputs": {
+        "vnetEnvironmentId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+        },
+        "defaultSubnetName": {
+            "type": "string",
+            "value": "default"
+        },
+        "GatewaySubnetName": {
+            "type": "string",
+            "value": "GatewaySubnet"
+        },
+        "GatewaySubnetId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), 'GatewaySubnet')]"
+        }
+    }
+}

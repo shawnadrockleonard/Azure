@@ -1,0 +1,140 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworkName": {
+            "defaultValue": "shared-vnet",
+            "type": "string"
+        },
+        "vnetSegmentPrefix": {
+            "type": "string",
+            "defaultValue": "172.10",
+            "metadata": {
+                "description": "The IP Prefix range"
+            }
+        },
+        "purpose": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string",
+            "allowedValues": [
+                "prod",
+                "qa",
+                "test",
+                "dev"
+            ],
+            "defaultValue": "dev"
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
+            },
+            "defaultValue": "https://github.com/shawnadrockleonard/azure-devtestlab/tree/master/Environments/WebApp-Gateway"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The sasToken required to access _artifactsLocation. When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "name": "Network",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/nested-vnet.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworkName": {
+                        "value": "[parameters('virtualNetworkName')]"
+                    },
+                    "vnetSegmentPrefix": {
+                        "value": "[parameters('vnetSegmentPrefix')]"
+                    },
+                    "environment": {
+                        "value": "[parameters('environment')]"
+                    },
+                    "purpose": {
+                        "value": "[parameters('purpose')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "name": "NetworkGateway",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/Network"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/nested-gateway.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[concat(parameters('virtualNetworkName'), '-gateway')]"
+                    },
+                    "sku": {
+                        "value": "VpnGw1"
+                    },
+                    "gatewayType": {
+                        "value": "Vpn"
+                    },
+                    "vpnType": {
+                        "value": "RouteBased"
+                    },
+                    "subnetId": {
+                        "value": "[reference('Network').outputs.GatewaySubnetId.value]"
+                    },
+                    "vnetSegmentPrefix": {
+                        "value": "[parameters('vnetSegmentPrefix')]"
+                    },
+                    "newPublicIpAddressName": {
+                        "value": "[concat(parameters('virtualNetworkName'), '-pip')]"
+                    },
+                    "environment": {
+                        "value": "[parameters('environment')]"
+                    },
+                    "purpose": {
+                        "value": "[parameters('purpose')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "name": "NetworkGatewayWeb",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/NetworkGateway"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/nested-web.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "environment": {
+                        "value": "[parameters('environment')]"
+                    },
+                    "purpose": {
+                        "value": "[parameters('purpose')]"
+                    }
+                }
+            }
+        }
+    ]
+}
