@@ -1,0 +1,97 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "gatewayType": {
+            "defaultValue": "Vpn",
+            "allowedValues": [
+                "Vpn",
+                "ExpressRoute"
+            ],
+            "type": "string"
+        },
+        "vpnType": {
+            "defaultValue": "RouteBased",
+            "allowedValues": [
+                "RouteBased",
+                "PolicyBased"
+            ],
+            "type": "string"
+        },
+        "subnetId": {
+            "type": "string"
+        },
+        "newPublicIpAddressName": {
+            "type": "string"
+        },
+        "purpose": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string",
+            "allowedValues": [
+                "prod",
+                "qa",
+                "test",
+                "dev"
+            ],
+            "defaultValue": "dev"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/virtualNetworkGateways",
+            "apiVersion": "2019-02-01",
+            "name": "[parameters('name')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "purpose": "[parameters('purpose')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', parameters('newPublicIpAddressName'))]"
+            ],
+            "properties": {
+                "gatewayType": "[parameters('gatewayType')]",
+                "ipConfigurations": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[parameters('subnetId')]"
+                            },
+                            "publicIpAddress": {
+                                "id": "[resourceId('DevTestLab', 'Microsoft.Network/publicIPAddresses', parameters('newPublicIpAddressName'))]"
+                            }
+                        }
+                    }
+                ],
+                "vpnType": "[parameters('vpnType')]",
+                "sku": {
+                    "name": "[parameters('sku')]",
+                    "tier": "[parameters('sku')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2019-02-01",
+            "name": "[parameters('newPublicIpAddressName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "purpose": "[parameters('purpose')]"
+            },
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic"
+            }
+        }
+    ]
+}

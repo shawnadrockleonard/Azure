@@ -1,0 +1,186 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetSegmentPrefix": {
+            "type": "string",
+            "defaultValue": "172.10",
+            "metadata": {
+                "description": "The IP Prefix range"
+            }
+        },
+        "dnsSuffix": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Used *only* when deploying an ILB enabled ASE.  Set this to the root domain associated with the ASE.  For example: contoso.com"
+            }
+        },
+        "aseName": {
+            "type": "string"
+        },
+        "appServicePlanName": {
+            "type": "string"
+        },
+        "webAppName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the web application to be deployed"
+            }
+        },
+        "alwaysOn": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Enables the application to always run, (true) is required for web jobs"
+            }
+        },
+        "environment": {
+            "type": "string",
+            "allowedValues": [
+                "prod",
+                "qa",
+                "test",
+                "dev"
+            ],
+            "defaultValue": "dev"
+        },
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
+            },
+            "defaultValue": "https://github.com/shawnadrockleonard/azure-devtestlab/tree/master/Environments/WebApp-ASE-Nested"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The sasToken required to access _artifactsLocation. When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+            }
+        }
+    },
+    "variables": {
+        "aseEnvironmentSettings": {
+            "dev": {
+                "label": "Development",
+                "numberOfWorkersScaleOut": 1
+            },
+            "test": {
+                "label": "TEST",
+                "numberOfWorkersScaleOut": 1
+            },
+            "qa": {
+                "label": "UAT",
+                "numberOfWorkersScaleOut": 1
+            },
+            "prod": {
+                "label": "Production",
+                "numberOfWorkersScaleOut": 1
+            }
+        },
+        "aseLabel": "[variables('aseEnvironmentSettings')[parameters('environment')].label]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "name": "Network",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/nested-vnet.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vnetSegmentPrefix": {
+                        "value": "[parameters('vnetSegmentPrefix')]"
+                    },
+                    "environment": {
+                        "value": "[parameters('environment')]"
+                    },
+                    "purpose": {
+                        "value": "[variables('aseLabel')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "name": "AppServiceEnvironment",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/Network"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/nested-ase.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vnetId": {
+                        "value": "[reference('Network').outputs.vnetEnvironmentId.value]"
+                    },
+                    "vnetSubnetName": {
+                        "value": "[reference('Network').outputs.subnetVMName.value]"
+                    },
+                    "dnsSuffix": {
+                        "value": "[parameters('dnsSuffix')]"
+                    },
+                    "aseName": {
+                        "value": "[parameters('aseName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[parameters('appServicePlanName')]"
+                    },
+                    "environment": {
+                        "value": "[parameters('environment')]"
+                    },
+                    "purpose": {
+                        "value": "[variables('aseLabel')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "name": "AppServiceEnvironmentWeb",
+            "dependsOn": [
+                "Microsoft.Resources/deployments/AppServiceEnvironment"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/nested-ase-web.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "hostingEnvironmentId": {
+                        "value": "[reference('AppServiceEnvironment').outputs.hostingEnvironmentId.value]"
+                    },
+                    "serverfarmsId": {
+                        "value": "[reference('AppServiceEnvironment').outputs.serverfarmsId.value]"
+                    },
+                    "webAppName": {
+                        "value": "[parameters('webAppName')]"
+                    },
+                    "numberOfWorkersScaleOut": {
+                        "value": "[reference('AppServiceEnvironment').outputs.numberOfWorkersScaleOut.value]"
+                    },
+                    "alwaysOn": {
+                        "value": "[parameters('alwaysOn')]"
+                    },
+                    "environment": {
+                        "value": "[parameters('environment')]"
+                    },
+                    "purpose": {
+                        "value": "[variables('aseLabel')]"
+                    }
+                }
+            }
+        }
+    ]
+}

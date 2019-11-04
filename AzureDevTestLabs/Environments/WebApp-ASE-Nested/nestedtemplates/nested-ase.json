@@ -1,0 +1,161 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vnetId": {
+            "type": "string"
+        },
+        "vnetSubnetName": {
+            "type": "string"
+        },
+        "dnsSuffix": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Used *only* when deploying an ILB enabled ASE.  Set this to the root domain associated with the ASE.  For example: contoso.com"
+            }
+        },
+        "aseName": {
+            "type": "string"
+        },
+        "appServicePlanName": {
+            "type": "string"
+        },
+        "purpose": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string",
+            "allowedValues": [
+                "prod",
+                "qa",
+                "test",
+                "dev"
+            ],
+            "defaultValue": "dev"
+        }
+    },
+    "variables": {
+        "aseEnvironmentSettings": {
+            "dev": {
+                "internalLoadBalancingMode": 0,
+                "ipsslAddressCount": 2,
+                "frontEndSize": "Small",
+                "frontEndInstances": 1,
+                "pricingTier": "1",
+                "pricingTierCapacity": 1,
+                "perSiteScaling": false,
+                "numberOfWorkersScaleOut": 1
+            },
+            "test": {
+                "internalLoadBalancingMode": 3,
+                "ipsslAddressCount": 0,
+                "frontEndSize": "Medium",
+                "frontEndInstances": 2,
+                "pricingTier": "2",
+                "pricingTierCapacity": 2,
+                "perSiteScaling": true,
+                "numberOfWorkersScaleOut": 1
+            },
+            "qa": {
+                "internalLoadBalancingMode": 3,
+                "ipsslAddressCount": 0,
+                "frontEndSize": "Medium",
+                "frontEndInstances": 2,
+                "pricingTier": "2",
+                "pricingTierCapacity": 2,
+                "perSiteScaling": true,
+                "numberOfWorkersScaleOut": 1
+            },
+            "prod": {
+                "internalLoadBalancingMode": 3,
+                "ipsslAddressCount": 0,
+                "frontEndSize": "Large",
+                "frontEndInstances": 2,
+                "pricingTier": "3",
+                "pricingTierCapacity": 3,
+                "perSiteScaling": true,
+                "numberOfWorkersScaleOut": 1
+            }
+        },
+        "frontEndSize": "[variables('aseEnvironmentSettings')[parameters('environment')].frontEndSize]",
+        "frontEndInstances": "[variables('aseEnvironmentSettings')[parameters('environment')].frontEndInstances]",
+        "internalLoadBalancingMode": "[variables('aseEnvironmentSettings')[parameters('environment')].internalLoadBalancingMode]",
+        "ipsslAddressCount": "[variables('aseEnvironmentSettings')[parameters('environment')].ipsslAddressCount]",
+        "pricingTier": "[concat('I', variables('aseEnvironmentSettings')[parameters('environment')].pricingTier)]",
+        "pricingTierCapacity": "[variables('aseEnvironmentSettings')[parameters('environment')].pricingTierCapacity]",
+        "perSiteScaling": "[variables('aseEnvironmentSettings')[parameters('environment')].perSiteScaling]",
+        "numberOfWorkersScaleOut": "[variables('aseEnvironmentSettings')[parameters('environment')].numberOfWorkersScaleOut]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('aseName')]",
+            "type": "Microsoft.Web/hostingEnvironments",
+            "apiVersion": "2018-02-01",
+            "kind": "ASEV2",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "purpose": "[parameters('purpose')]"
+            },
+            "properties": {
+                "vnetResourceGroupName": "[resourceGroup().name]",
+                "virtualNetwork": {
+                    "Id": "[parameters('vnetId')]",
+                    "Subnet": "[parameters('vnetSubnetName')]"
+                },
+                "multiSize": "[variables('frontEndSize')]",
+                "multiRoleCount": "[variables('frontEndInstances')]",
+                "internalLoadBalancingMode": "[variables('internalLoadBalancingMode')]",
+                "dnsSuffix": "[if(not(empty(parameters('dnsSuffix'))), parameters('dnsSuffix'), json('null'))]",
+                "ipsslAddressCount": "[variables('ipsslAddressCount')]",
+                "networkAccessControlList": [],
+                "frontEndScaleFactor": 15,
+                "suspended": false
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[parameters('appServicePlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2016-09-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/hostingEnvironments', parameters('aseName'))]"
+            ],
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "purpose": "[parameters('purpose')]"
+            },
+            "kind": "app",
+            "properties": {
+                "name": "[parameters('appServicePlanName')]",
+                "hostingEnvironmentProfile": {
+                    "id": "[resourceId('Microsoft.Web/hostingEnvironments', parameters('aseName'))]"
+                },
+                "perSiteScaling": "[variables('perSiteScaling')]"
+            },
+            "sku": {
+                "name": "[variables('pricingTier')]",
+                "tier": "Isolated",
+                "size": "[variables('pricingTier')]",
+                "family": "I",
+                "capacity": "[variables('pricingTierCapacity')]"
+            }
+        }
+    ],
+    "outputs": {
+        "hostingEnvironmentId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Web/hostingEnvironments', parameters('aseName'))]"
+        },
+        "serverfarmsId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
+        },
+        "numberOfWorkersScaleOut": {
+            "type": "int",
+            "value": "[variables('numberOfWorkersScaleOut')]"
+        }
+    }
+}

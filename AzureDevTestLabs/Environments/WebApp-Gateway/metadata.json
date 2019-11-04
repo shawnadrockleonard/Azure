@@ -1,0 +1,6 @@
+{
+  "itemDisplayName": "Web App with a hybrid vnet connection",
+  "description": "This template creates an Azure Web App with a hybrid vnet connection.",
+  "githubUsername": "shawnadrockleonard",
+  "summary": "Deploys an Azure Gateway along with a Web App in a hybrid vnet connection."
+}

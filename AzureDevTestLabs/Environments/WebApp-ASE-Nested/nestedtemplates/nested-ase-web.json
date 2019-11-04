@@ -1,0 +1,133 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "hostingEnvironmentId": {
+            "type": "string",
+            "metadata": {
+                "description": "The resource ID to the hosting environment"
+            }
+        },
+        "serverfarmsId": {
+            "type": "string",
+            "metadata": {
+                "description": "The resource ID to the server farm"
+            }
+        },
+        "webAppName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the web application to be deployed"
+            }
+        },
+        "numberOfWorkersScaleOut": {
+            "type": "int",
+            "defaultValue": 1
+        },
+        "alwaysOn": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Enables the application to always run, (true) is required for web jobs"
+            }
+        },
+        "purpose": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string",
+            "allowedValues": [
+                "prod",
+                "qa",
+                "test",
+                "dev"
+            ],
+            "defaultValue": "dev"
+        }
+    },
+    "variables": {
+        "stagingSlotName": "staging",
+        "webAppStagingSlotName": "[concat(parameters('webAppName'), '/', variables('stagingSlotName'))]",
+        "webAppSettings": {
+            "ASPNETCORE_ENVIRONMENT": "[parameters('purpose')]",
+            "MSDEPLOY_RENAME_LOCKED_FILES": "1"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2016-08-01",
+            "name": "[parameters('webAppName')]",
+            "location": "[resourceGroup().location]",
+            "kind": "app",
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "purpose": "[parameters('purpose')]"
+            },
+            "properties": {
+                "enabled": true,
+                "reserved": false,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": true,
+                "siteConfig": {
+                    "alwaysOn": "[parameters('alwaysOn')]",
+                    "phpVersion": "Off",
+                    "javaVersion": "Off",
+                    "connectionStrings": []
+                },
+                "serverFarmId": "[parameters('serverfarmsId')]",
+                "hostingEnvironmentProfile": {
+                    "id": "[parameters('hostingEnvironmentId')]"
+                },
+                "numberOfWorkers": "[parameters('numberOfWorkersScaleOut')]"
+            },
+            "resources": [
+                {
+                    "type": "config",
+                    "name": "appsettings",
+                    "apiVersion": "2016-08-01",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/Sites', parameters('webAppName'))]"
+                    ],
+                    "properties": "[variables('webAppSettings')]"
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/slots",
+            "kind": "app",
+            "name": "[variables('webAppStagingSlotName')]",
+            "apiVersion": "2016-08-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "enabled": true,
+                "serverFarmId": "[parameters('serverfarmsId')]",
+                "clientAffinityEnabled": false,
+                "httpsOnly": true,
+                "siteConfig": {
+                    "alwaysOn": false,
+                    "phpVersion": "Off",
+                    "javaVersion": "Off",
+                    "connectionStrings": []
+                }
+            },
+            "resources": [
+                {
+                    "type": "config",
+                    "name": "appsettings",
+                    "apiVersion": "2016-08-01",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/Sites/slots', parameters('webAppName'), variables('stagingSlotName'))]"
+                    ],
+                    "properties": "[variables('webAppSettings')]"
+                }
+            ],
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
+            ]
+        }
+    ]
+}
