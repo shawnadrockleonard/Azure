@@ -1,12 +1,15 @@
-﻿using System;
+﻿using AzureCMCore.Base;
+using System;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 
 namespace AzureCMCore
 {
     [Cmdlet(VerbsDiagnostic.Test,"SampleCmdlet")]
+    [CmdletHelpAttribute("Sample Cmdlet")]
     [OutputType(typeof(FavoriteStuff))]
-    public class TestSampleCmdletCommand : PSCmdlet
+    public class TestSampleCmdletCommand : AzureCmdlet
     {
         [Parameter(
             Mandatory = true,
@@ -21,26 +24,19 @@ namespace AzureCMCore
         [ValidateSet("Cat", "Dog", "Horse")]
         public string FavoritePet { get; set; } = "Dog";
 
-        // This method gets called once for each cmdlet in the pipeline when the pipeline starts executing
-        protected override void BeginProcessing()
-        {
-            WriteVerbose("Begin!");
-        }
+
 
         // This method will be called for each input received from the pipeline to this cmdlet; if no input is received, this method is not called
         protected override void ProcessRecord()
         {
+            base.ProcessRecord();
+
             WriteObject(new FavoriteStuff { 
                 FavoriteNumber = FavoriteNumber,
                 FavoritePet = FavoritePet
             });
         }
 
-        // This method will be called once at the end of pipeline execution; if no input is received, this method is not called
-        protected override void EndProcessing()
-        {
-            WriteVerbose("End!");
-        }
     }
 
     public class FavoriteStuff

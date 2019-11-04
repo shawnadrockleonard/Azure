@@ -9,9 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		scripts\PostBuild.ps1 = scripts\PostBuild.ps1
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureCM.Module", "AzureCM.Module\AzureCM.Module.csproj", "{2E6AF454-C886-4C61-ACFC-AB406BBE5D5F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureCMCore", "AzureCMCore\AzureCMCore.csproj", "{1341614F-3249-4498-A9C2-FCF2D92DCB66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureCMCore", "AzureCMCore\AzureCMCore.csproj", "{1341614F-3249-4498-A9C2-FCF2D92DCB66}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2E6AF454-C886-4C61-ACFC-AB406BBE5D5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2E6AF454-C886-4C61-ACFC-AB406BBE5D5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2E6AF454-C886-4C61-ACFC-AB406BBE5D5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2E6AF454-C886-4C61-ACFC-AB406BBE5D5F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1341614F-3249-4498-A9C2-FCF2D92DCB66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1341614F-3249-4498-A9C2-FCF2D92DCB66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1341614F-3249-4498-A9C2-FCF2D92DCB66}.Release|Any CPU.ActiveCfg = Release|Any CPU
