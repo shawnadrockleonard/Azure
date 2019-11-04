@@ -65,7 +65,7 @@ namespace AzureCMCore.Base
         /// <param name="ex">The exception to be included in the log</param>
         public void Warning(string message, Exception ex = null)
         {
-            if(ex != null)
+            if (ex != null)
             {
                 message = $"{message} with exception: {ex.Message}";
             }
@@ -105,7 +105,7 @@ namespace AzureCMCore.Base
         /// <param name="vars"></param>
         public void Error(Exception ex, string fmt, params object[] vars)
         {
-            if(ex == null)
+            if (ex == null)
             {
                 throw new ArgumentNullException(nameof(ex));
             }
@@ -140,8 +140,7 @@ namespace AzureCMCore.Base
             }
 
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Environment.CurrentDirectory)
-                .AddUserSecrets<AzureCmdlet>();
+                .SetBasePath(Environment.CurrentDirectory);
 
             if (env == "Development")
             {
