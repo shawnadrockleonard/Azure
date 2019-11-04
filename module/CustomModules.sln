@@ -4,10 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{229E2A99-8468-4612-9151-95588C2EB119}"
-	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
-		scripts\PostBuild.ps1 = scripts\PostBuild.ps1
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureCMCore", "AzureCMCore\AzureCMCore.csproj", "{1341614F-3249-4498-A9C2-FCF2D92DCB66}"
 EndProject
