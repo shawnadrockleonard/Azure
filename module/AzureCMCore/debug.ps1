@@ -1,1 +1,0 @@
-Import-Module .\bin\Debug\netstandard2.0\AzureCMCore.dll

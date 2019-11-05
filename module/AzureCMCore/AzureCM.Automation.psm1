@@ -1,4 +1,4 @@
-
+ï»¿
 function Send-EmailMessage
 {
     <#
@@ -170,7 +170,7 @@ function Get-AzureCMCopyStorageKey
             if(Get-Member -inputobject $acctWithKey -name "StorageType" -Membertype Properties) {
 				$storageEnvironment = $acctWithKey.StorageType
 			}
-			$acctContext = New-AzureStorageContext –StorageAccountName $accountName -StorageAccountKey $acctWithKey.StorageKey -Environment $storageEnvironment
+			$acctContext = New-AzureStorageContext ï¿½StorageAccountName $accountName -StorageAccountKey $acctWithKey.StorageKey -Environment $storageEnvironment
 			return $acctContext  
 		}
 		return $null
@@ -340,7 +340,7 @@ Function New-AzureCMStorage
 		.Synopsis
 			This function create a Storage Account if it doesn't exists.
 		.DESCRIPTION
-			This function will obtain the Storage Account. If we have an exception, the Storage Account doesn’t exist then create it.
+			This function will obtain the Storage Account. If we have an exception, the Storage Account doesnï¿½t exist then create it.
 		 .PARAMETER StorageAccountName
 			Specifies the cloud storage name
 		.PARAMETER StorageLocation
@@ -393,7 +393,7 @@ Function New-AzureCMStorage
         }
 
 		if($subscriptionId -ne $null -and $subscriptionId -ne "") {
-			Set-AzureSubscription –SubscriptionId $subscriptionId –CurrentStorageAccountName $StorageAccountName
+			Set-AzureSubscription ï¿½SubscriptionId $subscriptionId ï¿½CurrentStorageAccountName $StorageAccountName
 		}
 
 		return $myStorageAccount
@@ -853,7 +853,7 @@ Function Set-SetupConfigureDC
 					Write-Output "  -- Running AD-DS Deployment module to install AD DS..."
 		
 					#Add AD-DS Role
-					Install-windowsfeature -name AD-Domain-Services –IncludeManagementTools -verbose
+					Install-windowsfeature -name AD-Domain-Services ï¿½IncludeManagementTools -verbose
 		
 					# Hash password
 					$secPassword = ConvertTo-SecureString $pass -AsPlainText -Force
@@ -862,9 +862,9 @@ Function Set-SetupConfigureDC
 					if($dcInstallMode -eq "NewForest")
 					{
 						#Installing a new forest root domain
-						Install-ADDSForest –DomainName $domain -DomainNetBIOSName $netbiosName –DomainMode $domainMode –ForestMode $domainMode -InstallDNS:$true -Force `
+						Install-ADDSForest ï¿½DomainName $domain -DomainNetBIOSName $netbiosName ï¿½DomainMode $domainMode ï¿½ForestMode $domainMode -InstallDNS:$true -Force `
 							-SafeModeAdministratorPassword $secPassword `
-							–DatabasePath $locationNTDS –SYSVOLPath $locationSYSVOL –LogPath $locationNTDSLogs -verbose
+							ï¿½DatabasePath $locationNTDS ï¿½SYSVOLPath $locationSYSVOL ï¿½LogPath $locationNTDSLogs -verbose
 					}		
 					elseif($dcInstallMode -eq "Replica")
 					{
@@ -872,9 +872,9 @@ Function Set-SetupConfigureDC
 						
 						$domainCredential = New-Object System.Management.Automation.PSCredential("$netbiosName\$user", $secPassword)
 
-						Install-ADDSDomainController –Credential $domainCredential –DomainName $domain -Force `
+						Install-ADDSDomainController ï¿½Credential $domainCredential ï¿½DomainName $domain -Force `
 							-SafeModeAdministratorPassword $secPassword `
-							–DatabasePath $locationNTDS –SYSVOLPath $locationSYSVOL –LogPath $locationNTDSLogs -verbose
+							ï¿½DatabasePath $locationNTDS ï¿½SYSVOLPath $locationSYSVOL ï¿½LogPath $locationNTDSLogs -verbose
 					}
 		
 					Write-Output "  -- AD-DS Deployment completed..."
@@ -1020,7 +1020,7 @@ Function Set-SetupConfigureCluster
 					Write-Output "  -- Running clustering module.."
 		
 					#Add AD-DS Role
-					Install-windowsfeature -name Failover-Clustering, RSAT-Clustering –IncludeManagementTools -verbose
+					Install-windowsfeature -name Failover-Clustering, RSAT-Clustering ï¿½IncludeManagementTools -verbose
 		
 	
 					Write-Output "  -- Clustering installed..."

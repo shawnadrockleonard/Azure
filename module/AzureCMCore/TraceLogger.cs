@@ -26,41 +26,30 @@ namespace AzureCMCore
         }
 
 
-        public static void Verbose(string message, int id = 16, [CallerMemberName]string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber]int lineNumber = 0)
+        public static void Verbose(string message, [CallerMemberName]string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber]int lineNumber = 0)
         {
             Trace.TraceInformation(Format(message, memberName, filePath, lineNumber));
         }
 
-        public static void Information(string message, int id = 8, [CallerMemberName]string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber]int lineNumber = 0)
+        public static void Information(string message, [CallerMemberName]string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber]int lineNumber = 0)
         {
             Trace.TraceInformation(Format(message, memberName, filePath, lineNumber));
         }
 
-        public static void Warning(string message, int id = 4, [CallerMemberName]string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber]int lineNumber = 0)
+        public static void Warning(string message, [CallerMemberName]string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber]int lineNumber = 0)
         {
             Trace.TraceWarning(Format(message, memberName, filePath, lineNumber));
         }
 
-        public static void Error(string message, int id = 2, [CallerMemberName]string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber]int lineNumber = 0)
+        public static void Error(string message, [CallerMemberName]string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber]int lineNumber = 0)
         {
             Trace.TraceError(Format(message, memberName, filePath, lineNumber));
         }
 
-        public static void Critical(string message, int id = 1, [CallerMemberName]string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber]int lineNumber = 0)
+        public static void Critical(string message, [CallerMemberName]string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber]int lineNumber = 0)
         {
             Trace.TraceError(Format(message, memberName, filePath, lineNumber));
         }
-
-        public static void Start(string service, int id = 256, [CallerMemberName]string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber]int lineNumber = 0)
-        {
-            Trace.TraceInformation(Format("Starting - " + service, memberName, filePath, lineNumber));
-        }
-
-        public static void Stop(string service, int id = 512, [CallerMemberName]string memberName = "", [CallerFilePath] string filePath = "", [CallerLineNumber]int lineNumber = 0)
-        {
-            Trace.TraceInformation(Format("Stoping - " + service, memberName, filePath, lineNumber));
-        }
-
     }
 
 }

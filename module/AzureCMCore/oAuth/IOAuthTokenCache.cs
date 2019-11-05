@@ -14,7 +14,7 @@ namespace AzureCMCore.oAuth
         /// <summary>
         /// Return the Redirect URI from the AzureAD Config
         /// </summary>
-        string GetRedirectUri();
+        string GetRedirect();
 
         /// <summary>
         /// If the token is no longer fresh it will claim a new token
