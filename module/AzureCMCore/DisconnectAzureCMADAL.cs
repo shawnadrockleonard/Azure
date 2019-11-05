@@ -3,6 +3,7 @@ using AzureCMCore.oAuth;
 using System;
 using System.Linq;
 using System.Management.Automation;
+using System.Globalization;
 
 namespace AzureCMCore
 {
@@ -21,7 +22,7 @@ namespace AzureCMCore
                 AzureADALConnection.CurrentConnection = null;
             }
 
-            Information($"Disconnected at {DateTime.UtcNow.ToString("f")}");
+            Information($"Disconnected at {DateTime.UtcNow.ToString("f", CultureInfo.CurrentCulture)}");
         }
     }
 

@@ -14,7 +14,7 @@
 	CompanyName          = 'Microsoft'
 	Description          = 'This module is used to automate various capabilities in Azure'
 	CompatiblePSEditions = 'Core', 'Desktop'
-	PowerShellVersion    = "3.0"
+	PowerShellVersion    = "5.1"
 	ClrVersion           = "4.0"
 	FormatsToProcess     = 'AzureCMCore.ps1xml' 
 	RequiredAssemblies   = @('AzureCMCore.dll', 'Newtonsoft.Json.dll', 'Microsoft.WindowsAzure.Storage.dll', 'System.Runtime.CompilerServices.Unsafe.dll')

@@ -28,9 +28,9 @@ namespace AzureCMCore.oAuth
         ///     received. This method does not lookup token cache, but stores the result in it,
         /// </summary>
         /// <param name="code"></param>
-        /// <param name="redirect_uri"></param>
+        /// <param name="redirect"></param>
         /// <returns></returns>
-        Task RedeemAuthCodeForAadGraphAsync(string code, string redirect_uri);
+        Task RedeemAuthCodeForAadGraphAsync(string code, string redirect);
 
         /// <summary>
         /// Clears the user token cache

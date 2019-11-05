@@ -23,8 +23,8 @@ function Add-CompilerService {
 }
 
 
-Set-Location '.\AzureCMCore\bin\Debug\netstandard2.0'
-Import-Module .\AzureCMCore.psd1 -Force
+
+Import-Module '.\AzureCMCore\bin\Debug\netstandard2.0\AzureCMCore.psd1' -Force
 Get-Command -Module AzureCMCore
 Connect-AzureCMAdal 
 Connect-AzureCMAdal -Scopes @("User.Read", "User.ReadBasic.All") -ResourceUri "https://localhost:44300/"

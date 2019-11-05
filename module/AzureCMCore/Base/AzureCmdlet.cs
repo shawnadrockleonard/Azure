@@ -149,7 +149,7 @@ namespace AzureCMCore.Base
                 .AddUserSecrets<AzureCmdlet>()
                 .AddEnvironmentVariables();
 
-            if (env == "Development")
+            if (env == "Development" || env == "LocalDevelopment")
             {
                 builder.AddUserSecrets<AzureCmdlet>();
             }

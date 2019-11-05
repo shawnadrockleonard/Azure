@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Globalization;
 
 namespace AzureCMCore
 {
@@ -17,7 +18,7 @@ namespace AzureCMCore
 
         private static string Format(string msg)
         {
-            return string.Format("{0}\t{1}", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"), msg);
+            return string.Format(CultureInfo.CurrentCulture, "{0}\t{1}", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss", CultureInfo.CurrentCulture), msg);
         }
 
         private static string Format(string message, string memberName, string filePath, int lineNumber)
