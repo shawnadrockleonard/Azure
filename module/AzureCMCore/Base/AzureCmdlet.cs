@@ -1,14 +1,18 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AzureCMCore.oAuth;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Management.Automation;
+using System.Reflection;
 
 namespace AzureCMCore.Base
 {
     public abstract class AzureCmdlet : PSCmdlet
     {
-        private static IConfigurationRoot Configuration;
+        internal static IConfigurationRoot Configuration;
+        internal static AppSettings AuthenticationSettings;
 
         /// <summary>
         /// If True then only write verbose statements to the log and do not perform any action
@@ -111,7 +115,7 @@ namespace AzureCMCore.Base
             }
 
             Trace.TraceError(fmt, vars);
-            System.Diagnostics.Trace.TraceError("Exception: {0}", ex.Message);
+            Trace.TraceError("Exception: {0}", ex.Message);
             WriteError(new ErrorRecord(ex, "errorId", ErrorCategory.NotSpecified, null)
             {
                 ErrorDetails = new ErrorDetails(ex.StackTrace)
@@ -126,7 +130,7 @@ namespace AzureCMCore.Base
             }
 
             Trace.TraceError(message, args);
-            System.Diagnostics.Trace.TraceError("Exception: {0}", ex.Message);
+            Trace.TraceError("Exception: {0}", ex.Message);
             WriteError(new ErrorRecord(ex, "HALT", category, null));
         }
 
@@ -140,14 +144,19 @@ namespace AzureCMCore.Base
             }
 
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Environment.CurrentDirectory);
+                .SetBasePath($"{Directory.GetCurrentDirectory()}/module/AzureCMCore")
+                .AddJsonFile("appsettings.json")
+                .AddUserSecrets<AzureCmdlet>()
+                .AddEnvironmentVariables();
 
             if (env == "Development")
             {
                 builder.AddUserSecrets<AzureCmdlet>();
             }
 
+            AuthenticationSettings = new AppSettings();
             Configuration = builder.Build();
+            Configuration.Bind("Authentication", AuthenticationSettings);
         }
 
         internal string GetAppSetting(string appSetting)

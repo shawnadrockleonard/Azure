@@ -1,5 +1,6 @@
 ﻿using Microsoft.Identity.Client;
 using System;
+using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -22,22 +23,33 @@ namespace AzureCMCore.oAuth
 
         public AzureADv2TokenCache(IAppSettings aadConfig, ITraceLogger iLogger, bool useInteractiveLogin)
         {
+            if (aadConfig == null)
+            {
+                throw new ArgumentNullException(nameof(aadConfig));
+            }
+
             _aadConfig = aadConfig;
             _iLogger = iLogger;
 
             IClientApplicationBase clientApplication;
             if (useInteractiveLogin)
             {
-                clientApplication = PublicClientApplicationBuilder.Create(aadConfig.MSALClientID)
-                    .WithAuthority(aadConfig.Authority)
-                    .WithRedirectUri(aadConfig.PostLogoutRedirectURI)
+                var publicClientApplicationOptions = new PublicClientApplicationOptions()
+                {
+                    AadAuthorityAudience = _aadConfig.AadAuthorityAudience,
+                    AzureCloudInstance = _aadConfig.AzureCloudInstance,
+                    ClientId = _aadConfig.ClientId,
+                    RedirectUri = "urn:ietf:wg:oauth:2.0:oob",
+                    TenantId = _aadConfig.TenantId
+                };
+                clientApplication = PublicClientApplicationBuilder.CreateWithApplicationOptions(publicClientApplicationOptions)
                     .Build();
             }
             else
             {
-                clientApplication = ConfidentialClientApplicationBuilder.Create(aadConfig.ClientID)
-                    .WithClientSecret(aadConfig.ClientSecret)
-                    .WithAuthority(new Uri(aadConfig.Authority))
+                clientApplication = ConfidentialClientApplicationBuilder.Create(_aadConfig.ClientId)
+                    .WithClientSecret(_aadConfig.ClientSecret)
+                    .WithAuthority(new Uri(_aadConfig.Authority))
                     .Build();
             }
 
@@ -47,9 +59,9 @@ namespace AzureCMCore.oAuth
         /// <summary>
         /// Return the Redirect URI from the AzureAD Config
         /// </summary>
-        public string GetRedirectUri()
+        public string GetRedirect()
         {
-            return _aadConfig.PostLogoutRedirectURI.ToString();
+            return _aadConfig.PostLogoutRedirectURI.ToString(CultureInfo.CurrentCulture);
         }
 
         /// <summary>
@@ -85,7 +97,7 @@ namespace AzureCMCore.oAuth
             if (!cleanToken)
             {
                 // Failed to retrieve, reup the token
-                redirectUri = (string.IsNullOrEmpty(redirectUri) ? GetRedirectUri() : redirectUri);
+                redirectUri = (string.IsNullOrEmpty(redirectUri) ? GetRedirect() : redirectUri);
                 await RedeemAuthCodeForAadGraphAsync(string.Empty, redirectUri);
                 token = await AccessTokenResultAsync();
             }

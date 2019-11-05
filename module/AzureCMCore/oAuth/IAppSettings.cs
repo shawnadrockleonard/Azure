@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Identity.Client;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,7 +18,7 @@ namespace AzureCMCore.oAuth
         /// <summary>
         /// Gets or sets the application ID for Active Directory authentication. The Client ID is used by the application to uniquely identify itself to Azure AD.
         /// </summary>
-        string ClientID { get; set; }
+        string ClientId { get; set; }
 
         /// <summary>
         /// Gets or sets the client secret for Active Directory authentication. The ClientSecret is a credential used to authenticate the application to Azure AD.  Azure AD supports password and certificate credentials.
@@ -44,17 +45,6 @@ namespace AzureCMCore.oAuth
         /// </summary>
         string Authority { get; }
 
-        /// <summary>
-        /// Gets or sets if the Application is Multi-Tenant
-        /// </summary>
-        bool? IsAppMultiTenent { get; set; }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        string ServiceResource { get; set; }
-
-
         string Audience { get; set; }
 
         /// <summary>
@@ -63,17 +53,10 @@ namespace AzureCMCore.oAuth
         string SecurityGroupId { get; set; }
 
 
-        string SPClientID { get; set; }
-
-        string SPClientSecret { get; set; }
-
-
-        string MSALClientID { get; set; }
-
-        string MSALClientSecret { get; set; }
-
         string[] MSALScopes { get; set; }
 
+        AzureCloudInstance AzureCloudInstance { get; }
 
+        AadAuthorityAudience AadAuthorityAudience { get; }
     }
 }

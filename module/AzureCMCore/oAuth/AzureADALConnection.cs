@@ -68,6 +68,11 @@ namespace AzureCMCore.oAuth
             return AzureADCache.IsTokenExpired();
         }
 
+        public void Clear()
+        {
+            AzureADCache.Clear();
+        }
+
         private static X509Certificate2 ReadCertificateFromStore(string thumbprint)
         {
             X509Certificate2 cert = null;
