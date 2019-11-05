@@ -28,3 +28,5 @@ Import-Module .\AzureCMCore.psd1 -Force
 Get-Command -Module AzureCMCore
 Connect-AzureCMAdal 
 Connect-AzureCMAdal -Scopes @("User.Read", "User.ReadBasic.All") -ResourceUri "https://localhost:44300/"
+# Examples
+# Get-AzureCMConfig -WebUri "https://coolbridgeconfig.blob.core.usgovcloudapi.net/downloads/store.json"
