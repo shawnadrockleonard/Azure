@@ -1,0 +1,1 @@
+To execute test-adal-cert.ps1 you must first register an Azure AD application, create a self-signed certificate and associate it with your Azure AD application for credentials.

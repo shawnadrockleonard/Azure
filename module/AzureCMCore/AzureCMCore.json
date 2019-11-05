@@ -1,0 +1,18 @@
+﻿{
+  "ConnectionFields": [
+    {
+      "IsEncrypted": false,
+      "IsOptional": false,
+      "Name": "AccountName",
+      "TypeName": "System.String"
+    },
+    {
+      "IsEncrypted": true,
+      "IsOptional": false,
+      "Name": "AccountKey",
+      "TypeName": "System.String"
+    }
+  ],
+  "ConnectionTypeName": "ModuleCredentials",
+  "IntegrationModuleName": "AzureCM.Module"
+}

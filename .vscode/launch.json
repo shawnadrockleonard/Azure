@@ -3,18 +3,24 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
-    "configurations": [{
+    "configurations": [
+        {
             "name": "PowerShell Interactive Session",
             "type": "PowerShell",
             "request": "launch",
             "cwd": ""
         },
         {
-            "name": "PowerShell: Launch Script",
+            "name": "PowerShell Attach to Host Process",
             "type": "PowerShell",
-            "request": "launch",
-            "script": "enter path or command to execute e.g.: ${workspaceFolder}/src/foo.ps1 or Invoke-Pester",
-            "cwd": "${workspaceFolder}"
+            "request": "attach",
+            "runspaceId": 1
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
         }
     ]
 }

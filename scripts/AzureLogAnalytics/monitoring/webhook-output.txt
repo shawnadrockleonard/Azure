@@ -1,0 +1,647 @@
+'dotnet.exe' (CoreCLR: DefaultDomain): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Private.CoreLib.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\source\arcyber\CoolBridge\DotNet\src\CoolBridge.Web\bin\Debug\netcoreapp2.2\CoolBridge.Web.dll'. Symbols loaded.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Runtime.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Hosting.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\netstandard.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Hosting.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.IO.FileSystem.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Server.IISIntegration.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Server.Kestrel.Core.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Server.Kestrel.Transport.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Server.Kestrel.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\serilog.aspnetcore\2.1.1\lib\netstandard2.0\Serilog.AspNetCore.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\serilog\2.8.0\lib\netstandard2.0\Serilog.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Configuration.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.DependencyInjection.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Hosting.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.FileProviders.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Collections.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Configuration.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Configuration.EnvironmentVariables.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Threading.Tasks.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Runtime.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Linq.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Configuration.CommandLine.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Logging.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Server.IIS.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Runtime.InteropServices.RuntimeInformation.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.DependencyInjection.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.ComponentModel.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Logging.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Http.Features.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Diagnostics.DiagnosticSource.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Http.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Http.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.ObjectPool.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\microsoft.aspnetcore.azurekeyvault.hostingstartup\2.0.4\lib\netstandard2.0\Microsoft.AspNetCore.AzureKeyVault.HostingStartup.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Mvc.Core.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Razor.Runtime.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Configuration.UserSecrets.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.azure.keyvault\2.3.2\lib\netstandard1.4\Microsoft.Azure.KeyVault.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.azure.services.appauthentication\1.0.1\lib\netstandard1.4\Microsoft.Azure.Services.AppAuthentication.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\microsoft.rest.clientruntime\2.3.8\lib\netstandard1.4\Microsoft.Rest.ClientRuntime.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.rest.clientruntime.azure\3.3.7\lib\netstandard1.4\Microsoft.Rest.ClientRuntime.Azure.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\newtonsoft.json\12.0.2\lib\netstandard2.0\Newtonsoft.Json.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Net.Http.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Net.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Diagnostics.Tracing.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Net.Security.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Security.Cryptography.X509Certificates.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Globalization.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Reflection.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Reflection.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Resources.ResourceManager.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Private.Uri.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Text.RegularExpressions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Threading.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Collections.Concurrent.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.FileProviders.Physical.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Configuration.FileExtensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Configuration.Json.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.IO.FileSystem.Watcher.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.ComponentModel.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.FileSystemGlobbing.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Threading.Timer.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Threading.Overlapped.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Linq.Expressions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.ComponentModel.TypeConverter.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.ObjectModel.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Runtime.Numerics.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.TelemetryObserver.Common.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\Microsoft.IntelliTrace.TelemetryObserver.CoreClr.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Options.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Hosting.Server.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Logging.Configuration.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Options.ConfigurationExtensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Logging.Console.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Logging.Debug.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Logging.EventSource.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.HostFiltering.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.HttpOverrides.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Authentication.Core.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Authentication.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Security.Claims.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\microsoft.extensions.configuration.azurekeyvault\2.0.2\lib\netstandard2.0\Microsoft.Extensions.Configuration.AzureKeyVault.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'Anonymously Hosted DynamicMethods Assembly'.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\mscorlib.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Runtime.InteropServices.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Net.Sockets.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\Microsoft.Win32.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Net.NameResolution.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Memory.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Security.Cryptography.Encoding.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Security.Cryptography.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Collections.NonGeneric.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Security.Principal.Windows.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Security.Principal.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Threading.ThreadPool.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Buffers.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.identitymodel.clients.activedirectory\3.14.2\lib\netstandard1.3\Microsoft.IdentityModel.Clients.ActiveDirectory.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.IO.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.identitymodel.clients.activedirectory\3.14.2\lib\netstandard1.3\Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Runtime.Serialization.Json.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Private.DataContractSerialization.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Text.Encoding.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Xml.ReaderWriter.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Private.Xml.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Runtime.Serialization.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Text.Encoding.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Reflection.Emit.ILGeneration.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Reflection.Emit.Lightweight.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Reflection.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Runtime.Serialization.Formatters.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Threading.Thread.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Security.Cryptography.Algorithms.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Diagnostics.TraceSource.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Data.Common.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Collections.Specialized.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Drawing.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\windowsazure.storage\9.1.1\lib\netstandard1.3\Microsoft.WindowsAzure.Storage.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\serilog.sinks.console\3.1.1\lib\netcoreapp1.1\Serilog.Sinks.Console.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Console.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\serilog.sinks.azuretablestorage\4.0.0\lib\netstandard1.3\Serilog.Sinks.AzureTableStorage.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\serilog.sinks.periodicbatching\2.1.0\lib\netstandard1.2\Serilog.Sinks.PeriodicBatching.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Diagnostics.StackTrace.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Reflection.Metadata.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\source\arcyber\CoolBridge\DotNet\src\CoolBridge.Web\bin\Debug\netcoreapp2.2\CoolBridge.Core.dll'. Symbols loaded.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.EntityFrameworkCore.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Cors.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Authentication.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Mvc.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Mvc.Formatters.Json.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Caching.Memory.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Caching.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\featurebits.data\0.4.3\lib\netstandard2.0\FeatureBits.Data.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\featurebits.core\0.4.3\lib\netstandard2.0\FeatureBits.Core.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.DataProtection.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.DataProtection.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Cryptography.Internal.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.WebEncoders.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\System.Text.Encodings.Web.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Authentication.JwtBearer.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.DependencyModel.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.AppContext.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.IO.FileSystem.Primitives.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\aspnetcore.routeanalyzer\0.5.3\lib\netcoreapp2.0\AspNetCore.RouteAnalyzer.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\microsoft.aspnetcore.webhooks.receivers\1.0.0-preview2-final\lib\netstandard2.0\Microsoft.AspNetCore.WebHooks.Receivers.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Identity.UI.Views.V3.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Mvc.RazorPages.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Mvc.Razor.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Identity.UI.Views.V4.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Identity.UI.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.SpaServices.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.SpaServices.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Routing.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Routing.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Mvc.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Mvc.ApiExplorer.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Authorization.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Authorization.Policy.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Mvc.TagHelpers.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Razor.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Mvc.ViewFeatures.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Mvc.DataAnnotations.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Antiforgery.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.CodeAnalysis.Razor.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Razor.Language.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.CodeAnalysis.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Mvc.Razor.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Mvc.Cors.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\serilog.extensions.logging\2.0.0\lib\netstandard2.0\Serilog.Extensions.Logging.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Connections.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\System.IO.Pipelines.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\Microsoft.Win32.Registry.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Xml.XDocument.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Private.Xml.Linq.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.StaticFiles.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Rewrite.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Diagnostics.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Localization.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.JsonPatch.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Net.Http.Headers.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Collections.Immutable.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Diagnostics.Tools.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Authentication.Cookies.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Html.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.CodeAnalysis.CSharp.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Diagnostics.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Diagnostics.Debug.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.ComponentModel.Annotations.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Numerics.Vectors.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Users\spladmin\.nuget\packages\system.runtime.compilerservices.unsafe\4.5.2\lib\netcoreapp2.0\System.Runtime.CompilerServices.Unsafe.dll'. Module was built without symbols.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\System.Data.SqlClient.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.WebUtilities.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.AspNetCore.Http.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.Extensions.Configuration.Binder.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.IdentityModel.Tokens.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\System.IdentityModel.Tokens.Jwt.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.IdentityModel.Logging.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.IdentityModel.Protocols.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Threading.Tasks.Extensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.EntityFrameworkCore.SqlServer.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.EntityFrameworkCore.Relational.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Microsoft.EntityFrameworkCore.Abstractions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\Remotion.Linq.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Transactions.Local.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\2.2.2\System.Interactive.Async.dll'.
+'dotnet.exe' (CoreCLR: clrhost): Loaded 'C:\Program Files\dotnet\shared\Microsoft.NETCore.App\2.2.2\System.Reflection.TypeExtensions.dll'. Skipped loading symbols. Module is optimized and the debugger option 'Just My Code' is enabled.
+CoolBridge.Web Information: 0 : AzureAlerts received  at 6/1/2019 5:33:11 AM with data {
+  "schemaId": "azureMonitorCommonAlertSchema",
+  "data": {
+    "essentials": {
+      "aalertId": "/subscriptions/<subscription ID>/providers/Microsoft.AlertsManagement/alerts/b9569717-bc32-442f-add5-83a997729330",
+      "alertRule": "WCUS-R2-Gen2",
+      "severity": "Sev3",
+      "signalType": "Metric",
+      "monitorCondition": "Resolved",
+      "monitoringService": "Platform",
+      "alertTargetIDs": [
+        "/subscriptions/<subscription ID>/resourcegroups/pipelinealertrg/providers/microsoft.compute/virtualmachines/wcus-r2-gen2"
+      ],
+      "originAlertId": "3f2d4487-b0fc-4125-8bd5-7ad17384221e_PipeLineAlertRG_microsoft.insights_metricAlerts_WCUS-R2-Gen2_-117781227",
+      "firedDateTime": "2019-03-22T13:58:24.3713213Z",
+      "resolvedDateTime": "2019-03-22T14:03:16.2246313Z",
+      "description": "",
+      "essentialsVersion": "1.0",
+      "alertContextVersion": "1.0"
+    },
+    "alertContext": {
+      "properties": null,
+      "conditionType": "SingleResourceMultipleMetricCriteria",
+      "condition": {
+        "windowSize": "PT5M",
+        "allOf": [
+          {
+            "metricName": "Percentage CPU",
+            "metricNamespace": "Microsoft.Compute/virtualMachines",
+            "operator": "GreaterThan",
+            "threshold": "25",
+            "timeAggregation": "Average",
+            "dimensions": [
+              {
+                "name": "ResourceId",
+                "value": "3efad9dc-3d50-4eac-9c87-8b3fd6f97e4e"
+              }
+            ],
+            "metricValue": 7.727
+          }
+        ]
+      }
+    }
+  }
+}
+CoolBridge.Web Information: 0 : AzureAlerts received  at 6/2/2019 3:53:07 PM with data {
+  "schemaId": "AzureMonitorMetricAlert",
+  "data": {
+    "version": "2.0",
+    "properties": null,
+    "status": "Deactivated",
+    "context": {
+      "timestamp": "2019-06-02T15:52:38.2491546Z",
+      "id": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/microsoft.insights/metricAlerts/Transactions%20greather%20than%20350",
+      "name": "Transactions greather than 350",
+      "description": "",
+      "conditionType": "SingleResourceMultipleMetricCriteria",
+      "severity": "2",
+      "condition": {
+        "windowSize": "PT15M",
+        "allOf": [
+          {
+            "metricName": "Transactions",
+            "metricNamespace": "Microsoft.Storage/storageAccounts",
+            "operator": "GreaterThan",
+            "threshold": "30",
+            "timeAggregation": "Total",
+            "dimensions": [
+              {
+                "name": "AccountResourceId",
+                "value": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+              }
+            ],
+            "metricValue": 18.0
+          }
+        ]
+      },
+      "subscriptionId": "f59b8f71-6228-4888-b5dd-b155171027c3",
+      "resourceGroupName": "armcontoso-epa",
+      "resourceName": "eparoomfinder",
+      "resourceType": "Microsoft.Storage/storageAccounts",
+      "resourceId": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder",
+      "portalLink": "https://portal.azure.com/#resource/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+    }
+  }
+}
+CoolBridge.Web Information: 0 : AzureAlerts received  at 6/2/2019 8:21:52 PM with data {
+  "schemaId": "AzureMonitorMetricAlert",
+  "data": {
+    "version": "2.0",
+    "properties": null,
+    "status": "Activated",
+    "context": {
+      "timestamp": "2019-06-02T20:21:22.7305936Z",
+      "id": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/microsoft.insights/metricAlerts/capacity%20reached%20threshold",
+      "name": "capacity reached threshold",
+      "description": "",
+      "conditionType": "SingleResourceMultipleMetricCriteria",
+      "severity": "1",
+      "condition": {
+        "windowSize": "PT1H",
+        "allOf": [
+          {
+            "metricName": "UsedCapacity",
+            "metricNamespace": "XStore",
+            "operator": "GreaterThan",
+            "threshold": "4800000000",
+            "timeAggregation": "Average",
+            "dimensions": [
+              {
+                "name": "AccountResourceId",
+                "value": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+              }
+            ],
+            "metricValue": 5468277591.0
+          }
+        ]
+      },
+      "subscriptionId": "f59b8f71-6228-4888-b5dd-b155171027c3",
+      "resourceGroupName": "armcontoso-epa",
+      "resourceName": "eparoomfinder",
+      "resourceType": "Microsoft.Storage/storageAccounts",
+      "resourceId": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder",
+      "portalLink": "https://portal.azure.com/#resource/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+    }
+  }
+}
+CoolBridge.Web Information: 0 : AzureAlerts received  at 6/2/2019 9:17:03 PM with data {
+  "schemaId": "AzureMonitorMetricAlert",
+  "data": {
+    "version": "2.0",
+    "properties": null,
+    "status": "Deactivated",
+    "context": {
+      "timestamp": "2019-06-02T21:16:23.9411269Z",
+      "id": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/microsoft.insights/metricAlerts/capacity%20reached%20threshold",
+      "name": "capacity reached threshold",
+      "description": "",
+      "conditionType": "SingleResourceMultipleMetricCriteria",
+      "severity": "1",
+      "condition": {
+        "windowSize": "PT1H",
+        "allOf": [
+          {
+            "metricName": "UsedCapacity",
+            "metricNamespace": "Microsoft.Storage/storageAccounts",
+            "operator": "GreaterThan",
+            "threshold": "4800000000",
+            "timeAggregation": "Average",
+            "dimensions": [
+              {
+                "name": "AccountResourceId",
+                "value": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+              }
+            ],
+            "metricValue": 0.0
+          }
+        ]
+      },
+      "subscriptionId": "f59b8f71-6228-4888-b5dd-b155171027c3",
+      "resourceGroupName": "armcontoso-epa",
+      "resourceName": "eparoomfinder",
+      "resourceType": "Microsoft.Storage/storageAccounts",
+      "resourceId": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder",
+      "portalLink": "https://portal.azure.com/#resource/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+    }
+  }
+}
+CoolBridge.Web Information: 0 : AzureAlerts received  at 6/2/2019 9:21:52 PM with data {
+  "schemaId": "AzureMonitorMetricAlert",
+  "data": {
+    "version": "2.0",
+    "properties": null,
+    "status": "Activated",
+    "context": {
+      "timestamp": "2019-06-02T21:21:23.9591764Z",
+      "id": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/microsoft.insights/metricAlerts/capacity%20reached%20threshold",
+      "name": "capacity reached threshold",
+      "description": "",
+      "conditionType": "SingleResourceMultipleMetricCriteria",
+      "severity": "1",
+      "condition": {
+        "windowSize": "PT1H",
+        "allOf": [
+          {
+            "metricName": "UsedCapacity",
+            "metricNamespace": "XStore",
+            "operator": "GreaterThan",
+            "threshold": "4800000000",
+            "timeAggregation": "Average",
+            "dimensions": [
+              {
+                "name": "AccountResourceId",
+                "value": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+              }
+            ],
+            "metricValue": 5468277591.0
+          }
+        ]
+      },
+      "subscriptionId": "f59b8f71-6228-4888-b5dd-b155171027c3",
+      "resourceGroupName": "armcontoso-epa",
+      "resourceName": "eparoomfinder",
+      "resourceType": "Microsoft.Storage/storageAccounts",
+      "resourceId": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder",
+      "portalLink": "https://portal.azure.com/#resource/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+    }
+  }
+}
+CoolBridge.Web Information: 0 : AzureAlerts received  at 6/2/2019 10:16:55 PM with data {
+  "schemaId": "AzureMonitorMetricAlert",
+  "data": {
+    "version": "2.0",
+    "properties": null,
+    "status": "Deactivated",
+    "context": {
+      "timestamp": "2019-06-02T22:16:24.9021205Z",
+      "id": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/microsoft.insights/metricAlerts/capacity%20reached%20threshold",
+      "name": "capacity reached threshold",
+      "description": "",
+      "conditionType": "SingleResourceMultipleMetricCriteria",
+      "severity": "1",
+      "condition": {
+        "windowSize": "PT1H",
+        "allOf": [
+          {
+            "metricName": "UsedCapacity",
+            "metricNamespace": "Microsoft.Storage/storageAccounts",
+            "operator": "GreaterThan",
+            "threshold": "4800000000",
+            "timeAggregation": "Average",
+            "dimensions": [
+              {
+                "name": "AccountResourceId",
+                "value": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+              }
+            ],
+            "metricValue": 0.0
+          }
+        ]
+      },
+      "subscriptionId": "f59b8f71-6228-4888-b5dd-b155171027c3",
+      "resourceGroupName": "armcontoso-epa",
+      "resourceName": "eparoomfinder",
+      "resourceType": "Microsoft.Storage/storageAccounts",
+      "resourceId": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder",
+      "portalLink": "https://portal.azure.com/#resource/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+    }
+  }
+}
+CoolBridge.Web Information: 0 : AzureAlerts received  at 6/2/2019 10:21:58 PM with data {
+  "schemaId": "AzureMonitorMetricAlert",
+  "data": {
+    "version": "2.0",
+    "properties": null,
+    "status": "Activated",
+    "context": {
+      "timestamp": "2019-06-02T22:21:24.95535Z",
+      "id": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/microsoft.insights/metricAlerts/capacity%20reached%20threshold",
+      "name": "capacity reached threshold",
+      "description": "",
+      "conditionType": "SingleResourceMultipleMetricCriteria",
+      "severity": "1",
+      "condition": {
+        "windowSize": "PT1H",
+        "allOf": [
+          {
+            "metricName": "UsedCapacity",
+            "metricNamespace": "XStore",
+            "operator": "GreaterThan",
+            "threshold": "4800000000",
+            "timeAggregation": "Average",
+            "dimensions": [
+              {
+                "name": "AccountResourceId",
+                "value": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+              }
+            ],
+            "metricValue": 5468277591.0
+          }
+        ]
+      },
+      "subscriptionId": "f59b8f71-6228-4888-b5dd-b155171027c3",
+      "resourceGroupName": "armcontoso-epa",
+      "resourceName": "eparoomfinder",
+      "resourceType": "Microsoft.Storage/storageAccounts",
+      "resourceId": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder",
+      "portalLink": "https://portal.azure.com/#resource/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+    }
+  }
+}
+CoolBridge.Web Information: 0 : AzureAlerts received  at 6/2/2019 11:16:53 PM with data {
+  "schemaId": "AzureMonitorMetricAlert",
+  "data": {
+    "version": "2.0",
+    "properties": null,
+    "status": "Deactivated",
+    "context": {
+      "timestamp": "2019-06-02T23:16:25.180847Z",
+      "id": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/microsoft.insights/metricAlerts/capacity%20reached%20threshold",
+      "name": "capacity reached threshold",
+      "description": "",
+      "conditionType": "SingleResourceMultipleMetricCriteria",
+      "severity": "1",
+      "condition": {
+        "windowSize": "PT1H",
+        "allOf": [
+          {
+            "metricName": "UsedCapacity",
+            "metricNamespace": "Microsoft.Storage/storageAccounts",
+            "operator": "GreaterThan",
+            "threshold": "4800000000",
+            "timeAggregation": "Average",
+            "dimensions": [
+              {
+                "name": "AccountResourceId",
+                "value": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+              }
+            ],
+            "metricValue": 0.0
+          }
+        ]
+      },
+      "subscriptionId": "f59b8f71-6228-4888-b5dd-b155171027c3",
+      "resourceGroupName": "armcontoso-epa",
+      "resourceName": "eparoomfinder",
+      "resourceType": "Microsoft.Storage/storageAccounts",
+      "resourceId": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder",
+      "portalLink": "https://portal.azure.com/#resource/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+    }
+  }
+}
+CoolBridge.Web Information: 0 : AzureAlerts received  at 6/2/2019 11:27:14 PM with data {
+  "schemaId": "AzureMonitorMetricAlert",
+  "data": {
+    "version": "2.0",
+    "properties": null,
+    "status": "Activated",
+    "context": {
+      "timestamp": "2019-06-02T23:26:25.2331623Z",
+      "id": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/microsoft.insights/metricAlerts/capacity%20reached%20threshold",
+      "name": "capacity reached threshold",
+      "description": "",
+      "conditionType": "SingleResourceMultipleMetricCriteria",
+      "severity": "1",
+      "condition": {
+        "windowSize": "PT1H",
+        "allOf": [
+          {
+            "metricName": "UsedCapacity",
+            "metricNamespace": "XStore",
+            "operator": "GreaterThan",
+            "threshold": "4800000000",
+            "timeAggregation": "Average",
+            "dimensions": [
+              {
+                "name": "AccountResourceId",
+                "value": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+              }
+            ],
+            "metricValue": 5468277591.0
+          }
+        ]
+      },
+      "subscriptionId": "f59b8f71-6228-4888-b5dd-b155171027c3",
+      "resourceGroupName": "armcontoso-epa",
+      "resourceName": "eparoomfinder",
+      "resourceType": "Microsoft.Storage/storageAccounts",
+      "resourceId": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder",
+      "portalLink": "https://portal.azure.com/#resource/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+    }
+  }
+}
+CoolBridge.Web Information: 0 : AzureAlerts received  at 6/3/2019 12:17:02 AM with data {
+  "schemaId": "AzureMonitorMetricAlert",
+  "data": {
+    "version": "2.0",
+    "properties": null,
+    "status": "Deactivated",
+    "context": {
+      "timestamp": "2019-06-03T00:16:25.5794038Z",
+      "id": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/microsoft.insights/metricAlerts/capacity%20reached%20threshold",
+      "name": "capacity reached threshold",
+      "description": "",
+      "conditionType": "SingleResourceMultipleMetricCriteria",
+      "severity": "1",
+      "condition": {
+        "windowSize": "PT1H",
+        "allOf": [
+          {
+            "metricName": "UsedCapacity",
+            "metricNamespace": "Microsoft.Storage/storageAccounts",
+            "operator": "GreaterThan",
+            "threshold": "4800000000",
+            "timeAggregation": "Average",
+            "dimensions": [
+              {
+                "name": "AccountResourceId",
+                "value": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+              }
+            ],
+            "metricValue": 0.0
+          }
+        ]
+      },
+      "subscriptionId": "f59b8f71-6228-4888-b5dd-b155171027c3",
+      "resourceGroupName": "armcontoso-epa",
+      "resourceName": "eparoomfinder",
+      "resourceType": "Microsoft.Storage/storageAccounts",
+      "resourceId": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder",
+      "portalLink": "https://portal.azure.com/#resource/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armcontoso-epa/providers/Microsoft.Storage/storageAccounts/eparoomfinder"
+    }
+  }
+}
+
+
+
+
+2019-06-03T19:45:52.5984534Z Caught exception while emitting to sink Serilog.Core.Sinks.RestrictedSink: System.AggregateException: One or more errors occurred. (Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.) ---> Microsoft.WindowsAzure.Storage.StorageException: Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.
+   at Microsoft.WindowsAzure.Storage.Core.Executor.Executor.ExecuteAsyncInternal[T](RESTCommand`1 cmd, IRetryPolicy policy, OperationContext operationContext, CancellationToken token) in C:\Program Files (x86)\Jenkins\workspace\release_dotnet_master\Lib\WindowsRuntime\Core\Executor\Executor.cs:line 316
+   --- End of inner exception stack trace ---
+   at System.Threading.Tasks.Task.Wait(Int32 millisecondsTimeout, CancellationToken cancellationToken)
+   at Serilog.Sinks.AzureTableStorage.TaskExtensions.SyncContextSafeWait(Task task, Int32 timeout)
+   at Serilog.Sinks.AzureTableStorage.AzureTableStorageSink.Emit(LogEvent logEvent)
+   at Serilog.Core.Sinks.SafeAggregateSink.Emit(LogEvent logEvent) in C:\projects\serilog\src\Serilog\Core\Sinks\SafeAggregateSink.cs:line 39
+---> (Inner Exception #0) Microsoft.WindowsAzure.Storage.StorageException: Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.
+   at Microsoft.WindowsAzure.Storage.Core.Executor.Executor.ExecuteAsyncInternal[T](RESTCommand`1 cmd, IRetryPolicy policy, OperationContext operationContext, CancellationToken token) in C:\Program Files (x86)\Jenkins\workspace\release_dotnet_master\Lib\WindowsRuntime\Core\Executor\Executor.cs:line 316
+Request Information
+RequestID:811afbb7-7002-002a-2144-1ab3df000000
+RequestDate:Mon, 03 Jun 2019 13:45:52 GMT
+StatusMessage:Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.
+ErrorCode:AuthenticationFailed
+ErrorMessage:Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.
+RequestId:811afbb7-7002-002a-2144-1ab3df000000
+Time:2019-06-03T19:45:51.9150847Z
+<---
