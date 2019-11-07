@@ -1,0 +1,112 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "name": {
+            "defaultValue": "",
+            "type": "string"
+        },
+        "regionId": {
+            "defaultValue": "",
+            "type": "string",
+            "allowedValues": [
+                "australiasoutheast",
+                "brazilsouth",
+                "canadacentral",
+                "canadaeast",
+                "centralindia",
+                "centralus",
+                "eastasia",
+                "eastus",
+                "eastus2",
+                "francecentral",
+                "francesouth",
+                "germanywestcentral",
+                "japaneast",
+                "japanwest",
+                "koreacentral",
+                "koreasouth",
+                "northcentralus",
+                "northeurope",
+                "southafricanorth",
+                "southafricawest",
+                "southcentralus",
+                "southeastasia",
+                "southindia",
+                "switzerlandnorth",
+                "switzerlandwest",
+                "uaecentral",
+                "uaenorth",
+                "uksouth",
+                "ukwest",
+                "westcentralus",
+                "westeurope",
+                "westindia",
+                "westus",
+                "westus2"
+            ]
+        },
+        "autoShutdownTimeZoneId": {
+            "type": "string",
+            "allowedValues": [
+                "Mountain Standard Time"
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.DevTestLab/labs",
+            "apiVersion": "2018-10-15-preview",
+            "name": "[parameters('name')]",
+            "location": "[parameters('regionId')]",
+            "tags": {},
+            "properties": {
+                "labStorageType": "Premium"
+            },
+            "resources": [
+                {
+                    "type": "schedules",
+                    "apiVersion": "2018-10-15-preview",
+                    "name": "LabVmsShutdown",
+                    "location": "[parameters('regionId')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.DevTestLab/labs', parameters('name'))]"
+                    ],
+                    "properties": {
+                        "status": "Enabled",
+                        "timeZoneId": "[parameters('autoShutdownTimeZoneId')]",
+                        "dailyRecurrence": {
+                            "time": "1900"
+                        },
+                        "taskType": "LabVmsShutdownTask",
+                        "notificationSettings": {
+                            "status": "Disabled",
+                            "timeInMinutes": 30
+                        }
+                    }
+                },
+                {
+                    "type": "virtualNetworks",
+                    "apiVersion": "2018-10-15-preview",
+                    "name": "[concat('Dtl', parameters('name'))]",
+                    "location": "[parameters('regionId')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.DevTestLab/labs', parameters('name'))]"
+                    ]
+                },
+                {
+                    "type": "artifactSources",
+                    "apiVersion": "2018-10-15-preview",
+                    "name": "Public Environment Repo",
+                    "location": "[parameters('regionId')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.DevTestLab/labs', parameters('name'))]"
+                    ],
+                    "properties": {
+                        "status": "Enabled"
+                    }
+                }
+            ]
+        }
+    ]
+}
