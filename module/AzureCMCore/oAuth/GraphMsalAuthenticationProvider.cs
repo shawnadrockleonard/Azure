@@ -81,7 +81,7 @@ namespace AzureCMCore.oAuth
             {
                 try
                 {
-                    authResult = application.AcquireTokenWithDeviceCode(_scopes, 
+                    authResult = application.AcquireTokenWithDeviceCode(_scopes,
                          (deviceCodeCallback) =>
                          {
                              Console.WriteLine(deviceCodeCallback.Message);
