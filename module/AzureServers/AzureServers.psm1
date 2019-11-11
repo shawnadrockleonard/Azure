@@ -298,15 +298,35 @@ function Sync-FeatureBitsTable {
 }    
 
 Function Set-ADFSMetadata {
+  <#
+  .SYNOPSIS
+  Short description
+  
+  .DESCRIPTION
+  Long description
+  
+  .PARAMETER FSUrl
+  Parameter description
+  
+  .PARAMETER StsName
+  Parameter description
+  
+  .EXAMPLE
+      Set-ADFSMetadata -FSUrl "fs.test.local" -StsName "ADFS" -WhatIf
+  
+  .NOTES
+  General notes
+  #>
+  
+  [CmdletBinding(SupportsShouldProcess = $true)]
   param(
     [Parameter(Mandatory = $true)]
     $FSUrl,
+
     [Parameter(Mandatory = $true)]
-    $StsName,
-    [switch] $DryRun
+    $StsName
   )
   PROCESS {
-    UpdateADFSMetadata -FSUrl "fs.test.local" -StsName "ADFS" -DryRun
     $metadataUrl = "https://$FSUrl/federationmetadata/2007-06/federationmetadata.xml"
     
     try {
@@ -327,10 +347,10 @@ Function Set-ADFSMetadata {
     $newCert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
     $enc = [System.Text.Encoding]::UTF8
     
-    $sts = $metadataDoc.EntityDescriptor.RoleDescriptor | where { $_.type -eq "fed:SecurityTokenServiceType" }
+    $sts = $metadataDoc.EntityDescriptor.RoleDescriptor | Where-Object { $_.type -eq "fed:SecurityTokenServiceType" }
     
     # How many signing certs?
-    $signCount = ($sts.KeyDescriptor | ? { $_.use -eq "signing" } | measure).count
+    $signCount = ($sts.KeyDescriptor | ? { $_.use -eq "signing" } | Measure-Object).count
     if ($signCount -eq 1) {
       $certB64 = $sts.KeyDescriptor.KeyInfo.X509Data.X509Certificate
       $newCert.Import($enc.GetBytes($certB64))
@@ -347,8 +367,8 @@ Function Set-ADFSMetadata {
       # Do we need to add the new cert as CA in SharePoint?
       if ((Get-SPTrustedRootAuthority | ? { $_.Certificate.Thumbprint -eq $newCert.Thumbprint }) -eq $null) {
         Write-Host "Adding the ADFS cert" $newCert.Subject "to the SharePoint trust store"
-        If ($DryRun) {
-          Write-Warning "DryRun: not adding the certificate"
+        If ($PSCmdlet.ShouldProcess("Adding the certificate to the STS Trusted Root Authority")) {
+          Write-Warning "Whatif: not adding the certificate"
         }
         Else {
           New-SPTrustedRootAuthority -Name $newCert.Subject -Certificate $newCert
@@ -360,8 +380,8 @@ Function Set-ADFSMetadata {
             
       # Set the cert in the STS
       Write-Host "Setting the certificate in the ADFS STS"
-      If ($DryRun) {
-        Write-Warning "DryRun: not changing the certificate in the STS"
+      if ($PSCmdlet.ShouldProcess("Changing the certificate in the STS") ) {
+        Write-Warning "Whatif: not changing the certificate in the STS"
       }
       Else {
         $adfsSTS | Set-SPTrustedIdentityTokenIssuer -ImportTrustCertificate $newCert
