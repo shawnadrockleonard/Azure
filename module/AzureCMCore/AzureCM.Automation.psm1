@@ -55,7 +55,7 @@ function Send-EmailMessage
 			$passkey = ConvertTo-SecureString $securepassword -AsPlainText -Force
 		    $cred = new-object -typename System.Management.Automation.PSCredential -argumentlist $username, $passkey
 
-			$msg = Send-MailMessage -To $To -From $smtpfrom `
+			Send-MailMessage -To $To -From $smtpfrom `
 				-Body $Message -Subject $Subject `
 				-UseSsl -Port $smtpport -Credential $cred -SmtpServer $smtp
 
