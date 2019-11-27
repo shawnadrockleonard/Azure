@@ -15,10 +15,10 @@ namespace AzureCMCore.Base
         internal static AppSettings AuthenticationSettings;
 
         /// <summary>
-        /// If True then only write verbose statements to the log and do not perform any action
+        /// If specified will use the root path to the 'appsettings.json' file otherwise inferred at runtime.
         /// </summary>
         [Parameter(Mandatory = false)]
-        public SwitchParameter DoNothing { get; set; }
+        public string AppSettingPath { get; set; }
 
 
         // This method gets called once for each cmdlet in the pipeline when the pipeline starts executing
@@ -134,7 +134,7 @@ namespace AzureCMCore.Base
             WriteError(new ErrorRecord(ex, "HALT", category, null));
         }
 
-        private static void BootstrapConfiguration()
+        private void BootstrapConfiguration()
         {
             string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
@@ -143,8 +143,13 @@ namespace AzureCMCore.Base
                 env = "Development";
             }
 
+            if (string.IsNullOrEmpty(AppSettingPath))
+            {
+                AppSettingPath = $"{Directory.GetCurrentDirectory()}/module/AzureCMCore";
+            }
+
             var builder = new ConfigurationBuilder()
-                .SetBasePath($"{Directory.GetCurrentDirectory()}/module/AzureCMCore")
+                .SetBasePath(AppSettingPath)
                 .AddJsonFile("appsettings.json")
                 .AddUserSecrets<AzureCmdlet>()
                 .AddEnvironmentVariables();
