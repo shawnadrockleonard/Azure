@@ -96,7 +96,7 @@
         "description": "Local admin password of the virtual machine"
       }
     },
-    "artifact_sas_token": {
+    "vmScriptSasUri": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
@@ -330,7 +330,7 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "[concat(uri(deployment().properties.templateLink.uri, 'install-software.ps1'), parameters('artifact_sas_token'))]"
+            "[parameters('vmScriptSasUri')]"
           ]
         },
         "protectedSettings": {
@@ -384,10 +384,6 @@
     "vmResourceId": {
       "type": "string",
       "value": "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-    },
-    "scriptFileUri": {
-      "type": "string",
-      "value": "[concat(uri(deployment().properties.templateLink.uri, 'install-software.ps1'), parameters('artifact_sas_token'))]"
     }
   }
 }

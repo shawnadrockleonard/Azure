@@ -88,7 +88,8 @@
     "vmName": "[concat('vm-', parameters('systemName'), '01')]",
     "vnetAddressPrefix": "20.0",
     "vmStaticIp": "[concat(variables('vnetAddressPrefix'), '.1.4')]",
-    "vmSubnetName": "spoinstances"
+    "vmSubnetName": "spoinstances",
+    "vmScriptSasUri": "[concat(uri(deployment().properties.templateLink.uri, 'install-software.ps1'), parameters('artifact_sas_token'))]"
   },
   "resources": [
     {
@@ -214,7 +215,7 @@
   "outputs": {
     "scriptFileUri": {
       "type": "string",
-      "value": "[concat(uri(deployment().properties.templateLink.uri, 'install-software.ps1'), parameters('artifact_sas_token'))]"
+      "value": "[variables('vmScriptSasUri')]"
     }
   }
 }
