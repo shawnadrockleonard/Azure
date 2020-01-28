@@ -23,8 +23,17 @@
       "type": "string"
     },
     "systemName": {
-      "defaultValue": "cmscosting",
       "type": "String"
+    },
+    "hardwareProfile": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_B4ms",
+        "Standard_A4_v2"
+      ],
+      "metadata": {
+        "description": "Size of the virtual machine"
+      }
     },
     "imagePublisher": {
       "type": "string",
@@ -152,7 +161,7 @@
             "value": "[variables('vmName')]"
           },
           "hardwareProfile": {
-            "value": "Standard_D2"
+            "value": "[parameters('hardwareProfile')]"
           },
           "imagePublisher": {
             "value": "[parameters('imagePublisher')]"

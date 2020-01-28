@@ -17,7 +17,7 @@ $userId = Get-AzADUser -StartsWith "sle"
 
 New-AzResourceGroupDeployment -Name "keyvault" -ResourceGroupName "cmscosting" -Mode Incremental `
   -TemplateFile .\nested\cms-costing-keyvault.json -TemplateParameterFile .\nested\cms-costing-keyvault.parameters.json `
-  -KeyVaultName "cmscosting-kv" -userAadId $userId.Id
+  -KeyVaultName "cmscosting-kv" -keyVaultSkuName "Premium" -userAadId $userId.Id
 
 # Provision Key for Encryption
 Add-AzKeyVaultKey -Name "myKEK" -VaultName "cmscosting-kv" -Destination "HSM"
@@ -27,6 +27,10 @@ $KEK = Get-AzKeyVaultKey -VaultName "cmscosting-kv" -Name "myKEK"
 
 $Secure = Read-Host -AsSecureString
 
+New-AzResourceGroupDeployment -Name "encryptedVm" -ResourceGroupName "cmscosting" -Mode Incremental `
+  -TemplateUri "https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/templates/arm/aad-vm/cms-costing.template.json" `
+  -TemplateParameterFile .\cms-costing.parameter.json `
+  -keyVaultResourceGroup "cmscosting" -keyVaultName $KeyVault.VaultName -keyVaultEncryptionUrl $KEK.Id
 
 
 # https://docs.microsoft.com/en-us/azure/azure-government/documentation-government-get-started-connect-with-cli

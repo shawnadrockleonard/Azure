@@ -14,7 +14,6 @@
     },
     "hardwareProfile": {
       "type": "string",
-      "defaultValue": "Standard_B4ms",
       "allowedValues": [
         "Standard_B4ms",
         "Standard_A4_v2"
@@ -25,7 +24,6 @@
     },
     "imagePublisher": {
       "type": "string",
-      "defaultValue": "MicrosoftWindowsDesktop",
       "allowedValues": [
         "MicrosoftWindowsServer",
         "MicrosoftWindowsDesktop"
@@ -36,7 +34,6 @@
     },
     "imageOffer": {
       "type": "string",
-      "defaultValue": "Windows-10",
       "allowedValues": [
         "WindowsServer",
         "Windows-10"
@@ -47,7 +44,6 @@
     },
     "windowsOsVersion": {
       "type": "string",
-      "defaultValue": "19h2-pro",
       "allowedValues": [
         "2019-Datacenter",
         "rs5-pro",
@@ -59,7 +55,6 @@
     },
     "managedDiskType": {
       "type": "string",
-      "defaultValue": "StandardSSD_LRS",
       "allowedValues": [
         "Premium_LRS",
         "PremiumSSD_LRS",
@@ -69,7 +64,6 @@
     },
     "managedDataDiskType": {
       "type": "string",
-      "defaultValue": "Standard_LRS",
       "allowedValues": [
         "Premium_LRS",
         "PremiumSSD_LRS",

@@ -8,6 +8,9 @@
     "systemName": {
       "value": "cmscosting"
     },
+    "hardwareProfile": {
+      "value": "Standard_B4ms"
+    },
     "imagePublisher": {
       "value": "MicrosoftWindowsDesktop"
     },

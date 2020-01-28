@@ -2,13 +2,18 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "vnetName": {
+    "location": {
       "type": "string",
-      "defaultValue": "shared-vnet"
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location of the storage account"
+      }
+    },
+    "vnetName": {
+      "type": "string"
     },
     "vnetPrefix": {
-      "type": "string",
-      "defaultValue": "10.0"
+      "type": "string"
     }
   },
   "variables": {
@@ -27,7 +32,7 @@
       "type": "Microsoft.Network/virtualNetworks",
       "apiVersion": "2019-11-01",
       "name": "[parameters('vnetName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "tags": {
         "customer": "shawniq",
         "displayName": "vnet"
@@ -89,19 +94,19 @@
           {
             "service": "Microsoft.Sql",
             "locations": [
-              "[resourceGroup().location]"
+              "[parameters('location')]"
             ]
           },
           {
             "service": "Microsoft.Storage",
             "locations": [
-              "[resourceGroup().location]"
+              "[parameters('location')]"
             ]
           },
           {
             "service": "Microsoft.KeyVault",
             "locations": [
-              "[resourceGroup().location]"
+              "[parameters('location')]"
             ]
           }
         ],
@@ -124,7 +129,7 @@
           {
             "service": "Microsoft.KeyVault",
             "locations": [
-              "[resourceGroup().location]"
+              "[parameters('location')]"
             ]
           }
         ],
@@ -138,7 +143,7 @@
       "apiVersion": "2019-02-01",
       "type": "Microsoft.Network/virtualNetworks/subnets",
       "name": "[concat(parameters('vnetName'), '/', variables('bastionSubnetName'))]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
       ],
@@ -154,7 +159,7 @@
       "apiVersion": "2019-02-01",
       "type": "Microsoft.Network/publicIpAddresses",
       "name": "[variables('bastionPublicIpName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "tags": {
         "customer": "shawniq",
         "displayName": "vnet"
@@ -174,7 +179,7 @@
       "apiVersion": "2018-10-01",
       "type": "Microsoft.Network/bastionHosts",
       "name": "[variables('bastionHostName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "tags": {
         "customer": "shawniq",
         "displayName": "vnet"

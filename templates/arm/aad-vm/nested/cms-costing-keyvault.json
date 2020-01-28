@@ -17,7 +17,6 @@
       "type": "string"
     },
     "keyVaultSkuName": {
-      "defaultValue": "Standard",
       "type": "string",
       "allowedValues": [
         "Standard",
