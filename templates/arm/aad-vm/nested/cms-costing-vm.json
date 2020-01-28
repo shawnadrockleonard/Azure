@@ -224,6 +224,7 @@
       "name": "[parameters('vmName')]",
       "location": "[parameters('location')]",
       "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('vm_nic_name'))]"
       ],
       "identity": {
         "type": "SystemAssigned"
@@ -361,7 +362,7 @@
       "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/CustomScriptExtension')]"
+        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/AADLoginForWindows')]"
       ],
       "properties": {
         "publisher": "Microsoft.Azure.Security",
@@ -386,7 +387,7 @@
       "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/CustomScriptExtension')]"
+        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/diskEncryption')]"
       ],
       "properties": {
         "autoUpgradeMinorVersion": true,
