@@ -29,6 +29,10 @@ $KeyVault = Get-AzKeyVault -VaultName "cmscostingkv" -ResourceGroupName "cms-cos
 $KEK = Get-AzKeyVaultKey -VaultName "cmscostingkv" -Name "myKEK"
 
 
+New-AzResourceGroupDeployment -Name "SharedVnet" -ResourceGroupName "cms-costing" -Mode Incremental `
+  -TemplateFile .\nested\cms-costing-vnet.json `
+  -vnetName "shared-vnet" -vnetPrefix "20.0"
+
 $Secure = Read-Host -AsSecureString
 
 New-AzResourceGroupDeployment -Name "encryptedVm" -ResourceGroupName "cms-costing" -Mode Incremental `
