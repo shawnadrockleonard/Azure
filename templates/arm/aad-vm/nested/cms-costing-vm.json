@@ -96,7 +96,7 @@
         "description": "Local admin password of the virtual machine"
       }
     },
-    "vmScriptSasUri": {
+    "scriptSasUri": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
@@ -330,7 +330,7 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": [
-            "[parameters('vmScriptSasUri')]"
+            "[parameters('scriptSasUri')]"
           ]
         },
         "protectedSettings": {

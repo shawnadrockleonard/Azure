@@ -196,8 +196,8 @@
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
           },
-          "artifact_sas_token": {
-            "value": "[parameters('artifact_sas_token')]"
+          "scriptSasUri": {
+            "value": "[variables('vmScriptSasUri')]"
           },
           "keyVaultResourceGroup": {
             "value": "[parameters('keyVaultResourceGroup')]"
