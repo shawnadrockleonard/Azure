@@ -6,7 +6,7 @@ if (!(Test-Path $installedSoftwareTxt)) {
   New-Item -Path "c:\installs" -ItemType Directory -Force | Out-Null
   ("{0}--Initialized" -f (get-date).ToString("o")) | Out-File -FilePath $installedSoftwareTxt;
 
-  choco install sysinternals --params "/InstallDir:C:\tools\SysInternals" -y; 
+  choco install sysinternals --params "/InstallDir:C:\installs\SysInternals" -y; 
   Add-Content -Path $installedSoftwareTxt -Value ("{0}--sysinternals" -f (get-date).ToString("o"))
   choco install 7zip -y; 
   Add-Content -Path $installedSoftwareTxt -Value ("{0}--7zip" -f (get-date).ToString("o"))
