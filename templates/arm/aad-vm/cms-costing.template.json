@@ -2,86 +2,90 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "vaults_cms_costing_kv_name": {
-      "defaultValue": "cms-costing-kv",
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location of the virtual machine and Key Vault"
+      }
+    },
+    "keyVaultResourceGroup": {
+      "type": "String",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Resource group for the Key Vault"
+      }
+    },
+    "keyVaultName": {
       "type": "String"
     },
-    "virtualMachines_vmquick01_name": {
-      "defaultValue": "vmquick01",
+    "keyVaultEncryptionUrl": {
+      "type": "string"
+    },
+    "systemName": {
+      "defaultValue": "cmscosting",
       "type": "String"
     },
-    "virtualNetworks_shared_vnet_name": {
-      "defaultValue": "shared-vnet",
-      "type": "String"
+    "imagePublisher": {
+      "type": "string",
+      "allowedValues": [
+        "MicrosoftWindowsServer",
+        "MicrosoftWindowsDesktop"
+      ],
+      "metadata": {
+        "description": "Select image offer for the virtual machine"
+      }
     },
-    "storageAccounts_cmscostingcli_name": {
-      "defaultValue": "cmscostingcli",
-      "type": "String"
+    "imageOffer": {
+      "type": "string",
+      "allowedValues": [
+        "WindowsServer",
+        "Windows-10"
+      ],
+      "metadata": {
+        "description": "Select image offer for the virtual machine"
+      }
     },
-    "networkInterfaces_vmquick01561_name": {
-      "defaultValue": "vmquick01561",
-      "type": "String"
+    "windowsOsVersion": {
+      "type": "string",
+      "allowedValues": [
+        "2019-Datacenter",
+        "rs5-pro",
+        "19h2-pro"
+      ],
+      "metadata": {
+        "description": "Select image SKU (aka os edition) for the virtual machine"
+      }
     },
-    "publicIPAddresses_vmquick01_ip_name": {
-      "defaultValue": "vmquick01-ip",
-      "type": "String"
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "Local admin username of the virtual machine"
+      }
     },
-    "storageAccounts_cmscostingdiag_name": {
-      "defaultValue": "cmscostingdiag",
-      "type": "String"
-    },
-    "networkSecurityGroups_vmquick01_nsg_name": {
-      "defaultValue": "vmquick01-nsg",
-      "type": "String"
-    },
-    "schedules_shutdown_computevm_vmquick01_name": {
-      "defaultValue": "shutdown-computevm-vmquick01",
-      "type": "String"
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Local admin password of the virtual machine"
+      }
     },
     "artifact_sas_token": {
       "type": "securestring"
     }
   },
   "variables": {
-    "keyVaultName": "cms-costing-kv",
     "vnetName": "shared-vnet",
-    "storageAccountName": "cmscostingdiag",
-    "vmName": "[concat('vm-cmscosting01')]"
+    "storageAccountName": "[concat(parameters('systemName'), 'diag')]",
+    "vmName": "[concat('vm-', parameters('systemName'), '01')]",
+    "vnetAddressPrefix": "20.0",
+    "vmStaticIp": "[concat(variables('vnetAddressPrefix'), '.1.4')]",
+    "encryptionOperation": "EnableEncryption",
+    "KeyEncryptionAlgorithm": "RSA-OAEP",
+    "KeyVaultResourceId": "[concat(subscription().id,'/resourceGroups/', parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
+    "KeyEncryptionKeyURL": "[parameters('keyVaultEncryptionUrl')]",
+    "VolumeType": "All"
   },
   "resources": [
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2019-05-01",
-      "name": "GroupKeyVault",
-      "dependsOn": [
-      ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/cms-costing-keyvault.json'), parameters('artifact_sas_token'))]"
-        },
-        "parameters": {
-          "keyVaultName": {
-            "value": "[variables('keyVaultName')]"
-          },
-          "keyVaultSkuFamily": {
-            "value": "A"
-          },
-          "keyVaultSkuName": {
-            "value": "Standard"
-          },
-          "enabledForDeployment": {
-            "value": true
-          },
-          "enabledForDiskEncryption": {
-            "value": true
-          },
-          "enabledForTemplateDeployment": {
-            "value": true
-          }
-        }
-      }
-    },
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-05-01",
@@ -94,11 +98,14 @@
           "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/cms-costing-vnet.json'), parameters('artifact_sas_token'))]"
         },
         "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
           "vnetName": {
             "value": "[variables('vnetName')]"
           },
           "vnetPrefix": {
-            "value": "20.0"
+            "value": "[variables('vnetAddressPrefix')]"
           }
         }
       }
@@ -115,6 +122,9 @@
           "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/cms-costing-storage.json'), parameters('artifact_sas_token'))]"
         },
         "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
           "storageAccountName": {
             "value": "[variables('storageAccountName')]"
           }
@@ -126,7 +136,6 @@
       "apiVersion": "2019-05-01",
       "name": "CostingMachine",
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'GroupKeyVault')]",
         "[resourceId('Microsoft.Resources/deployments', 'SharedVnet')]",
         "[resourceId('Microsoft.Resources/deployments', 'CostingStorage')]"
       ],
@@ -136,11 +145,29 @@
           "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/cms-costing-vm.json'), parameters('artifact_sas_token'))]"
         },
         "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
           "vmName": {
             "value": "[variables('vmName')]"
           },
           "hardwareProfile": {
             "value": "Standard_D2"
+          },
+          "imagePublisher": {
+            "value": "[parameters('imagePublisher')]"
+          },
+          "imageOffer": {
+            "value": "[parameters('imageOffer')]"
+          },
+          "windowsOsVersion": {
+            "value": "[parameters('windowsOsVersion')]"
+          },
+          "managedDiskType": {
+            "value": "StandardSSD_LRS"
+          },
+          "managedDataDiskType": {
+            "value": "Standard_LRS"
           },
           "enableAutomaticUpdates": {
             "value": false
@@ -148,75 +175,37 @@
           "diagnosticStorageBlobUri": {
             "value": "[reference('CostingStorage').outputs.storageAccountBlobEndpoint.value]"
           },
-          "vnetName": {
-            "value": "[reference('SharedVnet').outputs.vnetId.value]"
-          },
           "subnetId": {
             "value": "[reference('SharedVnet').outputs.vnetSubnetId.value]"
           },
           "subnetStaticIp": {
-            "value": "20.0.1.4"
+            "value": "[variables('vmStaticIp')]"
           },
-          "userName": {
-            "value": ""
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "artifact_sas_token": {
+            "value": "[parameters('artifact_sas_token')]"
+          },
+          "KeyVaultResourceId": {
+            "value": "[variables('KeyVaultResourceId')]"
+          },
+          "encryptionOperation": {
+            "value": "[variables('encryptionOperation')]"
+          },
+          "KeyEncryptionAlgorithm": {
+            "value": "[variables('KeyEncryptionAlgorithm')]"
+          },
+          "KeyEncryptionKeyURL": {
+            "value": "[variables('KeyEncryptionKeyURL')]"
+          },
+          "VolumeType": {
+            "value": "[variables('VolumeType')]"
           }
         }
-      }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2019-07-01",
-      "name": "[concat(parameters('virtualMachines_vmquick01_name'), '/enablevmaccess')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'CostingMachine')]"
-      ],
-      "properties": {
-        "autoUpgradeMinorVersion": true,
-        "publisher": "Microsoft.Compute",
-        "type": "VMAccessAgent",
-        "typeHandlerVersion": "2.0",
-        "settings": {
-          "UserName": "spluser"
-        },
-        "protectedSettings": {
-        }
-      }
-    },
-    {
-      "type": "Microsoft.KeyVault/vaults/secrets",
-      "apiVersion": "2016-10-01",
-      "name": "[concat(parameters('vaults_cms_costing_kv_name'), '/913C08D2-50A2-4452-AC47-D7BE10D637B9')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_cms_costing_kv_name'))]"
-      ],
-      "tags": {
-        "DiskEncryptionKeyFileName": "913C08D2-50A2-4452-AC47-D7BE10D637B9.BEK",
-        "VolumeLetter": "C:\\",
-        "VolumeLabel": "Windows",
-        "MachineName": "vmquick01",
-        "DiskEncryptionKeyEncryptionKeyURL": "https://cms-costing-kv.vault.azure.net/keys/myvmkeys/80183577298f4c86adf242d53779b8be",
-        "DiskEncryptionKeyEncryptionAlgorithm": "RSA-OAEP"
-      },
-      "properties": {
-        "contentType": "Wrapped BEK",
-        "attributes": {
-          "enabled": true
-        }
-      }
-    },
-
-    {
-      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-      "apiVersion": "2019-06-01",
-      "name": "[concat(parameters('storageAccounts_cmscostingdiag_name'), '/default/bootdiagnostics-vmquick01-304dd35c-46e6-47ad-be00-9bc1063a9e84')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_cmscostingdiag_name'), 'default')]",
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_cmscostingdiag_name'))]"
-      ],
-      "properties": {
-        "publicAccess": "None"
       }
     }
   ]
