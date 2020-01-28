@@ -7,28 +7,32 @@
     },
     "hardwareProfile": {
       "type": "string",
-      "defaultValue": "Standard_D2"
+      "defaultValue": "Standard_B4ms"
     },
     "enableAutomaticUpdates": {
       "type": "bool",
       "defaultValue": false
     },
-    "diagnosticStorageAccountName": {
+    "diagnosticStorageBlobUri": {
       "type": "string"
     },
-    "subnetName": {
+    "subnetId": {
       "type": "string"
     },
-    "subnetPrefix": {
-      "type": "string",
-      "defaultValue": "10.0"
+    "subnetStaticIp": {
+      "type": "string"
+    },
+    "shared_admin_username": {
+      "type": "string"
+    },
+    "shared_password": {
+      "type": "securestring"
     }
   },
   "variables": {
     "vm_nsg_name": "[concat(parameters('vmName'), '-nsg')]",
     "vm_nic_name": "[concat(parameters('vmName'), '-nic01')]",
-    "vm_public_ip_name": "[concat(parameters('vmName'), '-pip01')]",
-    "bootDiagnostics": "[resourceId('Microsoft.Storage/storageAccounts', parameters('diagnosticStorageAccountName'))]"
+    "vm_public_ip_name": "[concat(parameters('vmName'), '-pip01')]"
   },
   "resources": [
     {
@@ -92,13 +96,13 @@
           {
             "name": "ipconfig1",
             "properties": {
-              "privateIPAddress": "10.0.1.4",
-              "privateIPAllocationMethod": "Dynamic",
+              "privateIPAddress": "[parameters('subnetStaticIp')]",
+              "privateIPAllocationMethod": "Static",
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('vm_public_ip_name'))]"
               },
               "subnet": {
-                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_shared_vnet_name'), 'spotinstances')]"
+                "id": "[parameters('subnetId')]"
               },
               "primary": true,
               "privateIPAddressVersion": "IPv4"
@@ -151,10 +155,11 @@
         },
         "osProfile": {
           "computerName": "[parameters('vmName')]",
-          "adminUsername": "spluser",
+          "adminUsername": "[parameters('shared_admin_username')]",
+          "adminPassword": "[parameters('shared_password')]",
           "windowsConfiguration": {
             "provisionVMAgent": true,
-            "enableAutomaticUpdates": true
+            "enableAutomaticUpdates": "[parameters('enableAutomaticUpdates')]"
           },
           "secrets": [
           ],
@@ -164,18 +169,18 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_vmquick01561_name'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vm_nic_name'))]"
             }
           ]
         },
         "diagnosticsProfile": {
           "bootDiagnostics": {
             "enabled": true,
-            "storageUri": "[concat('https://', parameters('storageAccounts_cmscostingdiag_name'), '.blob.core.windows.net/')]"
+            "storageUri": "[parameters('diagnosticStorageBlobUri')]"
           }
         },
         "licenseType": "Windows_Client"
       }
-    },
+    }
   ]
 }

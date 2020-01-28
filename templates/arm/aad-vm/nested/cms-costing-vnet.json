@@ -200,5 +200,23 @@
         ]
       }
     }
-  ]
+  ],
+  "outputs": {
+    "vnetId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+    },
+    "vnetSubnetProperties": {
+      "type": "object",
+      "value": "[reference(resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('spoSubnetName')), '2019-04-01')]"
+    },
+    "vnetSubnetId": {
+      "type": "object",
+      "value": "[reference(resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('spoSubnetName')), '2019-04-01')]"
+    },
+    "vnetSubscriptionId": {
+      "type": "string",
+      "value": "[subscription().subscriptionId]"
+    }
+  }
 }

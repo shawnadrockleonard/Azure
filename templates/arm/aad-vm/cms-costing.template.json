@@ -37,12 +37,16 @@
     "schedules_shutdown_computevm_vmquick01_name": {
       "defaultValue": "shutdown-computevm-vmquick01",
       "type": "String"
+    },
+    "artifact_sas_token": {
+      "type": "securestring"
     }
   },
   "variables": {
     "keyVaultName": "cms-costing-kv",
     "vnetName": "shared-vnet",
-    "storageAccountName": "cmscostingdiag"
+    "storageAccountName": "cmscostingdiag",
+    "vmName": "[concat('vm-cmscosting01')]"
   },
   "resources": [
     {
@@ -118,12 +122,54 @@
       }
     },
     {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
+      "name": "CostingMachine",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'GroupKeyVault')]",
+        "[resourceId('Microsoft.Resources/deployments', 'SharedVnet')]",
+        "[resourceId('Microsoft.Resources/deployments', 'CostingStorage')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/cms-costing-vm.json'), parameters('artifact_sas_token'))]"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[variables('vmName')]"
+          },
+          "hardwareProfile": {
+            "value": "Standard_D2"
+          },
+          "enableAutomaticUpdates": {
+            "value": false
+          },
+          "diagnosticStorageBlobUri": {
+            "value": "[reference('CostingStorage').outputs.storageAccountBlobEndpoint.value]"
+          },
+          "vnetName": {
+            "value": "[reference('SharedVnet').outputs.vnetId.value]"
+          },
+          "subnetId": {
+            "value": "[reference('SharedVnet').outputs.vnetSubnetId.value]"
+          },
+          "subnetStaticIp": {
+            "value": "20.0.1.4"
+          },
+          "userName": {
+            "value": ""
+          }
+        }
+      }
+    },
+    {
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2019-07-01",
       "name": "[concat(parameters('virtualMachines_vmquick01_name'), '/enablevmaccess')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_vmquick01_name'))]"
+        "[resourceId('Microsoft.Resources/deployments', 'CostingMachine')]"
       ],
       "properties": {
         "autoUpgradeMinorVersion": true,
