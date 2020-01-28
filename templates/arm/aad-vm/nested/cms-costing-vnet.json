@@ -49,9 +49,29 @@
             "properties": {
               "addressPrefix": "[variables('defaultSubnetAddressPrefix')]",
               "serviceEndpoints": [
+                {
+                  "service": "Microsoft.Sql",
+                  "locations": [
+                    "[parameters('location')]"
+                  ]
+                },
+                {
+                  "service": "Microsoft.Storage",
+                  "locations": [
+                    "[parameters('location')]"
+                  ]
+                },
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                    "[parameters('location')]"
+                  ]
+                }
               ],
               "delegations": [
-              ]
+              ],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
             }
           },
           {
@@ -59,9 +79,17 @@
             "properties": {
               "addressPrefix": "[variables('spoSubnetAddressPrefix')]",
               "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                    "[parameters('location')]"
+                  ]
+                }
               ],
               "delegations": [
-              ]
+              ],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
             }
           },
           {
@@ -79,64 +107,6 @@
         ],
         "enableDdosProtection": false,
         "enableVmProtection": false
-      }
-    },
-    {
-      "type": "Microsoft.Network/virtualNetworks/subnets",
-      "apiVersion": "2019-11-01",
-      "name": "[concat(parameters('vnetName'), '/', variables('defaultSubnetName'))]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
-      ],
-      "properties": {
-        "addressPrefix": "[variables('defaultSubnetAddressPrefix')]",
-        "serviceEndpoints": [
-          {
-            "service": "Microsoft.Sql",
-            "locations": [
-              "[parameters('location')]"
-            ]
-          },
-          {
-            "service": "Microsoft.Storage",
-            "locations": [
-              "[parameters('location')]"
-            ]
-          },
-          {
-            "service": "Microsoft.KeyVault",
-            "locations": [
-              "[parameters('location')]"
-            ]
-          }
-        ],
-        "delegations": [
-        ],
-        "privateEndpointNetworkPolicies": "Enabled",
-        "privateLinkServiceNetworkPolicies": "Enabled"
-      }
-    },
-    {
-      "type": "Microsoft.Network/virtualNetworks/subnets",
-      "apiVersion": "2019-11-01",
-      "name": "[concat(parameters('vnetName'), '/', variables('spoSubnetName'))]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
-      ],
-      "properties": {
-        "addressPrefix": "[variables('spoSubnetAddressPrefix')]",
-        "serviceEndpoints": [
-          {
-            "service": "Microsoft.KeyVault",
-            "locations": [
-              "[parameters('location')]"
-            ]
-          }
-        ],
-        "delegations": [
-        ],
-        "privateEndpointNetworkPolicies": "Enabled",
-        "privateLinkServiceNetworkPolicies": "Enabled"
       }
     },
     {
