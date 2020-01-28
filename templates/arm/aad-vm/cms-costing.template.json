@@ -88,11 +88,7 @@
     "vmName": "[concat('vm-', parameters('systemName'), '01')]",
     "vnetAddressPrefix": "20.0",
     "vmStaticIp": "[concat(variables('vnetAddressPrefix'), '.1.4')]",
-    "encryptionOperation": "EnableEncryption",
-    "KeyEncryptionAlgorithm": "RSA-OAEP",
-    "KeyVaultResourceId": "[concat(subscription().id,'/resourceGroups/', parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
-    "KeyEncryptionKeyURL": "[parameters('keyVaultEncryptionUrl')]",
-    "VolumeType": "All"
+    "vmSubnetName": "spoinstances"
   },
   "resources": [
     {
@@ -181,11 +177,14 @@
           "enableAutomaticUpdates": {
             "value": false
           },
-          "diagnosticStorageBlobUri": {
-            "value": "[reference('CostingStorage').outputs.storageAccountBlobEndpoint.value]"
+          "diagnosticStorageName": {
+            "value": "[variables('storageAccountName')]"
           },
-          "subnetId": {
-            "value": "[reference('SharedVnet').outputs.vnetSubnetId.value]"
+          "vnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "subnetName": {
+            "value": "[variables('vmSubnetName')]"
           },
           "subnetStaticIp": {
             "value": "[variables('vmStaticIp')]"
@@ -199,20 +198,14 @@
           "artifact_sas_token": {
             "value": "[parameters('artifact_sas_token')]"
           },
-          "KeyVaultResourceId": {
-            "value": "[variables('KeyVaultResourceId')]"
+          "keyVaultResourceGroup": {
+            "value": "[parameters('keyVaultResourceGroup')]"
           },
-          "encryptionOperation": {
-            "value": "[variables('encryptionOperation')]"
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
           },
-          "KeyEncryptionAlgorithm": {
-            "value": "[variables('KeyEncryptionAlgorithm')]"
-          },
-          "KeyEncryptionKeyURL": {
-            "value": "[variables('KeyEncryptionKeyURL')]"
-          },
-          "VolumeType": {
-            "value": "[variables('VolumeType')]"
+          "keyVaultEncryptionUrl": {
+            "value": "[parameters('keyVaultEncryptionUrl')]"
           }
         }
       }

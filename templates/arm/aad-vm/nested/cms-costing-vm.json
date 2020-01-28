@@ -75,10 +75,13 @@
       "type": "bool",
       "defaultValue": false
     },
-    "diagnosticStorageBlobUri": {
+    "diagnosticStorageName": {
       "type": "string"
     },
-    "subnetId": {
+    "vnetName": {
+      "type": "string"
+    },
+    "subnetName": {
       "type": "string"
     },
     "subnetStaticIp": {
@@ -100,50 +103,34 @@
         "description": "SAS token for the script blob uri"
       }
     },
-    "KeyVaultResourceId": {
-      "type": "string",
+    "keyVaultResourceGroup": {
+      "type": "String",
+      "defaultValue": "[resourceGroup().name]",
       "metadata": {
-        "description": "The ResourceId of the Key Vault for encryption"
+        "description": "Resource group for the Key Vault"
       }
     },
-    "encryptionOperation": {
-      "type": "string",
-      "allowedValues": [
-        "EnableEncryption"
-      ],
-      "metadata": {
-        "description": "The URL for the Key Vault"
-      }
+    "keyVaultName": {
+      "type": "String"
     },
-    "KeyEncryptionAlgorithm": {
-      "type": "string",
-      "allowedValues": [
-        "RSA-OAEP"
-      ],
-      "metadata": {
-        "description": "Select key encryption algorithm for the disks"
-      }
-    },
-    "KeyEncryptionKeyURL": {
+    "keyVaultEncryptionUrl": {
       "type": "string",
       "metadata": {
-        "description": "Specify Key URL with Version in Key Vault"
-      }
-    },
-    "VolumeType": {
-      "type": "string",
-      "allowedValues": [
-        "All"
-      ],
-      "metadata": {
-        "description": "Specify volume type encryption settings"
+        "description": "Key Vault encryption key URL"
       }
     }
   },
   "variables": {
     "vm_nsg_name": "[concat(parameters('vmName'), '-nsg')]",
     "vm_nic_name": "[concat(parameters('vmName'), '-nic01')]",
-    "vm_public_ip_name": "[concat(parameters('vmName'), '-pip01')]"
+    "vm_public_ip_name": "[concat(parameters('vmName'), '-pip01')]",
+    "diagnosticStorageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('diagnosticStorageName'))]",
+    "encryptionOperation": "EnableEncryption",
+    "KeyEncryptionAlgorithm": "RSA-OAEP",
+    "KeyVaultResourceId": "[concat(subscription().id,'/resourceGroups/', parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
+    "KeyEncryptionKeyURL": "[parameters('keyVaultEncryptionUrl')]",
+    "VolumeType": "All",
+    "subnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
   },
   "resources": [
     {
@@ -213,7 +200,7 @@
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('vm_public_ip_name'))]"
               },
               "subnet": {
-                "id": "[parameters('subnetId')]"
+                "id": "[variables('subnetId')]"
               },
               "primary": true,
               "privateIPAddressVersion": "IPv4"
@@ -296,7 +283,7 @@
         "diagnosticsProfile": {
           "bootDiagnostics": {
             "enabled": true,
-            "storageUri": "[parameters('diagnosticStorageBlobUri')]"
+            "storageUri": "[reference(variables('diagnosticStorageId'), '2019-04-01').primaryEndpoints.blob]"
           }
         }
       }
@@ -382,13 +369,13 @@
         "typeHandlerVersion": "2.2",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "EncryptionOperation": "[parameters('encryptionOperation')]",
-          "KeyVaultURL": "[reference(parameters('KeyVaultResourceId'), '')]",
-          "KeyVaultResourceId": "[parameters('KeyVaultResourceId')]",
-          "KeyEncryptionAlgorithm": "[parameters('KeyEncryptionAlgorithm')]",
-          "VolumeType": "[parameters('VolumeType')]",
-          "KeyEncryptionKeyURL": "[parameters('KeyEncryptionKeyURL')]",
-          "KekVaultResourceId": "[parameters('KeyVaultResourceId')]"
+          "EncryptionOperation": "[variables('encryptionOperation')]",
+          "KeyVaultURL": "[reference(variables('KeyVaultResourceId'), '2018-02-14').vaultUri]",
+          "KeyVaultResourceId": "[variables('KeyVaultResourceId')]",
+          "KeyEncryptionAlgorithm": "[variables('KeyEncryptionAlgorithm')]",
+          "VolumeType": "[variables('VolumeType')]",
+          "KeyEncryptionKeyURL": "[variables('KeyEncryptionKeyURL')]",
+          "KekVaultResourceId": "[variables('KeyVaultResourceId')]"
         }
       }
     },
