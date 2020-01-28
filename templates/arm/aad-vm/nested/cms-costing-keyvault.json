@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "keyVaultName": {
+      "type": "string"
+    },
+    "keyVaultSkuFamily": {
+      "defaultValue": "A",
+      "type": "string"
+    },
+    "keyVaultSkuName": {
+      "defaultValue": "Standard",
+      "type": "string"
+    },
+    "enabledForDeployment": {
+      "defaultValue": false,
+      "type": "bool"
+    },
+    "enabledForDiskEncryption": {
+      "defaultValue": false,
+      "type": "bool"
+    },
+    "enabledForTemplateDeployment": {
+      "defaultValue": false,
+      "type": "bool"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2016-10-01",
+      "name": "[parameters('keyVaultName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "sku": {
+          "family": "[parameters('keyVaultSkuFamily')]",
+          "name": "[parameters('keyVaultSkuName')]"
+        },
+        "tenantId": "[subscription().tenantId]",
+        "enabledForDeployment": "[parameters('enabledForDeployment')]",
+        "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
+        "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]"
+      }
+    }
+
+  ],
+  "outputs": {
+    "keyVaultId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+    },
+    "keyVaultName": {
+      "type": "string",
+      "value": "[parameters('keyVaultName')]"
+    },
+    "keyVaultUri": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')), '2018-02-14').vaultUri]"
+    }
+  }
+}

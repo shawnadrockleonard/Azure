@@ -1,0 +1,204 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "shared-vnet"
+    },
+    "vnetPrefix": {
+      "type": "string",
+      "defaultValue": "10.0"
+    }
+  },
+  "variables": {
+    "addressPrefix": "[concat(parameters('vnetPrefix'), '.0.0/22')]",
+    "defaultSubnetName": "default",
+    "defaultSubnetAddressPrefix": "[concat(parameters('vnetPrefix'), '.0.0/24')]",
+    "spoSubnetName": "spoinstances",
+    "spoSubnetAddressPrefix": "[concat(parameters('vnetPrefix'), '.1.0/25')]",
+    "bastionSubnetName": "AzureBastionSubnet",
+    "bastionSubnetAddressPrefix": "[concat(parameters('vnetPrefix'), '.2.0/27')]",
+    "bastionHostName": "[concat(parameters('vnetName'), '-bastion')]",
+    "bastionPublicIpName": "[concat(parameters('vnetName'), '-ip')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2019-11-01",
+      "name": "[parameters('vnetName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "customer": "shawniq",
+        "displayName": "vnet"
+      },
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('addressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('defaultSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('defaultSubnetAddressPrefix')]",
+              "serviceEndpoints": [
+              ],
+              "delegations": [
+              ]
+            }
+          },
+          {
+            "name": "[variables('spoSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('spoSubnetAddressPrefix')]",
+              "serviceEndpoints": [
+              ],
+              "delegations": [
+              ]
+            }
+          },
+          {
+            "name": "[variables('bastionSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('bastionSubnetAddressPrefix')]",
+              "serviceEndpoints": [
+              ],
+              "delegations": [
+              ]
+            }
+          }
+        ],
+        "virtualNetworkPeerings": [
+        ],
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2019-11-01",
+      "name": "[concat(parameters('vnetName'), '/', variables('defaultSubnetName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[variables('defaultSubnetAddressPrefix')]",
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.Sql",
+            "locations": [
+              "[resourceGroup().location]"
+            ]
+          },
+          {
+            "service": "Microsoft.Storage",
+            "locations": [
+              "[resourceGroup().location]"
+            ]
+          },
+          {
+            "service": "Microsoft.KeyVault",
+            "locations": [
+              "[resourceGroup().location]"
+            ]
+          }
+        ],
+        "delegations": [
+        ],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2019-11-01",
+      "name": "[concat(parameters('vnetName'), '/', variables('spoSubnetName'))]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[variables('spoSubnetAddressPrefix')]",
+        "serviceEndpoints": [
+          {
+            "service": "Microsoft.KeyVault",
+            "locations": [
+              "[resourceGroup().location]"
+            ]
+          }
+        ],
+        "delegations": [
+        ],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "apiVersion": "2019-02-01",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "name": "[concat(parameters('vnetName'), '/', variables('bastionSubnetName'))]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[variables('bastionSubnetAddressPrefix')]",
+        "serviceEndpoints": [
+        ],
+        "delegations": [
+        ]
+      }
+    },
+    {
+      "apiVersion": "2019-02-01",
+      "type": "Microsoft.Network/publicIpAddresses",
+      "name": "[variables('bastionPublicIpName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "customer": "shawniq",
+        "displayName": "vnet"
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 4,
+        "ipTags": [
+        ]
+      }
+    },
+    {
+      "apiVersion": "2018-10-01",
+      "type": "Microsoft.Network/bastionHosts",
+      "name": "[variables('bastionHostName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "customer": "shawniq",
+        "displayName": "vnet"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIpAddresses', variables('bastionPublicIpName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('bastionSubnetName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "IpConf",
+            "properties": {
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('bastionSubnetName'))]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('bastionPublicIpName'))]"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
