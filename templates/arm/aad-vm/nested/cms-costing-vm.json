@@ -378,27 +378,12 @@
           "KekVaultResourceId": "[variables('KeyVaultResourceId')]"
         }
       }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2019-07-01",
-      "name": "[concat(parameters('vmName'), '/enablevmaccess')]",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/diskEncryption')]"
-      ],
-      "properties": {
-        "autoUpgradeMinorVersion": true,
-        "publisher": "Microsoft.Compute",
-        "type": "VMAccessAgent",
-        "typeHandlerVersion": "2.0",
-        "settings": {
-          "UserName": "[parameters('adminUsername')]"
-        },
-        "protectedSettings": {
-        }
-      }
     }
-  ]
+  ],
+  "outputs": {
+    "vmResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+    }
+  }
 }
