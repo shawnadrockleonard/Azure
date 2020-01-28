@@ -384,6 +384,10 @@
     "vmResourceId": {
       "type": "string",
       "value": "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+    },
+    "scriptFileUri": {
+      "type": "string",
+      "value": "[concat(uri(deployment().properties.templateLink.uri, 'install-software.ps1'), parameters('artifact_sas_token'))]"
     }
   }
 }
