@@ -9,6 +9,13 @@
         "description": "Location of the virtual machine and Key Vault"
       }
     },
+    "resourceGroup": {
+      "type": "String",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Resource group for log analytics"
+      }
+    },
     "logAnalyticsWorkspaceName": {
       "type": "string",
       "metadata": {
@@ -89,7 +96,7 @@
       "dependsOn": [
         "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]"
       ],
-      "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.OperationsManagement/solutions/', variables('Solutions')[copyIndex()].Name)]",
+      "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.OperationsManagement/solutions/', variables('Solutions')[copyIndex()].Name)]",
       "properties": {
         "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
         "containedResources": [

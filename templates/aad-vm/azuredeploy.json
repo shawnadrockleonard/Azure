@@ -9,6 +9,20 @@
         "description": "Location of the virtual machine and Key Vault"
       }
     },
+    "logAnalyticsResourceGroup": {
+      "type": "String",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Resource group for the Key Vault"
+      }
+    },
+    "logAnalyticsLocation": {
+      "type": "String",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Resource group for the Key Vault"
+      }
+    },
     "keyVaultResourceGroup": {
       "type": "String",
       "defaultValue": "[resourceGroup().name]",
@@ -142,6 +156,8 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-05-01",
       "name": "CostingAnalytics",
+      "resourceGroup": "[parameters('logAnalyticsResourceGroup')]",
+      "subscriptionId": "[subscription().subscriptionId]",
       "dependsOn": [
       ],
       "properties": {
@@ -151,7 +167,7 @@
         },
         "parameters": {
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[parameters('logAnalyticsLocation')]"
           },
           "logAnalyticsWorkspaceName": {
             "value": "[variables('logAnalyticsWorkspaceName')]"

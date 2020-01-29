@@ -146,7 +146,7 @@
       }
     },
     {
-      "apiVersion": "2018-10-01",
+      "apiVersion": "2019-11-01",
       "type": "Microsoft.Network/bastionHosts",
       "name": "[variables('bastionHostName')]",
       "location": "[parameters('location')]",
