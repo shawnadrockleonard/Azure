@@ -127,6 +127,18 @@
       ],
       "type": "string"
     },
+    "malwareExclusionPaths": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "malwareExclusionExtensions": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "malwareExclusionProcesses": {
+      "type": "string",
+      "defaultValue": ""
+    },
     "aadJoinDevice": {
       "type": "bool",
       "defaultValue": false
@@ -320,6 +332,11 @@
             "scanType": "Quick",
             "day": "7",
             "time": "120"
+          },
+          "Exclusions": {
+            "Extensions": "[parameters('malwareExclusionExtensions')]",
+            "Paths": "[parameters('malwareExclusionPaths')]",
+            "Processes": "[parameters('malwareExclusionProcesses')]"
           }
         },
         "protectedSettings": null
@@ -342,10 +359,10 @@
         "settings": {
           "fileUris": [
             "[parameters('scriptSasUri')]"
-          ]
+          ],
+          "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File install-software.ps1"
         },
         "protectedSettings": {
-          "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File install-software.ps1"
         }
       }
     },
