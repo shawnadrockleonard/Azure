@@ -19,7 +19,7 @@ $sleoId = Get-AzADUser -StartsWith "shawn leo"
 $shawnId = Get-AzADUser -StartsWith "shawn"
 
 New-AzResourceGroupDeployment -Name "keyvault" -ResourceGroupName "spl-costing" -Mode Incremental `
-  -TemplateFile .\nested\cms-costing-keyvault.json -TemplateParameterFile .\nested\cms-costing-keyvault.parameters.json `
+  -TemplateFile .\nested\aad-keyvault.json -TemplateParameterFile .\nested\aad-keyvault.parameters.json `
   -KeyVaultName "splcostingkv" -keyVaultSkuName "Premium"
 Set-AzKeyVaultAccessPolicy -VaultName "splcostingkv" -UserPrincipalName $sleoId.UserPrincipalName -PermissionsToKeys get, create, import, delete, list, update, recover, backup, restore -PermissionsToSecrets get, list, set, delete, recover, backup, restore -PassThru
 Set-AzKeyVaultAccessPolicy -VaultName "splcostingkv" -UserPrincipalName $shawnId.UserPrincipalName -PermissionsToKeys get, create, import, delete, list, update, recover, backup, restore -PermissionsToSecrets get, list, set, delete, recover, backup, restore -PassThru
@@ -29,6 +29,10 @@ Add-AzKeyVaultKey -Name "myKEK" -VaultName "splcostingkv" -Destination "HSM"
 $KeyVault = Get-AzKeyVault -VaultName "splcostingkv" -ResourceGroupName "spl-costing"
 $KEK = Get-AzKeyVaultKey -VaultName "splcostingkv" -Name "myKEK"
 
+
+New-AzResourceGroupDeployment -Name "logAnalytics" -ResourceGroupName "spl-costing-logs" -Mode Incremental `
+  -TemplateFile .\nested\aad-log-analytics.json `
+  -logAnalyticsWorkspaceName "splcostinglogs" -logAnalyticsSku "PerGB2018" -logAnalyticsRetention 90
 
 $Secure = Read-Host -AsSecureString
 
