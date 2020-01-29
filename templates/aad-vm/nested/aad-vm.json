@@ -103,6 +103,12 @@
         "description": "SAS token for the script blob uri"
       }
     },
+    "logAnalyticsWorkspaceName": {
+      "type": "String",
+      "metadata": {
+        "description": "Unique name for the log analytics workspace."
+      }
+    },
     "keyVaultResourceGroup": {
       "type": "String",
       "defaultValue": "[resourceGroup().name]",
@@ -149,6 +155,7 @@
     "vm_nic_name": "[concat(parameters('vmName'), '-nic01')]",
     "vm_public_ip_name": "[concat(parameters('vmName'), '-pip01')]",
     "diagnosticStorageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('diagnosticStorageName'))]",
+    "logAnalyticsWorkspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
     "encryptionOperation": "EnableEncryption",
     "KeyEncryptionAlgorithm": "RSA-OAEP",
     "KeyVaultResourceId": "[concat(subscription().id,'/resourceGroups/', parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
@@ -367,20 +374,24 @@
       }
     },
     {
-      "condition": "[equals(parameters('aadJoinDevice'), bool('true'))]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'), '/AADLoginForWindows')]",
-      "location": "[parameters('location')]",
       "apiVersion": "2019-03-01",
+      "name": "[concat(parameters('vmName'),'/LogAnalytics')]",
+      "location": "[concat(parameters('location'))]",
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
         "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/CustomScriptExtension')]"
       ],
       "properties": {
-        "publisher": "Microsoft.Azure.ActiveDirectory",
-        "type": "AADLoginForWindows",
-        "typeHandlerVersion": "0.4",
-        "autoUpgradeMinorVersion": true
+        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+        "type": "MicrosoftMonitoringAgent",
+        "typeHandlerVersion": "1.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "workspaceId": "[variables('logAnalyticsWorkspaceId')]"
+        },
+        "protectedSettings": {
+          "workspaceKey": "[listKeys(variables('logAnalyticsWorkspaceId'), '2015-03-20').primarySharedKey]"
+        }
       }
     },
     {
@@ -390,7 +401,7 @@
       "location": "[parameters('location')]",
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/AADLoginForWindows')]"
+        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/LogAnalytics')]"
       ],
       "properties": {
         "publisher": "Microsoft.Azure.Security",
@@ -406,6 +417,43 @@
           "KeyEncryptionKeyURL": "[variables('KeyEncryptionKeyURL')]",
           "KekVaultResourceId": "[variables('KeyVaultResourceId')]"
         }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2018-10-01",
+      "name": "[concat(parameters('vmName'), '/AzureNetworkWatcherExtension')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/diskEncryption')]"
+      ],
+      "tags": {
+        "Customer": "shawniq",
+        "displayName": "vm extensions"
+      },
+      "properties": {
+        "autoUpgradeMinorVersion": true,
+        "publisher": "Microsoft.Azure.NetworkWatcher",
+        "type": "NetworkWatcherAgentWindows",
+        "typeHandlerVersion": "1.4"
+      }
+    },
+    {
+      "condition": "[equals(parameters('aadJoinDevice'), bool('true'))]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmName'), '/AADLoginForWindows')]",
+      "location": "[parameters('location')]",
+      "apiVersion": "2019-03-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/AzureNetworkWatcherExtension')]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Azure.ActiveDirectory",
+        "type": "AADLoginForWindows",
+        "typeHandlerVersion": "0.4",
+        "autoUpgradeMinorVersion": true
       }
     }
   ],

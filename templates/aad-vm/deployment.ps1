@@ -32,8 +32,8 @@ $KEK = Get-AzKeyVaultKey -VaultName "splcostingkv" -Name "myKEK"
 $Secure = Read-Host -AsSecureString
 
 New-AzResourceGroupDeployment -Name "encryptedVm" -ResourceGroupName "spl-costing" -Mode Incremental `
-  -TemplateUri "https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/templates/aad-vm/cms-costing.template.json" `
-  -TemplateParameterFile .\cms-costing.parameter.json `
+  -TemplateUri "https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/templates/aad-vm/azuredeploy.json" `
+  -TemplateParameterFile .\azuredeploy.parameter.json `
   -keyVaultResourceGroup "spl-costing" -keyVaultName $KeyVault.VaultName -keyVaultEncryptionUrl $KEK.Id -systemName "splcosting" `
   -adminUsername "spluser" -adminPassword $Secure -Verbose
 

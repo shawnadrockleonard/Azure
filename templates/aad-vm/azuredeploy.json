@@ -85,6 +85,7 @@
   "variables": {
     "vnetName": "shared-vnet",
     "storageAccountName": "[concat(parameters('systemName'), 'diag')]",
+    "logAnalyticsWorkspaceName": "[concat(parameters('systemName'), 'logs')]",
     "vmName": "[concat('vm-', parameters('systemName'), '01')]",
     "vnetAddressPrefix": "20.0",
     "vmStaticIp": "[concat(variables('vnetAddressPrefix'), '.1.4')]",
@@ -101,7 +102,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/cms-costing-vnet.json'), parameters('artifact_sas_token'))]"
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/aad-vnet.json'), parameters('artifact_sas_token'))]"
         },
         "parameters": {
           "location": {
@@ -125,7 +126,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/cms-costing-storage.json'), parameters('artifact_sas_token'))]"
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/aad-storage.json'), parameters('artifact_sas_token'))]"
         },
         "parameters": {
           "location": {
@@ -140,15 +141,43 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-05-01",
-      "name": "CostingMachine",
+      "name": "CostingAnalytics",
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'SharedVnet')]",
-        "[resourceId('Microsoft.Resources/deployments', 'CostingStorage')]"
       ],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/cms-costing-vm.json'), parameters('artifact_sas_token'))]"
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/aad-log-analytics.json'), parameters('artifact_sas_token'))]"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "logAnalyticsWorkspaceName": {
+            "value": "[variables('logAnalyticsWorkspaceName')]"
+          },
+          "logAnalyticsSku": {
+            "value": "PerGB2018"
+          },
+          "logAnalyticsRetention": {
+            "value": 90
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
+      "name": "CostingMachine",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'SharedVnet')]",
+        "[resourceId('Microsoft.Resources/deployments', 'CostingStorage')]",
+        "[resourceId('Microsoft.Resources/deployments', 'CostingAnalytics')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/aad-vm.json'), parameters('artifact_sas_token'))]"
         },
         "parameters": {
           "location": {
@@ -198,6 +227,9 @@
           },
           "scriptSasUri": {
             "value": "[variables('vmScriptSasUri')]"
+          },
+          "logAnalyticsWorkspaceName": {
+            "value": "[variables('logAnalyticsWorkspaceName')]"
           },
           "keyVaultResourceGroup": {
             "value": "[parameters('keyVaultResourceGroup')]"
