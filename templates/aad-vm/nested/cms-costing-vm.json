@@ -126,6 +126,10 @@
         "All"
       ],
       "type": "string"
+    },
+    "aadJoinDevice": {
+      "type": "bool",
+      "defaultValue": false
     }
   },
   "variables": {
@@ -346,6 +350,7 @@
       }
     },
     {
+      "condition": "[equals(parameters('aadJoinDevice'), bool('true'))]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'), '/AADLoginForWindows')]",
       "location": "[parameters('location')]",
