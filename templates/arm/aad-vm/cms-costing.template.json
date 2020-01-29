@@ -207,6 +207,9 @@
           },
           "keyVaultEncryptionUrl": {
             "value": "[parameters('keyVaultEncryptionUrl')]"
+          },
+          "vmEncryptionType": {
+            "value": "OS"
           }
         }
       }

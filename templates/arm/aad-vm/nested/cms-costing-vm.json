@@ -118,6 +118,14 @@
       "metadata": {
         "description": "Key Vault encryption key URL"
       }
+    },
+    "vmEncryptionType": {
+      "allowedValues": [
+        "OS",
+        "Data",
+        "All"
+      ],
+      "type": "string"
     }
   },
   "variables": {
@@ -129,7 +137,6 @@
     "KeyEncryptionAlgorithm": "RSA-OAEP",
     "KeyVaultResourceId": "[concat(subscription().id,'/resourceGroups/', parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
     "KeyEncryptionKeyURL": "[parameters('keyVaultEncryptionUrl')]",
-    "VolumeType": "All",
     "subnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
   },
   "resources": [
@@ -373,7 +380,7 @@
           "KeyVaultURL": "[reference(variables('KeyVaultResourceId'), '2018-02-14').vaultUri]",
           "KeyVaultResourceId": "[variables('KeyVaultResourceId')]",
           "KeyEncryptionAlgorithm": "[variables('KeyEncryptionAlgorithm')]",
-          "VolumeType": "[variables('VolumeType')]",
+          "VolumeType": "[parameters('vmEncryptionType')]",
           "KeyEncryptionKeyURL": "[variables('KeyEncryptionKeyURL')]",
           "KekVaultResourceId": "[variables('KeyVaultResourceId')]"
         }
