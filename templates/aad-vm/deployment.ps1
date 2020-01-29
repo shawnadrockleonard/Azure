@@ -33,7 +33,7 @@ $KEK = Get-AzKeyVaultKey -VaultName "splcostingkv" -Name "myKEK"
 $templateLog = New-AzResourceGroupDeployment -Name "logAnalytics" -ResourceGroupName "spl-costing-logs" -Mode Incremental `
   -TemplateFile .\nested\aad-log-analytics.json `
   -logAnalyticsWorkspaceName "splcostinglogs" -logAnalyticsSku "PerGB2018" -logAnalyticsRetention 90 -Verbose
-$logWorkspaceId = $templateLog.Outputs["workspaceId"].value
+$logWorkspaceId = $templateLog.Outputs["workspaceCustomerId"].value
 $logWorkspaceKey = $templateLog.Outputs["workspaceKey"].value
 
 $Secure = Read-Host -AsSecureString
@@ -44,6 +44,18 @@ New-AzResourceGroupDeployment -Name "encryptedVm" -ResourceGroupName "spl-costin
   -logAnalyticsWorkspaceId $logWorkspaceId -logAnalyticsWorkspaceKey $logWorkspaceKey `
   -keyVaultResourceGroup "spl-costing" -keyVaultName $KeyVault.VaultName -keyVaultEncryptionUrl $KEK.Id -systemName "splcosting" `
   -adminUsername "spluser" -adminPassword $Secure -Verbose
+
+
+# For Windows/Log Analytics where LogAnalytics is not available in the region
+$oms = Get-AzOperationalInsightsWorkspace -ResourceGroupName "spl-costing-logs" -Name "splcostinglogs" 
+$logWorkspaceId = $oms.CustomerId
+$logWorkspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKeys -ResourceGroupName $oms.ResourceGroupName -Name $oms.Name).PrimarySharedKey
+
+$vm = Get-AzVM -ResourceGroupName "spl-costing" -Name "vm-splcosting01"
+$vmlocation = $vm.Location
+Set-AzVMExtension -ResourceGroupName "spl-costing" -VMName "vm-splcosting01" -Name 'MicrosoftMonitoringAgent' -Publisher 'Microsoft.EnterpriseCloud.Monitoring' -ExtensionType 'MicrosoftMonitoringAgent' -TypeHandlerVersion '1.0' `
+  -Location $vmlocation -SettingString "{'workspaceId':  '$logWorkspaceId'}" -ProtectedSettingString "{'workspaceKey': '$logWorkspaceKey' }"
+  
 
 
 Get-AzADServicePrincipal | Where-Object DisplayName -Like "*splcosting*"

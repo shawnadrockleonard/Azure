@@ -119,6 +119,10 @@
       "type": "string",
       "value": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]"
     },
+    "workspaceCustomerId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName')), '2015-03-20').customerId]"
+    },
     "workspaceKey": {
       "type": "string",
       "value": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName')), '2015-03-20').primarySharedKey]"
