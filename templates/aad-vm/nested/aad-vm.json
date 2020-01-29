@@ -110,7 +110,7 @@
       }
     },
     "logAnalyticsWorkspaceKey": {
-      "type": "String",
+      "type": "securestring",
       "metadata": {
         "description": "primary key for the log analytics workspace."
       }

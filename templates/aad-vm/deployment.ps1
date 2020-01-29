@@ -30,16 +30,18 @@ $KeyVault = Get-AzKeyVault -VaultName "splcostingkv" -ResourceGroupName "spl-cos
 $KEK = Get-AzKeyVaultKey -VaultName "splcostingkv" -Name "myKEK"
 
 
-New-AzResourceGroupDeployment -Name "logAnalytics" -ResourceGroupName "spl-costing-logs" -Mode Incremental `
+$templateLog = New-AzResourceGroupDeployment -Name "logAnalytics" -ResourceGroupName "spl-costing-logs" -Mode Incremental `
   -TemplateFile .\nested\aad-log-analytics.json `
-  -logAnalyticsWorkspaceName "splcostinglogs" -logAnalyticsSku "PerGB2018" -logAnalyticsRetention 90
+  -logAnalyticsWorkspaceName "splcostinglogs" -logAnalyticsSku "PerGB2018" -logAnalyticsRetention 90 -Verbose
+$logWorkspaceId = $templateLog.Outputs["workspaceId"].value
+$logWorkspaceKey = $templateLog.Outputs["workspaceKey"].value
 
 $Secure = Read-Host -AsSecureString
 
 New-AzResourceGroupDeployment -Name "encryptedVm" -ResourceGroupName "spl-costing" -Mode Incremental `
   -TemplateUri "https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/templates/aad-vm/azuredeploy.json" `
   -TemplateParameterFile .\azuredeploy.parameter.json `
-  -logAnalyticsResourceGroup "spl-costing-logs" -logAnalyticsLocation "usgovarizona" `
+  -logAnalyticsWorkspaceId $logWorkspaceId -logAnalyticsWorkspaceKey $logWorkspaceKey `
   -keyVaultResourceGroup "spl-costing" -keyVaultName $KeyVault.VaultName -keyVaultEncryptionUrl $KEK.Id -systemName "splcosting" `
   -adminUsername "spluser" -adminPassword $Secure -Verbose
 

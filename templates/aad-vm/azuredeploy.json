@@ -215,7 +215,7 @@
             "value": "[parameters('logAnalyticsWorkspaceId')]"
           },
           "logAnalyticsWorkspaceKey": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
+            "value": "[parameters('logAnalyticsWorkspaceKey')]"
           },
           "keyVaultResourceGroup": {
             "value": "[parameters('keyVaultResourceGroup')]"
