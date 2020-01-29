@@ -103,10 +103,16 @@
         "description": "SAS token for the script blob uri"
       }
     },
-    "logAnalyticsWorkspaceName": {
+    "logAnalyticsWorkspaceId": {
       "type": "String",
       "metadata": {
-        "description": "Unique name for the log analytics workspace."
+        "description": "Resource ID for the log analytics workspace."
+      }
+    },
+    "logAnalyticsWorkspaceKey": {
+      "type": "String",
+      "metadata": {
+        "description": "primary key for the log analytics workspace."
       }
     },
     "keyVaultResourceGroup": {
@@ -155,7 +161,6 @@
     "vm_nic_name": "[concat(parameters('vmName'), '-nic01')]",
     "vm_public_ip_name": "[concat(parameters('vmName'), '-pip01')]",
     "diagnosticStorageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('diagnosticStorageName'))]",
-    "logAnalyticsWorkspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
     "encryptionOperation": "EnableEncryption",
     "KeyEncryptionAlgorithm": "RSA-OAEP",
     "KeyVaultResourceId": "[concat(subscription().id,'/resourceGroups/', parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
@@ -387,10 +392,10 @@
         "typeHandlerVersion": "1.0",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "workspaceId": "[variables('logAnalyticsWorkspaceId')]"
+          "workspaceId": "[parameters('logAnalyticsWorkspaceId')]"
         },
         "protectedSettings": {
-          "workspaceKey": "[listKeys(variables('logAnalyticsWorkspaceId'), '2015-03-20').primarySharedKey]"
+          "workspaceKey": "[parameters('logAnalyticsWorkspaceKey')]"
         }
       }
     },

@@ -244,8 +244,11 @@
           "scriptSasUri": {
             "value": "[variables('vmScriptSasUri')]"
           },
-          "logAnalyticsWorkspaceName": {
-            "value": "[variables('logAnalyticsWorkspaceName')]"
+          "logAnalyticsWorkspaceId": {
+            "value": "[reference('CostingAnalytics').outputs.workspaceId.value]"
+          },
+          "logAnalyticsWorkspaceKey": {
+            "value": "[reference('CostingAnalytics').outputs.workspaceKey.value]"
           },
           "keyVaultResourceGroup": {
             "value": "[parameters('keyVaultResourceGroup')]"
