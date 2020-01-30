@@ -215,8 +215,11 @@
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
           },
-          "scriptSasUri": {
-            "value": "[variables('vmScriptSasUri')]"
+          "scriptFileUris": {
+            "value": [
+              "[concat(uri(deployment().properties.templateLink.uri, 'install-software.ps1'), parameters('artifact_sas_token'))]",
+              "[concat(uri(deployment().properties.templateLink.uri, 'vs2019.config'), parameters('artifact_sas_token'))]"
+            ]
           },
           "logAnalyticsWorkspaceId": {
             "value": "[parameters('logAnalyticsWorkspaceId')]"

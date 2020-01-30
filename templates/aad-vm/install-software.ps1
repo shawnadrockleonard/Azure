@@ -10,14 +10,30 @@ if (!(Test-Path $installedSoftwareTxt)) {
   Add-Content -Path $installedSoftwareTxt -Value ("{0}--sysinternals" -f (get-date).ToString("o"))
   choco install 7zip -y; 
   Add-Content -Path $installedSoftwareTxt -Value ("{0}--7zip" -f (get-date).ToString("o"))
+  choco install cmder -y;
+  Add-Content -Path $installedSoftwareTxt -Value ("{0}--cmder" -f (get-date).ToString("o"))
   choco install googlechrome -y;
   Add-Content -Path $installedSoftwareTxt -Value ("{0}--googlechrome" -f (get-date).ToString("o"))
+  choco install firefox -y
+  Add-Content -Path $installedSoftwareTxt -Value ("{0}--firefox" -f (get-date).ToString("o"))
   choco install git -y; 
   Add-Content -Path $installedSoftwareTxt -Value ("{0}--git" -f (get-date).ToString("o"))
   choco install nodejs --version 10.16.2 -y; 
   Add-Content -Path $installedSoftwareTxt -Value ("{0}--nodejs" -f (get-date).ToString("o"))
+  choco install yarn -y; 
+  Add-Content -Path $installedSoftwareTxt -Value ("{0}--yarn" -f (get-date).ToString("o"))
+  choco install jdk8 -y;
+  Add-Content -Path $installedSoftwareTxt -Value ("{0}--jdk8" -f (get-date).ToString("o"))
+  choco install dotnetcore-sdk --version 2.2.402 -y;
+  Add-Content -Path $installedSoftwareTxt -Value ("{0}--dotnetcore-sdk" -f (get-date).ToString("o"))
   choco install dotnetcore-sdk --version 3.0.100 -y;  
   Add-Content -Path $installedSoftwareTxt -Value ("{0}--dotnetcore-sdk" -f (get-date).ToString("o"))
+  choco install visualstudio2019enterprise --params "--config .\vs2019.vsconfig" -y;
+  Add-Content -Path $installedSoftwareTxt -Value ("{0}--visualstudio2019enterprise" -f (get-date).ToString("o"))
+  choco install sql-server-2019 -y
+  Add-Content -Path $installedSoftwareTxt -Value ("{0}--sql-server-2019" -f (get-date).ToString("o"))
+  choco install sql-server-management-studio -y;
+  Add-Content -Path $installedSoftwareTxt -Value ("{0}--sql-server-management-studio" -f (get-date).ToString("o"))
   choco install vscode -y; 
   Add-Content -Path $installedSoftwareTxt -Value ("{0}--vscode" -f (get-date).ToString("o"))
   choco install azure-cli -y;
