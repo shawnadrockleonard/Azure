@@ -43,7 +43,7 @@ New-AzResourceGroupDeployment -Name "encryptedVm" -ResourceGroupName "spl-costin
   -TemplateParameterFile .\azuredeploy.parameter.json `
   -logAnalyticsWorkspaceId $logWorkspaceId -logAnalyticsWorkspaceKey $logWorkspaceKey `
   -keyVaultResourceGroup "spl-costing" -keyVaultName $KeyVault.VaultName -keyVaultEncryptionUrl $KEK.Id -systemName "splcosting" `
-  -adminUsername "spluser" -adminPassword $Secure -Verbose
+  -adminUsername "spluser" -adminPassword $Secure -systemCount 2 -Verbose
 
 
 # For Windows/Log Analytics where LogAnalytics is not available in the region

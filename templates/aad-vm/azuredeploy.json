@@ -37,6 +37,15 @@
     "systemName": {
       "type": "String"
     },
+    "systemCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "minValue": 1,
+      "maxValue": 10,
+      "metadata": {
+        "description": "represents the number of machines to be provisioned."
+      }
+    },
     "hardwareProfile": {
       "type": "string",
       "allowedValues": [
@@ -97,9 +106,7 @@
   "variables": {
     "vnetName": "shared-vnet",
     "storageAccountName": "[concat(parameters('systemName'), 'diag')]",
-    "vmName": "[concat('vm-', parameters('systemName'), '01')]",
     "vnetAddressPrefix": "20.0",
-    "vmStaticIp": "[concat(variables('vnetAddressPrefix'), '.1.4')]",
     "vmSubnetName": "spoinstances",
     "vmScriptSasUri": "[concat(uri(deployment().properties.templateLink.uri, 'install-software.ps1'), parameters('artifact_sas_token'))]"
   },
@@ -167,7 +174,7 @@
             "value": "[parameters('location')]"
           },
           "vmName": {
-            "value": "[variables('vmName')]"
+            "value": "[concat('vm-', parameters('systemName'), padLeft(add(copyIndex(), 1), 2, '0'))]"
           },
           "hardwareProfile": {
             "value": "[parameters('hardwareProfile')]"
@@ -200,7 +207,7 @@
             "value": "[variables('vmSubnetName')]"
           },
           "subnetStaticIp": {
-            "value": "[variables('vmStaticIp')]"
+            "value": "[concat(variables('vnetAddressPrefix'), '.1.', add(copyIndex(), 4))]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -230,6 +237,10 @@
             "value": "OS"
           }
         }
+      },
+      "copy": {
+        "name": "solutionsCopy",
+        "count": "[length(parameters('systemCount'))]"
       }
     }
   ],
