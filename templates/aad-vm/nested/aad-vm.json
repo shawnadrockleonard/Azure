@@ -96,11 +96,12 @@
         "description": "Local admin password of the virtual machine"
       }
     },
-    "scriptSasUri": {
-      "type": "string",
-      "defaultValue": "",
+    "scriptFileUris": {
+      "type": "array",
+      "defaultValue": [
+      ],
       "metadata": {
-        "description": "SAS token for the script blob uri"
+        "description": "script blob uris with SAS tokens"
       }
     },
     "logAnalyticsWorkspaceId": {
@@ -327,9 +328,7 @@
         "typeHandlerVersion": "1.9",
         "autoUpgradeMinorVersion": true,
         "settings": {
-          "fileUris": [
-            "[parameters('scriptSasUri')]"
-          ],
+          "fileUris": "[parameters('scriptFileUris')]",
           "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File install-software.ps1"
         },
         "protectedSettings": {
