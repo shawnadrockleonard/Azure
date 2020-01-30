@@ -11,12 +11,12 @@ This template allows you to deploy a virtual machine that has the following capa
 
 
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshawnadrockleonard%2FAzure%2Fshawns%2Fdotnetcore%2Ftemplates%2Faad-vm%2Fnested%2Faad-vm.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshawnadrockleonard%2FAzure%2Fshawns%2Fdotnetcore%2Ftemplates%2Faad-vm%2Fazuredeploy.json" target="_blank">
     <img src="metadata/deploytoazure.png"/> 
 </a>
 
 
-<a href="https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshawnadrockleonard%2FAzure%2Fshawns%2Fdotnetcore%2Ftemplates%2Faad-vm%2Fnested%2Faad-vm.json" target="_blank">
+<a href="https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshawnadrockleonard%2FAzure%2Fshawns%2Fdotnetcore%2Ftemplates%2Faad-vm%2Fazuredeploy.json" target="_blank">
 <img src="metadata/deploytoazuregov.png"/>
 </a>
 
