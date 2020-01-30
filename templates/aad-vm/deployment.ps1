@@ -35,13 +35,14 @@ $templateLog = New-AzResourceGroupDeployment -Name "logAnalytics" -ResourceGroup
   -logAnalyticsWorkspaceName "splcostinglogs" -logAnalyticsSku "PerGB2018" -logAnalyticsRetention 90 -Verbose
 $logWorkspaceId = $templateLog.Outputs["workspaceCustomerId"].value
 $logWorkspaceKey = $templateLog.Outputs["workspaceKey"].value
+$logWorkspaceSecureKey = ConvertTo-SecureString -String $logWorkspaceKey -AsPlainText -Force
 
 $Secure = Read-Host -AsSecureString
 
 New-AzResourceGroupDeployment -Name "encryptedVm" -ResourceGroupName "spl-costing" -Mode Incremental `
   -TemplateUri "https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/templates/aad-vm/azuredeploy.json" `
   -TemplateParameterFile .\azuredeploy.parameter.json `
-  -logAnalyticsWorkspaceId $logWorkspaceId -logAnalyticsWorkspaceKey $logWorkspaceKey `
+  -logAnalyticsWorkspaceId $logWorkspaceId -logAnalyticsWorkspaceKey $logWorkspaceSecureKey `
   -keyVaultResourceGroup "spl-costing" -keyVaultName $KeyVault.VaultName -keyVaultEncryptionUrl $KEK.Id -systemName "splcosting" `
   -adminUsername "spluser" -adminPassword $Secure -systemCount 2 -Verbose
 
@@ -50,6 +51,7 @@ New-AzResourceGroupDeployment -Name "encryptedVm" -ResourceGroupName "spl-costin
 $oms = Get-AzOperationalInsightsWorkspace -ResourceGroupName "spl-costing-logs" -Name "splcostinglogs" 
 $logWorkspaceId = $oms.CustomerId
 $logWorkspaceKey = (Get-AzOperationalInsightsWorkspaceSharedKeys -ResourceGroupName $oms.ResourceGroupName -Name $oms.Name).PrimarySharedKey
+$logWorkspaceSecureKey = ConvertTo-SecureString -String $logWorkspaceKey -AsPlainText -Force
 
 $vm = Get-AzVM -ResourceGroupName "spl-costing" -Name "vm-splcosting01"
 $vmlocation = $vm.Location

@@ -240,7 +240,7 @@
       },
       "copy": {
         "name": "solutionsCopy",
-        "count": "[length(parameters('systemCount'))]"
+        "count": "[parameters('systemCount')]"
       }
     }
   ],
