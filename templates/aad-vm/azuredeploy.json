@@ -159,7 +159,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-05-01",
-      "name": "CostingMachine",
+      "name": "[concat('CostingMachine-', padLeft(add(copyIndex(), 1), 2, '0'))]",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'SharedVnet')]",
         "[resourceId('Microsoft.Resources/deployments', 'CostingStorage')]"
