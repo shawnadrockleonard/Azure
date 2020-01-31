@@ -21,8 +21,6 @@
       "apiVersion": "2018-10-01",
       "name": "[concat(parameters('vmName'), '/AzureNetworkWatcherExtension')]",
       "location": "[parameters('location')]",
-      "dependsOn": [
-      ],
       "properties": {
         "autoUpgradeMinorVersion": true,
         "publisher": "Microsoft.Azure.NetworkWatcher",

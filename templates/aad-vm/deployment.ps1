@@ -32,12 +32,8 @@ $KEK = Get-AzKeyVaultKey -VaultName "splcostingkv" -Name "myKEK"
 # Add vmloginname and vmloginpwd to the key vault as your username and password
 New-AzResourceGroupDeployment -Name "encryptedVm" -ResourceGroupName "armbastion" -Mode Incremental `
   -TemplateUri "https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/templates/aad-vm/azuredeploy.json" `
-  -TemplateParameterFile .\azuredeploy.parameter.json -Verbose
-
-
-New-AzResourceGroupDeployment -Name "CostingMachine02-ext" -ResourceGroupName "armbastion" -Mode Incremental `
-  -TemplateUri .\nested\aad-vm-ext.json `
-  -keyVaultResourceGroup "armbastion" -keyVaultName $KeyVault.VaultName -keyVaultEncryptionUrl $KEK.Id -Verbose
+  -TemplateParameterFile .\azuredeploy.parameter.json `
+  -keyVaultName $KeyVault.VaultName -keyVaultEncryptionUrl $KEK.Id -Verbose
 
 
 Get-AzADServicePrincipal | Where-Object DisplayName -Like "*splcosting*"

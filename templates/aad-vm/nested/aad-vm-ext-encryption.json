@@ -49,8 +49,6 @@
       "name": "[concat(parameters('vmName'),'/diskEncryption')]",
       "apiVersion": "2019-03-01",
       "location": "[parameters('location')]",
-      "dependsOn": [
-      ],
       "properties": {
         "publisher": "Microsoft.Azure.Security",
         "type": "AzureDiskEncryption",

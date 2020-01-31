@@ -19,17 +19,18 @@
       "metadata": {
         "description": "script blob uris with SAS tokens"
       }
+    },
+    "commandToExecute": {
+      "type": "string"
     }
   },
   "resources": [
     {
+      "condition": "[greater(length(parameters('scriptFileUris')), 0)]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2019-03-01",
       "name": "[concat(parameters('vmName'), '/CustomScriptExtension')]",
       "location": "[parameters('location')]",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'), '/extensions/antimalware')]"
-      ],
       "properties": {
         "publisher": "Microsoft.Compute",
         "type": "CustomScriptExtension",
@@ -37,7 +38,7 @@
         "autoUpgradeMinorVersion": true,
         "settings": {
           "fileUris": "[parameters('scriptFileUris')]",
-          "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File install-software.ps1"
+          "commandToExecute": "[parameters('commandToExecute')]"
         },
         "protectedSettings": {
         }

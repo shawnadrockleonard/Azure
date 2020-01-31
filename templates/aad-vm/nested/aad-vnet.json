@@ -24,6 +24,9 @@
     "spoSubnetName": "spoinstances",
     "spoSubnetAddressPrefix": "[concat(parameters('vnetPrefix'), '.1.0/25')]",
     "spoSubnet_nsg_internal_name": "[concat(parameters('vnetName'), '-nsg-internal')]",
+    "dmzSubnetName": "spodmz",
+    "dmzSubnetAddressPrefix": "[concat(parameters('vnetPrefix'), '.3.0/25')]",
+    "dmzSubnet_nsg_internal_name": "[concat(parameters('vnetName'), '-nsg-dmz')]",
     "bastionSubnetName": "AzureBastionSubnet",
     "bastionSubnetAddressPrefix": "[concat(parameters('vnetPrefix'), '.2.0/27')]",
     "bastionHostName": "[concat(parameters('vnetName'), '-bastion')]",
@@ -61,6 +64,21 @@
       }
     },
     {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2019-04-01",
+      "name": "[variables('dmzSubnet_nsg_internal_name')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "vnet"
+      },
+      "properties": {
+        "securityRules": [
+        ],
+        "defaultSecurityRules": [
+        ]
+      }
+    },
+    {
       "type": "Microsoft.Network/virtualNetworks",
       "apiVersion": "2019-11-01",
       "name": "[parameters('vnetName')]",
@@ -71,7 +89,8 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Network/networkSecurityGroups', variables('defaultSubnet_nsg_internal_name'))]",
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('spoSubnet_nsg_internal_name'))]"
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('spoSubnet_nsg_internal_name'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('dmzSubnet_nsg_internal_name'))]"
       ],
       "properties": {
         "addressSpace": {
@@ -84,6 +103,9 @@
             "name": "[variables('defaultSubnetName')]",
             "properties": {
               "addressPrefix": "[variables('defaultSubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('defaultSubnet_nsg_internal_name'))]"
+              },
               "serviceEndpoints": [
                 {
                   "service": "Microsoft.Sql",
@@ -132,6 +154,19 @@
             }
           },
           {
+            "name": "[variables('dmzSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('dmzSubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('dmzSubnet_nsg_internal_name'))]"
+              },
+              "serviceEndpoints": [
+              ],
+              "delegations": [
+              ]
+            }
+          },
+          {
             "name": "[variables('bastionSubnetName')]",
             "properties": {
               "addressPrefix": "[variables('bastionSubnetAddressPrefix')]",
@@ -170,7 +205,6 @@
       "name": "[variables('bastionPublicIpName')]",
       "location": "[parameters('location')]",
       "tags": {
-        "customer": "shawniq",
         "displayName": "vnet"
       },
       "sku": {
@@ -190,7 +224,6 @@
       "name": "[variables('bastionHostName')]",
       "location": "[parameters('location')]",
       "tags": {
-        "customer": "shawniq",
         "displayName": "vnet"
       },
       "dependsOn": [
@@ -219,14 +252,6 @@
     "vnetId": {
       "type": "string",
       "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
-    },
-    "vnetSubnetId": {
-      "type": "string",
-      "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('spoSubnetName'))]"
-    },
-    "vnetSubscriptionId": {
-      "type": "string",
-      "value": "[subscription().subscriptionId]"
     }
   }
 }

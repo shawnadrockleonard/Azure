@@ -24,6 +24,22 @@
         "description": "Local admin password of the virtual machine"
       }
     },
+    "keyVaultResourceGroup": {
+      "type": "String",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Resource group for the Key Vault"
+      }
+    },
+    "keyVaultName": {
+      "type": "String"
+    },
+    "keyVaultEncryptionUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "Key Vault encryption key URL"
+      }
+    },
     "artifact_sas_token": {
       "type": "securestring"
     }
@@ -32,7 +48,9 @@
     "vnetName": "shared-vnet",
     "storageAccountName": "[concat(parameters('systemName'), 'stgdiag')]",
     "logAnalyticsAccountName": "[concat(parameters('systemName'), 'stglogs')]",
-    "vnetAddressPrefix": "10.1"
+    "vnetAddressPrefix": "10.1",
+    "vm01": "[concat('vm-', parameters('systemName'), '01')]",
+    "vm02": "[concat('vm-', parameters('systemName'), '02')]"
   },
   "resources": [
     {
@@ -126,7 +144,7 @@
             "value": "[parameters('location')]"
           },
           "vmName": {
-            "value": "[concat('vm-', parameters('systemName'), '01')]"
+            "value": "[variables('vm01')]"
           },
           "hardwareProfile": {
             "value": "Standard_B4ms"
@@ -170,6 +188,91 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-05-01",
+      "name": "CostingMachine-01-ext-logs",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'CostingMachine-01')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/aad-vm-ext-logs.json'), parameters('artifact_sas_token'))]"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vmName": {
+            "value": "[variables('vm01')]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[reference('CostingAnalytics').outputs.workspaceCustomerId.value]"
+          },
+          "logAnalyticsWorkspaceKey": {
+            "value": "[reference('CostingAnalytics').outputs.workspaceKey.value]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
+      "name": "CostingMachine-01-ext-encryption",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'CostingMachine-01-ext-logs')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/aad-vm-ext-encryption.json'), parameters('artifact_sas_token'))]"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vmName": {
+            "value": "[variables('vm01')]"
+          },
+          "keyVaultResourceGroup": {
+            "value": "[parameters('keyVaultResourceGroup')]"
+          },
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "keyVaultEncryptionUrl": {
+            "value": "[parameters('keyVaultEncryptionUrl')]"
+          },
+          "vmEncryptionType": {
+            "value": "All"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
+      "name": "CostingMachine-01-ext-network",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'CostingMachine-01')]",
+        "[resourceId('Microsoft.Resources/deployments', 'CostingMachine-01-ext-encryption')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/aad-vm-ext-networkWatcher.json'), parameters('artifact_sas_token'))]"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vmName": {
+            "value": "[variables('vm01')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
       "name": "CostingMachine-02",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'SharedVnet')]",
@@ -186,7 +289,7 @@
             "value": "[parameters('location')]"
           },
           "vmName": {
-            "value": "[concat('vm-', parameters('systemName'), '02')]"
+            "value": "[variables('vm02')]"
           },
           "hardwareProfile": {
             "value": "Standard_DS3_v2"
@@ -226,6 +329,124 @@
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
+      "name": "CostingMachine-02-ext-logs",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'CostingMachine-02')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/aad-vm-ext-logs.json'), parameters('artifact_sas_token'))]"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vmName": {
+            "value": "[variables('vm02')]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[reference('CostingAnalytics').outputs.workspaceCustomerId.value]"
+          },
+          "logAnalyticsWorkspaceKey": {
+            "value": "[reference('CostingAnalytics').outputs.workspaceKey.value]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
+      "name": "CostingMachine-02-ext-encryption",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'CostingMachine-02')]",
+        "[resourceId('Microsoft.Resources/deployments', 'CostingMachine-02-ext-logs')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/aad-vm-ext-encryption.json'), parameters('artifact_sas_token'))]"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vmName": {
+            "value": "[variables('vm02')]"
+          },
+          "keyVaultResourceGroup": {
+            "value": "[parameters('keyVaultResourceGroup')]"
+          },
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "keyVaultEncryptionUrl": {
+            "value": "[parameters('keyVaultEncryptionUrl')]"
+          },
+          "vmEncryptionType": {
+            "value": "OS"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
+      "name": "CostingMachine-02-ext-software",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'CostingMachine-02')]",
+        "[resourceId('Microsoft.Resources/deployments', 'CostingMachine-02-ext-encryption')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/aad-vm-ext-software.json'), parameters('artifact_sas_token'))]"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vmName": {
+            "value": "[variables('vm02')]"
+          },
+          "scriptFileUris": {
+            "value": [
+              "[concat(uri(deployment().properties.templateLink.uri, 'install-software.ps1'), parameters('artifact_sas_token'))]",
+              "[concat(uri(deployment().properties.templateLink.uri, 'vs2019.config'), parameters('artifact_sas_token'))]"
+            ]
+          },
+          "commandToExecute": {
+            "value": "powershell -ExecutionPolicy Unrestricted -File install-software.ps1"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
+      "name": "CostingMachine-02-ext-network",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'CostingMachine-02')]",
+        "[resourceId('Microsoft.Resources/deployments', 'CostingMachine-02-ext-software')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/aad-vm-ext-networkWatcher.json'), parameters('artifact_sas_token'))]"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vmName": {
+            "value": "[variables('vm02')]"
           }
         }
       }
