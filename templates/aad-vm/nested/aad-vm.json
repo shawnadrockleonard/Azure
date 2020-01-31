@@ -16,7 +16,8 @@
       "type": "string",
       "allowedValues": [
         "Standard_B4ms",
-        "Standard_A4_v2"
+        "Standard_A4_v2",
+        "Standard_DS3_v2"
       ],
       "metadata": {
         "description": "Size of the virtual machine"
@@ -86,6 +87,13 @@
     },
     "subnetStaticIp": {
       "type": "string"
+    },
+    "enableAcceleratedNetworking": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable accelerated networking, note: only available in specific sizes"
+      }
     },
     "adminUsername": {
       "type": "string"
@@ -205,7 +213,7 @@
           "dnsServers": [
           ]
         },
-        "enableAcceleratedNetworking": false,
+        "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]",
         "enableIPForwarding": false,
         "networkSecurityGroup": {
           "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vm_nsg_name'))]"

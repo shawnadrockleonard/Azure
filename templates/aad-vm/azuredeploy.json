@@ -37,56 +37,6 @@
     "systemName": {
       "type": "String"
     },
-    "systemCount": {
-      "type": "int",
-      "defaultValue": 1,
-      "minValue": 1,
-      "maxValue": 10,
-      "metadata": {
-        "description": "represents the number of machines to be provisioned."
-      }
-    },
-    "hardwareProfile": {
-      "type": "string",
-      "allowedValues": [
-        "Standard_B4ms",
-        "Standard_A4_v2"
-      ],
-      "metadata": {
-        "description": "Size of the virtual machine"
-      }
-    },
-    "imagePublisher": {
-      "type": "string",
-      "allowedValues": [
-        "MicrosoftWindowsServer",
-        "MicrosoftWindowsDesktop"
-      ],
-      "metadata": {
-        "description": "Select image offer for the virtual machine"
-      }
-    },
-    "imageOffer": {
-      "type": "string",
-      "allowedValues": [
-        "WindowsServer",
-        "Windows-10"
-      ],
-      "metadata": {
-        "description": "Select image offer for the virtual machine"
-      }
-    },
-    "windowsOsVersion": {
-      "type": "string",
-      "allowedValues": [
-        "2019-Datacenter",
-        "rs5-pro",
-        "19h2-pro"
-      ],
-      "metadata": {
-        "description": "Select image SKU (aka os edition) for the virtual machine"
-      }
-    },
     "adminUsername": {
       "type": "string",
       "metadata": {
@@ -106,9 +56,7 @@
   "variables": {
     "vnetName": "shared-vnet",
     "storageAccountName": "[concat(parameters('systemName'), 'diag')]",
-    "vnetAddressPrefix": "20.0",
-    "vmSubnetName": "spoinstances",
-    "vmScriptSasUri": "[concat(uri(deployment().properties.templateLink.uri, 'install-software.ps1'), parameters('artifact_sas_token'))]"
+    "vnetAddressPrefix": "20.0"
   },
   "resources": [
     {
@@ -159,7 +107,7 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-05-01",
-      "name": "[concat('CostingMachine-', padLeft(add(copyIndex(), 1), 2, '0'))]",
+      "name": "CostingMachine-01",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'SharedVnet')]",
         "[resourceId('Microsoft.Resources/deployments', 'CostingStorage')]"
@@ -174,19 +122,19 @@
             "value": "[parameters('location')]"
           },
           "vmName": {
-            "value": "[concat('vm-', parameters('systemName'), padLeft(add(copyIndex(), 1), 2, '0'))]"
+            "value": "[concat('vm-', parameters('systemName'), '01')]"
           },
           "hardwareProfile": {
-            "value": "[parameters('hardwareProfile')]"
+            "value": "Standard_B4ms"
           },
           "imagePublisher": {
-            "value": "[parameters('imagePublisher')]"
+            "value": "MicrosoftWindowsDesktop"
           },
           "imageOffer": {
-            "value": "[parameters('imageOffer')]"
+            "value": "Windows-10"
           },
           "windowsOsVersion": {
-            "value": "[parameters('windowsOsVersion')]"
+            "value": "19h2-pro"
           },
           "managedDiskType": {
             "value": "StandardSSD_LRS"
@@ -204,10 +152,10 @@
             "value": "[variables('vnetName')]"
           },
           "subnetName": {
-            "value": "[variables('vmSubnetName')]"
+            "value": "spoinstances"
           },
           "subnetStaticIp": {
-            "value": "[concat(variables('vnetAddressPrefix'), '.1.', add(copyIndex(), 4))]"
+            "value": "[concat(variables('vnetAddressPrefix'), '.1.4')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -240,17 +188,96 @@
             "value": "OS"
           }
         }
-      },
-      "copy": {
-        "name": "solutionsCopy",
-        "count": "[parameters('systemCount')]"
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
+      "name": "CostingMachine-02",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'SharedVnet')]",
+        "[resourceId('Microsoft.Resources/deployments', 'CostingStorage')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/aad-vm.json'), parameters('artifact_sas_token'))]"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "vmName": {
+            "value": "[concat('vm-', parameters('systemName'), '02')]"
+          },
+          "hardwareProfile": {
+            "value": "Standard_B4ms"
+          },
+          "imagePublisher": {
+            "value": "MicrosoftWindowsDesktop"
+          },
+          "imageOffer": {
+            "value": "Windows-10"
+          },
+          "windowsOsVersion": {
+            "value": "19h2-pro"
+          },
+          "managedDiskType": {
+            "value": "StandardSSD_LRS"
+          },
+          "managedDataDiskType": {
+            "value": "Standard_LRS"
+          },
+          "enableAutomaticUpdates": {
+            "value": false
+          },
+          "diagnosticStorageName": {
+            "value": "[variables('storageAccountName')]"
+          },
+          "vnetName": {
+            "value": "[variables('vnetName')]"
+          },
+          "subnetName": {
+            "value": "spoinstances"
+          },
+          "subnetStaticIp": {
+            "value": "[concat(variables('vnetAddressPrefix'), '.1.5')]"
+          },
+          "enableAcceleratedNetworking": {
+            "value": true
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "scriptFileUris": {
+            "value": [
+              "[concat(uri(deployment().properties.templateLink.uri, 'install-software.ps1'), parameters('artifact_sas_token'))]",
+              "[concat(uri(deployment().properties.templateLink.uri, 'vs2019.config'), parameters('artifact_sas_token'))]"
+            ]
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[parameters('logAnalyticsWorkspaceId')]"
+          },
+          "logAnalyticsWorkspaceKey": {
+            "value": "[parameters('logAnalyticsWorkspaceKey')]"
+          },
+          "keyVaultResourceGroup": {
+            "value": "[parameters('keyVaultResourceGroup')]"
+          },
+          "keyVaultName": {
+            "value": "[parameters('keyVaultName')]"
+          },
+          "keyVaultEncryptionUrl": {
+            "value": "[parameters('keyVaultEncryptionUrl')]"
+          },
+          "vmEncryptionType": {
+            "value": "OS"
+          }
+        }
       }
     }
-  ],
-  "outputs": {
-    "scriptFileUri": {
-      "type": "string",
-      "value": "[variables('vmScriptSasUri')]"
-    }
-  }
+  ]
 }
