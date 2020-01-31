@@ -62,14 +62,6 @@
         "StandardSSD_LRS"
       ]
     },
-    "managedDataDiskType": {
-      "type": "string",
-      "allowedValues": [
-        "Premium_LRS",
-        "Standard_LRS",
-        "StandardSSD_LRS"
-      ]
-    },
     "enableAutomaticUpdates": {
       "type": "bool",
       "defaultValue": false
@@ -171,15 +163,6 @@
             }
           },
           "dataDisks": [
-            {
-              "name": "[concat(parameters('vmName'), 'datadisk01')]",
-              "diskSizeGB": 256,
-              "lun": 0,
-              "createOption": "Empty",
-              "managedDisk": {
-                "storageAccountType": "[parameters('managedDataDiskType')]"
-              }
-            }
           ]
         },
         "osProfile": {

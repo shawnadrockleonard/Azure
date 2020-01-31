@@ -31,7 +31,7 @@
   "variables": {
     "vnetName": "shared-vnet",
     "storageAccountName": "[concat(parameters('systemName'), 'stgdiag')]",
-    "logAnalyticsAccountName": "[concat(parameters('systemName'), 'stglogs')]",
+    "logAnalyticsAccountName": "[concat(parameters('systemName'), 'logs')]",
     "vnetAddressPrefix": "10.1"
   },
   "resources": [
@@ -143,9 +143,6 @@
           "managedDiskType": {
             "value": "StandardSSD_LRS"
           },
-          "managedDataDiskType": {
-            "value": "Standard_LRS"
-          },
           "enableAutomaticUpdates": {
             "value": false
           },
@@ -206,9 +203,6 @@
           "managedDiskType": {
             "value": "Premium_LRS"
           },
-          "managedDataDiskType": {
-            "value": "StandardSSD_LRS"
-          },
           "enableAutomaticUpdates": {
             "value": false
           },
@@ -238,6 +232,14 @@
     }
   ],
   "outputs": {
+    "storageName": {
+      "type": "string",
+      "value": "[variables('storageAccountName')]"
+    },
+    "logAnalyticsName": {
+      "type": "string",
+      "value": "[variables('logAnalyticsAccountName')]"
+    },
     "logAnalyticsId": {
       "type": "string",
       "value": "[reference('CostingAnalytics').outputs.workspaceCustomerId.value]"
