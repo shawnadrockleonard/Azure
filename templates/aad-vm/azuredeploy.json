@@ -9,19 +9,6 @@
         "description": "Location of the virtual machine and Key Vault"
       }
     },
-    "keyVaultResourceGroup": {
-      "type": "String",
-      "defaultValue": "[resourceGroup().name]",
-      "metadata": {
-        "description": "Resource group for the Key Vault"
-      }
-    },
-    "keyVaultName": {
-      "type": "String"
-    },
-    "keyVaultEncryptionUrl": {
-      "type": "string"
-    },
     "systemName": {
       "type": "String"
     },
@@ -178,30 +165,6 @@
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
-          },
-          "scriptFileUris": {
-            "value": [
-              "[concat(uri(deployment().properties.templateLink.uri, 'install-software.ps1'), parameters('artifact_sas_token'))]",
-              "[concat(uri(deployment().properties.templateLink.uri, 'vs2019.config'), parameters('artifact_sas_token'))]"
-            ]
-          },
-          "logAnalyticsWorkspaceId": {
-            "value": "[reference('CostingAnalytics').outputs.workspaceCustomerId.value]"
-          },
-          "logAnalyticsWorkspaceKey": {
-            "value": "[reference('CostingAnalytics').outputs.workspaceKey.value]"
-          },
-          "keyVaultResourceGroup": {
-            "value": "[parameters('keyVaultResourceGroup')]"
-          },
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "keyVaultEncryptionUrl": {
-            "value": "[parameters('keyVaultEncryptionUrl')]"
-          },
-          "vmEncryptionType": {
-            "value": "OS"
           }
         }
       }
@@ -268,30 +231,6 @@
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
-          },
-          "scriptFileUris": {
-            "value": [
-              "[concat(uri(deployment().properties.templateLink.uri, 'install-software.ps1'), parameters('artifact_sas_token'))]",
-              "[concat(uri(deployment().properties.templateLink.uri, 'vs2019.config'), parameters('artifact_sas_token'))]"
-            ]
-          },
-          "logAnalyticsWorkspaceId": {
-            "value": "[reference('CostingAnalytics').outputs.workspaceCustomerId.value]"
-          },
-          "logAnalyticsWorkspaceKey": {
-            "value": "[reference('CostingAnalytics').outputs.workspaceKey.value]"
-          },
-          "keyVaultResourceGroup": {
-            "value": "[parameters('keyVaultResourceGroup')]"
-          },
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "keyVaultEncryptionUrl": {
-            "value": "[parameters('keyVaultEncryptionUrl')]"
-          },
-          "vmEncryptionType": {
-            "value": "OS"
           }
         }
       }

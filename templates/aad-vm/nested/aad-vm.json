@@ -101,96 +101,20 @@
       "metadata": {
         "description": "Local admin password of the virtual machine"
       }
-    },
-    "scriptFileUris": {
-      "type": "array",
-      "defaultValue": [
-      ],
-      "metadata": {
-        "description": "script blob uris with SAS tokens"
-      }
-    },
-    "logAnalyticsWorkspaceId": {
-      "type": "String",
-      "metadata": {
-        "description": "Resource ID for the log analytics workspace."
-      }
-    },
-    "logAnalyticsWorkspaceKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "primary key for the log analytics workspace."
-      }
-    },
-    "keyVaultResourceGroup": {
-      "type": "String",
-      "defaultValue": "[resourceGroup().name]",
-      "metadata": {
-        "description": "Resource group for the Key Vault"
-      }
-    },
-    "keyVaultName": {
-      "type": "String"
-    },
-    "keyVaultEncryptionUrl": {
-      "type": "string",
-      "metadata": {
-        "description": "Key Vault encryption key URL"
-      }
-    },
-    "vmEncryptionType": {
-      "allowedValues": [
-        "OS",
-        "Data",
-        "All"
-      ],
-      "type": "string"
-    },
-    "malwareExclusionPaths": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "malwareExclusionExtensions": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "malwareExclusionProcesses": {
-      "type": "string",
-      "defaultValue": ""
-    },
-    "aadJoinDevice": {
-      "type": "bool",
-      "defaultValue": false
     }
   },
   "variables": {
-    "vm_nsg_name": "[concat(parameters('vmName'), '-nsg')]",
     "vm_nic_name": "[concat(parameters('vmName'), '-nic01')]",
     "diagnosticStorageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('diagnosticStorageName'))]",
-    "encryptionOperation": "EnableEncryption",
-    "KeyEncryptionAlgorithm": "RSA-OAEP",
-    "KeyVaultResourceId": "[concat(subscription().id,'/resourceGroups/', parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
-    "KeyEncryptionKeyURL": "[parameters('keyVaultEncryptionUrl')]",
     "subnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
   },
   "resources": [
-    {
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "apiVersion": "2019-11-01",
-      "name": "[variables('vm_nsg_name')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "securityRules": [
-        ]
-      }
-    },
     {
       "type": "Microsoft.Network/networkInterfaces",
       "apiVersion": "2019-11-01",
       "name": "[variables('vm_nic_name')]",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vm_nsg_name'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -212,10 +136,7 @@
           ]
         },
         "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]",
-        "enableIPForwarding": false,
-        "networkSecurityGroup": {
-          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('vm_nsg_name'))]"
-        }
+        "enableIPForwarding": false
       }
     },
     {
@@ -286,142 +207,6 @@
             "storageUri": "[reference(variables('diagnosticStorageId'), '2019-04-01').primaryEndpoints.blob]"
           }
         }
-      }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2019-03-01",
-      "name": "[concat(parameters('vmName'), '/antimalware')]",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.Azure.Security",
-        "type": "IaaSAntimalware",
-        "typeHandlerVersion": "1.5",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "AntimalwareEnabled": true,
-          "RealtimeProtectionEnabled": "true",
-          "ScheduledScanSettings": {
-            "isEnabled": "true",
-            "scanType": "Quick",
-            "day": "7",
-            "time": "120"
-          },
-          "Exclusions": {
-            "Extensions": "[parameters('malwareExclusionExtensions')]",
-            "Paths": "[parameters('malwareExclusionPaths')]",
-            "Processes": "[parameters('malwareExclusionProcesses')]"
-          }
-        },
-        "protectedSettings": null
-      }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2019-03-01",
-      "name": "[concat(parameters('vmName'), '/CustomScriptExtension')]",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'), '/extensions/antimalware')]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.Compute",
-        "type": "CustomScriptExtension",
-        "typeHandlerVersion": "1.9",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "fileUris": "[parameters('scriptFileUris')]",
-          "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File install-software.ps1"
-        },
-        "protectedSettings": {
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2019-03-01",
-      "name": "[concat(parameters('vmName'),'/LogAnalytics')]",
-      "location": "[concat(parameters('location'))]",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/CustomScriptExtension')]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-        "type": "MicrosoftMonitoringAgent",
-        "typeHandlerVersion": "1.0",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "workspaceId": "[parameters('logAnalyticsWorkspaceId')]"
-        },
-        "protectedSettings": {
-          "workspaceKey": "[parameters('logAnalyticsWorkspaceKey')]"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'),'/diskEncryption')]",
-      "apiVersion": "2019-03-01",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/LogAnalytics')]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.Azure.Security",
-        "type": "AzureDiskEncryption",
-        "typeHandlerVersion": "2.2",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "EncryptionOperation": "[variables('encryptionOperation')]",
-          "KeyVaultURL": "[reference(variables('KeyVaultResourceId'), '2018-02-14').vaultUri]",
-          "KeyVaultResourceId": "[variables('KeyVaultResourceId')]",
-          "KeyEncryptionAlgorithm": "[variables('KeyEncryptionAlgorithm')]",
-          "VolumeType": "[parameters('vmEncryptionType')]",
-          "KeyEncryptionKeyURL": "[variables('KeyEncryptionKeyURL')]",
-          "KekVaultResourceId": "[variables('KeyVaultResourceId')]"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2018-10-01",
-      "name": "[concat(parameters('vmName'), '/AzureNetworkWatcherExtension')]",
-      "location": "[parameters('location')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/diskEncryption')]"
-      ],
-      "tags": {
-        "Customer": "shawniq",
-        "displayName": "vm extensions"
-      },
-      "properties": {
-        "autoUpgradeMinorVersion": true,
-        "publisher": "Microsoft.Azure.NetworkWatcher",
-        "type": "NetworkWatcherAgentWindows",
-        "typeHandlerVersion": "1.4"
-      }
-    },
-    {
-      "condition": "[equals(parameters('aadJoinDevice'), bool('true'))]",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmName'), '/AADLoginForWindows')]",
-      "location": "[parameters('location')]",
-      "apiVersion": "2019-03-01",
-      "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'), '/extensions/AzureNetworkWatcherExtension')]"
-      ],
-      "properties": {
-        "publisher": "Microsoft.Azure.ActiveDirectory",
-        "type": "AADLoginForWindows",
-        "typeHandlerVersion": "0.4",
-        "autoUpgradeMinorVersion": true
       }
     }
   ],
