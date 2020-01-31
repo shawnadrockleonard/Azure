@@ -31,7 +31,7 @@
   "variables": {
     "vnetName": "shared-vnet",
     "storageAccountName": "[concat(parameters('systemName'), 'stgdiag')]",
-    "logAnalyticsAccountName": "[concat(parameters('systemName'), 'logs')]",
+    "logAnalyticsAccountName": "[concat(parameters('systemName'), 'stglogs')]",
     "vnetAddressPrefix": "10.1"
   },
   "resources": [
