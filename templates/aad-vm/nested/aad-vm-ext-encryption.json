@@ -1,0 +1,77 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location of the storage account"
+      }
+    },
+    "vmName": {
+      "type": "string"
+    },
+    "keyVaultResourceGroup": {
+      "type": "String",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "Resource group for the Key Vault"
+      }
+    },
+    "keyVaultName": {
+      "type": "String"
+    },
+    "keyVaultEncryptionUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "Key Vault encryption key URL"
+      }
+    },
+    "vmEncryptionType": {
+      "allowedValues": [
+        "OS",
+        "Data",
+        "All"
+      ],
+      "type": "string"
+    }
+  },
+  "variables": {
+    "encryptionOperation": "EnableEncryption",
+    "KeyEncryptionAlgorithm": "RSA-OAEP",
+    "KeyVaultResourceId": "[concat(subscription().id,'/resourceGroups/', parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
+    "KeyEncryptionKeyURL": "[parameters('keyVaultEncryptionUrl')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmName'),'/diskEncryption')]",
+      "apiVersion": "2019-03-01",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+      ],
+      "properties": {
+        "publisher": "Microsoft.Azure.Security",
+        "type": "AzureDiskEncryption",
+        "typeHandlerVersion": "2.2",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "EncryptionOperation": "[variables('encryptionOperation')]",
+          "KeyVaultURL": "[reference(variables('KeyVaultResourceId'), '2018-02-14').vaultUri]",
+          "KeyVaultResourceId": "[variables('KeyVaultResourceId')]",
+          "KeyEncryptionAlgorithm": "[variables('KeyEncryptionAlgorithm')]",
+          "VolumeType": "[parameters('vmEncryptionType')]",
+          "KeyEncryptionKeyURL": "[variables('KeyEncryptionKeyURL')]",
+          "KekVaultResourceId": "[variables('KeyVaultResourceId')]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'diskEncryption')]"
+    }
+  }
+}
