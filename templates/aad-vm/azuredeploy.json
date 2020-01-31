@@ -223,10 +223,10 @@
             "value": "19h2-pro"
           },
           "managedDiskType": {
-            "value": "StandardSSD_LRS"
+            "value": "PremiumSSD_LRS"
           },
           "managedDataDiskType": {
-            "value": "Standard_LRS"
+            "value": "StandardSSD_LRS"
           },
           "enableAutomaticUpdates": {
             "value": false
