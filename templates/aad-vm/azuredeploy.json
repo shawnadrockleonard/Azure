@@ -211,7 +211,7 @@
             "value": "[concat('vm-', parameters('systemName'), '02')]"
           },
           "hardwareProfile": {
-            "value": "Standard_B4ms"
+            "value": "Standard_DS3_v2"
           },
           "imagePublisher": {
             "value": "MicrosoftWindowsDesktop"
