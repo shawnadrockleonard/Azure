@@ -9,13 +9,6 @@
         "description": "Location of the virtual machine and Key Vault"
       }
     },
-    "resourceGroup": {
-      "type": "String",
-      "defaultValue": "[resourceGroup().name]",
-      "metadata": {
-        "description": "Resource group for log analytics"
-      }
-    },
     "logAnalyticsWorkspaceName": {
       "type": "string",
       "metadata": {
@@ -48,20 +41,6 @@
     }
   },
   "variables": {
-    "Solutions": [
-      {
-        "EnvironmentCondition": true,
-        "Name": "[concat('Updates(', parameters('logAnalyticsWorkspaceName'), ')')]",
-        "GalleryName": "Updates",
-        "Publisher": "Microsoft"
-      },
-      {
-        "EnvironmentCondition": true,
-        "Name": "[concat('NetworkMonitoring(', parameters('logAnalyticsWorkspaceName'), ')')]",
-        "GalleryName": "NetworkMonitoring",
-        "Publisher": "Microsoft"
-      }
-    ]
   },
   "resources": [
     {
@@ -82,36 +61,6 @@
       },
       "resources": [
       ]
-    },
-    {
-      "condition": "[equals(variables('Solutions')[copyIndex()].EnvironmentCondition, bool('true'))]",
-      "type": "Microsoft.OperationsManagement/solutions",
-      "apiVersion": "2015-11-01-preview",
-      "name": "[variables('Solutions')[copyIndex()].Name]",
-      "location": "[parameters('location')]",
-      "tags": {
-        "Customer": "shawniq",
-        "displayName": "log analytics insights"
-      },
-      "dependsOn": [
-        "[concat('Microsoft.OperationalInsights/workspaces/', parameters('logAnalyticsWorkspaceName'))]"
-      ],
-      "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('resourceGroup'), '/providers/Microsoft.OperationsManagement/solutions/', variables('Solutions')[copyIndex()].Name)]",
-      "properties": {
-        "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('logAnalyticsWorkspaceName'))]",
-        "containedResources": [
-        ]
-      },
-      "plan": {
-        "name": "[variables('Solutions')[copyIndex()].Name]",
-        "product": "[concat('OMSGallery/', variables('Solutions')[copyIndex()].GalleryName)]",
-        "promotionCode": "",
-        "publisher": "[variables('Solutions')[copyIndex()].Publisher]"
-      },
-      "copy": {
-        "name": "solutionsCopy",
-        "count": "[length(variables('Solutions'))]"
-      }
     }
   ],
   "outputs": {

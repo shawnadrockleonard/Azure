@@ -9,18 +9,6 @@
         "description": "Location of the virtual machine and Key Vault"
       }
     },
-    "logAnalyticsWorkspaceId": {
-      "type": "String",
-      "metadata": {
-        "description": "The resource id for the log analytics workspace"
-      }
-    },
-    "logAnalyticsWorkspaceKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "The workspace primary key for log analytics"
-      }
-    },
     "keyVaultResourceGroup": {
       "type": "String",
       "defaultValue": "[resourceGroup().name]",
@@ -55,8 +43,8 @@
   },
   "variables": {
     "vnetName": "shared-vnet",
-    "storageAccountName": "[concat(parameters('systemName'), 'diag')]",
-    "vnetAddressPrefix": "20.0"
+    "storageAccountName": "[concat(parameters('systemName'), 'stgdiag')]",
+    "vnetAddressPrefix": "10.1"
   },
   "resources": [
     {
@@ -107,10 +95,38 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-05-01",
+      "name": "CostingAnalytics",
+      "dependsOn": [
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(uri(deployment().properties.templateLink.uri, 'nested/aad-log-analytics.json'), parameters('artifact_sas_token'))]"
+        },
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "logAnalyticsWorkspaceName": {
+            "value": "[variables('storageAccountName')]"
+          },
+          "logAnalyticsSku": {
+            "value": "PerGB2018"
+          },
+          "logAnalyticsRetention": {
+            "value": 30
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
       "name": "CostingMachine-01",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'SharedVnet')]",
-        "[resourceId('Microsoft.Resources/deployments', 'CostingStorage')]"
+        "[resourceId('Microsoft.Resources/deployments', 'CostingStorage')]",
+        "[resourceId('Microsoft.Resources/deployments', 'CostingAnalytics')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -170,10 +186,10 @@
             ]
           },
           "logAnalyticsWorkspaceId": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
+            "value": "[reference('CostingAnalytics').outputs.workspaceCustomerId.value]"
           },
           "logAnalyticsWorkspaceKey": {
-            "value": "[parameters('logAnalyticsWorkspaceKey')]"
+            "value": "[reference('CostingAnalytics').outputs.workspaceKey.value]"
           },
           "keyVaultResourceGroup": {
             "value": "[parameters('keyVaultResourceGroup')]"
@@ -196,7 +212,8 @@
       "name": "CostingMachine-02",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'SharedVnet')]",
-        "[resourceId('Microsoft.Resources/deployments', 'CostingStorage')]"
+        "[resourceId('Microsoft.Resources/deployments', 'CostingStorage')]",
+        "[resourceId('Microsoft.Resources/deployments', 'CostingAnalytics')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -259,10 +276,10 @@
             ]
           },
           "logAnalyticsWorkspaceId": {
-            "value": "[parameters('logAnalyticsWorkspaceId')]"
+            "value": "[reference('CostingAnalytics').outputs.workspaceCustomerId.value]"
           },
           "logAnalyticsWorkspaceKey": {
-            "value": "[parameters('logAnalyticsWorkspaceKey')]"
+            "value": "[reference('CostingAnalytics').outputs.workspaceKey.value]"
           },
           "keyVaultResourceGroup": {
             "value": "[parameters('keyVaultResourceGroup')]"
