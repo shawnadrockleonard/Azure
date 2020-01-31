@@ -31,6 +31,7 @@
   "variables": {
     "vnetName": "shared-vnet",
     "storageAccountName": "[concat(parameters('systemName'), 'stgdiag')]",
+    "logAnalyticsAccountName": "[concat(parameters('systemName'), 'stglogs')]",
     "vnetAddressPrefix": "10.1"
   },
   "resources": [
@@ -95,7 +96,7 @@
             "value": "[parameters('location')]"
           },
           "logAnalyticsWorkspaceName": {
-            "value": "[variables('storageAccountName')]"
+            "value": "[variables('logAnalyticsAccountName')]"
           },
           "logAnalyticsSku": {
             "value": "PerGB2018"
@@ -235,5 +236,23 @@
         }
       }
     }
-  ]
+  ],
+  "outputs": {
+    "logAnalyticsId": {
+      "type": "string",
+      "value": "[reference('CostingAnalytics').outputs.workspaceCustomerId.value]"
+    },
+    "logAnalyticsKey": {
+      "type": "string",
+      "value": "[reference('CostingAnalytics').outputs.workspaceKey.value]"
+    },
+    "vm01Id": {
+      "type": "string",
+      "value": "[reference('CostingMachine-01').outputs.vmResourceId.value]"
+    },
+    "vm02Id": {
+      "type": "string",
+      "value": "[reference('CostingMachine-02').outputs.vmResourceId.value]"
+    }
+  }
 }
