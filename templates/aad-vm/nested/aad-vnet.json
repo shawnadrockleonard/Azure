@@ -73,6 +73,204 @@
       },
       "properties": {
         "securityRules": [
+          {
+            "name": "allow-https",
+            "properties": {
+              "description": "Allow HTTPS to internal for testing",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 110,
+              "direction": "Inbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "allow-icmp-inbound",
+            "properties": {
+              "description": "Allow icmp - Inbound",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 120,
+              "direction": "Inbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+                "80",
+                "135",
+                "445",
+                "636",
+                "3268",
+                "4500"
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "allow-multicast-inbound",
+            "properties": {
+              "description": "Allow multicast - Inbound",
+              "protocol": "Udp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 130,
+              "direction": "Inbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+                "67",
+                "68",
+                "547",
+                "546",
+                "5353"
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "allow-query-inbound",
+            "properties": {
+              "description": "Allow query - Inbound",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 140,
+              "direction": "Inbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+                "88 ",
+                "389",
+                "53"
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "allow-icmp-outbound",
+            "properties": {
+              "description": "Allow icmp - outbound",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 120,
+              "direction": "Outbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+                "80",
+                "135",
+                "445",
+                "636",
+                "3268",
+                "4500"
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "allow-multicast-outbound",
+            "properties": {
+              "description": "Allow multicast - outbound",
+              "protocol": "Udp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 130,
+              "direction": "Outbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+                "67",
+                "68",
+                "547",
+                "546",
+                "5353"
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "allow-query-outbound",
+            "properties": {
+              "description": "Allow query - outbound",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 140,
+              "direction": "Outbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+                "88",
+                "389",
+                "53"
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "winlogin-outbound",
+            "properties": {
+              "description": "winlogin outbound",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "1025-5000",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 145,
+              "direction": "Outbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          }
         ],
         "defaultSecurityRules": [
         ]

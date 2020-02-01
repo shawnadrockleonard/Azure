@@ -316,10 +316,10 @@
             "value": "[variables('vnetName')]"
           },
           "subnetName": {
-            "value": "spoinstances"
+            "value": "spodmz"
           },
           "subnetStaticIp": {
-            "value": "[concat(variables('vnetAddressPrefix'), '.1.5')]"
+            "value": "[concat(variables('vnetAddressPrefix'), '.3.4')]"
           },
           "enableAcceleratedNetworking": {
             "value": true
