@@ -1,3 +1,19 @@
+Function Install-Choco
+{
+ [CmdletBinding()]
+ param()
+ process {
+    Set-ExecutionPolicy Bypass -force
+    If (!(Test-Path -Path "C:\ProgramData\chocolatey")) 
+    {
+      $env:chocolateyUseWindowsCompression = 'false'
+      Invoke-WebRequest https://chocolatey.org/install.ps1 -UseBasicParsing | Invoke-Expression
+      choco feature enable -n=allowGlobalConfirmation
+    }
+}
+}
+
+
 function Install-AzCopy {
   [CmdletBinding()]
   Param(
