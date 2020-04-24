@@ -46,7 +46,8 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-05-01",
             "name": "Network",
-            "dependsOn": [],
+            "dependsOn": [
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -127,6 +128,12 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "vnetId": {
+                        "value": "[reference('Network').outputs.vnetEnvironmentId.value]"
+                    },
+                    "vnetSubnetName": {
+                        "value": "[reference('Network').outputs.subnetVMName.value]"
+                    },
                     "environment": {
                         "value": "[parameters('environment')]"
                     },

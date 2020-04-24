@@ -1,0 +1,54 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location of the storage account"
+      }
+    },
+    "vmName": {
+      "type": "string"
+    },
+    "logAnalyticsWorkspaceId": {
+      "type": "String",
+      "metadata": {
+        "description": "Resource ID for the log analytics workspace."
+      }
+    },
+    "logAnalyticsWorkspaceKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "primary key for the log analytics workspace."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2019-03-01",
+      "name": "[concat(parameters('vmName'),'/LogAnalytics')]",
+      "location": "[concat(parameters('location'))]",
+      "properties": {
+        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+        "type": "MicrosoftMonitoringAgent",
+        "typeHandlerVersion": "1.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "workspaceId": "[parameters('logAnalyticsWorkspaceId')]"
+        },
+        "protectedSettings": {
+          "workspaceKey": "[parameters('logAnalyticsWorkspaceKey')]"
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "resourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'LogAnalytics')]"
+    }
+  }
+}

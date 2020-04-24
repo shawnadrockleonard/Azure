@@ -1,0 +1,455 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location of the storage account"
+      }
+    },
+    "vnetName": {
+      "type": "string"
+    },
+    "vnetPrefix": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "addressPrefix": "[concat(parameters('vnetPrefix'), '.0.0/22')]",
+    "defaultSubnetName": "default",
+    "defaultSubnetAddressPrefix": "[concat(parameters('vnetPrefix'), '.0.0/24')]",
+    "defaultSubnet_nsg_internal_name": "[concat(parameters('vnetName'), '-nsg-default')]",
+    "spoSubnetName": "spoinstances",
+    "spoSubnetAddressPrefix": "[concat(parameters('vnetPrefix'), '.1.0/25')]",
+    "spoSubnet_nsg_internal_name": "[concat(parameters('vnetName'), '-nsg-internal')]",
+    "dmzSubnetName": "spodmz",
+    "dmzSubnetAddressPrefix": "[concat(parameters('vnetPrefix'), '.3.0/25')]",
+    "dmzSubnet_nsg_internal_name": "[concat(parameters('vnetName'), '-nsg-dmz')]",
+    "bastionSubnetName": "AzureBastionSubnet",
+    "bastionSubnetAddressPrefix": "[concat(parameters('vnetPrefix'), '.2.0/27')]",
+    "bastionHostName": "[concat(parameters('vnetName'), '-bastion')]",
+    "bastionPublicIpName": "[concat(parameters('vnetName'), '-ip')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2019-04-01",
+      "name": "[variables('defaultSubnet_nsg_internal_name')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "vnet"
+      },
+      "properties": {
+        "securityRules": [
+        ],
+        "defaultSecurityRules": [
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2019-04-01",
+      "name": "[variables('spoSubnet_nsg_internal_name')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "vnet"
+      },
+      "properties": {
+        "securityRules": [
+        ],
+        "defaultSecurityRules": [
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2019-04-01",
+      "name": "[variables('dmzSubnet_nsg_internal_name')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "vnet"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "allow-https",
+            "properties": {
+              "description": "Allow HTTPS to internal for testing",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 110,
+              "direction": "Inbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "allow-icmp-inbound",
+            "properties": {
+              "description": "Allow icmp - Inbound",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 120,
+              "direction": "Inbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+                "80",
+                "135",
+                "445",
+                "636",
+                "3268",
+                "4500"
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "allow-multicast-inbound",
+            "properties": {
+              "description": "Allow multicast - Inbound",
+              "protocol": "Udp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 130,
+              "direction": "Inbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+                "67",
+                "68",
+                "547",
+                "546",
+                "5353"
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "allow-query-inbound",
+            "properties": {
+              "description": "Allow query - Inbound",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 140,
+              "direction": "Inbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+                "88 ",
+                "389",
+                "53"
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "allow-icmp-outbound",
+            "properties": {
+              "description": "Allow icmp - outbound",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 120,
+              "direction": "Outbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+                "80",
+                "135",
+                "445",
+                "636",
+                "3268",
+                "4500"
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "allow-multicast-outbound",
+            "properties": {
+              "description": "Allow multicast - outbound",
+              "protocol": "Udp",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 130,
+              "direction": "Outbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+                "67",
+                "68",
+                "547",
+                "546",
+                "5353"
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "allow-query-outbound",
+            "properties": {
+              "description": "Allow query - outbound",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 140,
+              "direction": "Outbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+                "88",
+                "389",
+                "53"
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          },
+          {
+            "name": "winlogin-outbound",
+            "properties": {
+              "description": "winlogin outbound",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "1025-5000",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 145,
+              "direction": "Outbound",
+              "sourcePortRanges": [
+              ],
+              "destinationPortRanges": [
+              ],
+              "sourceAddressPrefixes": [
+              ],
+              "destinationAddressPrefixes": [
+              ]
+            }
+          }
+        ],
+        "defaultSecurityRules": [
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2019-11-01",
+      "name": "[parameters('vnetName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "customer": "shawniq",
+        "displayName": "vnet"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('defaultSubnet_nsg_internal_name'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('spoSubnet_nsg_internal_name'))]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', variables('dmzSubnet_nsg_internal_name'))]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('addressPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('defaultSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('defaultSubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('defaultSubnet_nsg_internal_name'))]"
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.Sql",
+                  "locations": [
+                    "[parameters('location')]"
+                  ]
+                },
+                {
+                  "service": "Microsoft.Storage",
+                  "locations": [
+                    "[parameters('location')]"
+                  ]
+                },
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                    "[parameters('location')]"
+                  ]
+                }
+              ],
+              "delegations": [
+              ],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "[variables('spoSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('spoSubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('spoSubnet_nsg_internal_name'))]"
+              },
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                    "[parameters('location')]"
+                  ]
+                }
+              ],
+              "delegations": [
+              ],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "[variables('dmzSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('dmzSubnetAddressPrefix')]",
+              "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('dmzSubnet_nsg_internal_name'))]"
+              },
+              "serviceEndpoints": [
+              ],
+              "delegations": [
+              ]
+            }
+          },
+          {
+            "name": "[variables('bastionSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('bastionSubnetAddressPrefix')]",
+              "serviceEndpoints": [
+              ],
+              "delegations": [
+              ]
+            }
+          }
+        ],
+        "virtualNetworkPeerings": [
+        ],
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      }
+    },
+    {
+      "apiVersion": "2019-02-01",
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "name": "[concat(parameters('vnetName'), '/', variables('bastionSubnetName'))]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+      ],
+      "properties": {
+        "addressPrefix": "[variables('bastionSubnetAddressPrefix')]",
+        "serviceEndpoints": [
+        ],
+        "delegations": [
+        ]
+      }
+    },
+    {
+      "apiVersion": "2019-02-01",
+      "type": "Microsoft.Network/publicIpAddresses",
+      "name": "[variables('bastionPublicIpName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "vnet"
+      },
+      "sku": {
+        "name": "Standard"
+      },
+      "properties": {
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Static",
+        "idleTimeoutInMinutes": 4,
+        "ipTags": [
+        ]
+      }
+    },
+    {
+      "apiVersion": "2019-11-01",
+      "type": "Microsoft.Network/bastionHosts",
+      "name": "[variables('bastionHostName')]",
+      "location": "[parameters('location')]",
+      "tags": {
+        "displayName": "vnet"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIpAddresses', variables('bastionPublicIpName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('bastionSubnetName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "IpConf",
+            "properties": {
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), variables('bastionSubnetName'))]"
+              },
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIpAddresses', variables('bastionPublicIpName'))]"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "vnetId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]"
+    }
+  }
+}

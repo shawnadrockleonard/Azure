@@ -8,32 +8,32 @@
 
 @{
 
-# Script module or binary module file associated with this manifest.
-RootModule = 'AzureCM.Automation.psm1'
+    # Script module or binary module file associated with this manifest.
+    RootModule            = 'AzureCM.Automation.psm1'
 
-# Version number of this module.
-ModuleVersion = '1.0.0.0'
+    # Version number of this module.
+    ModuleVersion         = '1.0.0.0'
 
-# ID used to uniquely identify this module
-GUID = 'fb6c0827-cdb2-4d97-b901-d74c7de487ca'
+    # ID used to uniquely identify this module
+    GUID                  = 'fb6c0827-cdb2-4d97-b901-d74c7de487ca'
 
-# Author of this module
-Author = 'Shawn Leonard'
+    # Author of this module
+    Author                = 'Shawn Leonard'
 
-# Company or vendor of this module
-CompanyName = 'SPL-INC'
+    # Company or vendor of this module
+    CompanyName           = 'SPL-INC'
 
-# Copyright statement for this module
-Copyright = '(c) 2014 . All rights reserved.'
+    # Copyright statement for this module
+    Copyright             = '(c) 2014 . All rights reserved.'
 
-# Description of the functionality provided by this module
-Description = 'Module contains functions for Azure Automation'
+    # Description of the functionality provided by this module
+    Description           = 'Module contains functions for Azure Automation'
 
-ProcessorArchitecture = 'Amd64'
-FunctionsToExport = '*'
-CmdletsToExport = '*'
-VariablesToExport = '*'
-AliasesToExport = '*'
+    ProcessorArchitecture = 'Amd64'
+    FunctionsToExport     = '*'
+    CmdletsToExport       = '*'
+    VariablesToExport     = '*'
+    AliasesToExport       = '*'
 
 }
 

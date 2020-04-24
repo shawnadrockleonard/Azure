@@ -1,0 +1,40 @@
+﻿{
+  "keys": [
+    {
+      "StorageAccount": "armcontosova01stg",
+      "StorageKey": "",
+      "StorageType": "AzureUSGovernment"
+    },
+    {
+      "StorageAccount": "armvmoracle",
+      "StorageKey": "",
+      "StorageType": "AzureUSGovernment"
+    }
+  ],
+  "blobs": [
+    {
+      "ComputerName": "oracle01",
+      "DestinationStorageName": "armcontosova01stg",
+      "DestinationContainerName": "vhds",
+      "DestinationVhd": "oracle01-os01.vhd",
+      "OriginalStorageName": "armvmoracle",
+      "OriginalContainerName": "vhds",
+      "OriginalLocation": "oracle01-os01.vhd",
+      "Activity": "go"
+    },
+    {
+      "ComputerName": "oracle01",
+      "DestinationStorageName": "armcontosova01stg",
+      "DestinationContainerName": "vhds",
+      "DestinationVhd": "oracle01-data02.vhd",
+      "OriginalStorageName": "armvmoracle",
+      "OriginalContainerName": "vhds",
+      "OriginalLocation": "oracle01-data02.vhd",
+      "Activity": "go"
+    }
+  ],
+  "uris": [
+    "https://armcontosova01stg.blob.core.usgovcloudapi.net/vhds",
+    "https://armvmoracle.blob.core.usgovcloudapi.net/vhds/oracle01-os01.vhd"
+  ]
+}

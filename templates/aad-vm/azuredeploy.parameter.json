@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "systemName": {
+      "value": "splcosting"
+    },
+    "adminUsername": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armbastion/providers/Microsoft.KeyVault/vaults/splcostingkv"
+        },
+        "secretName": "vmloginname"
+      }
+    },
+    "adminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/f59b8f71-6228-4888-b5dd-b155171027c3/resourceGroups/armbastion/providers/Microsoft.KeyVault/vaults/splcostingkv"
+        },
+        "secretName": "vmloginpwd"
+      }
+    },
+    "artifact_sas_token": {
+      "value": ""
+    }
+  }
+}

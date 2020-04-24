@@ -1,0 +1,31 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptionId": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "resourcegroupName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "workspaceName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "solutionType": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "scopeConfigurationName": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "resources": []
+}

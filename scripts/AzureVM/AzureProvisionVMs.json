@@ -1,0 +1,104 @@
+{
+  "VMs": [
+    {
+      "isdc": true,
+      "name": "dc1",
+      "service": "contosodcha",
+      "size": "Small",
+      "subnet": "domainng",
+      "ip": "10.0.0.4",
+      "storage": "contosodcstorage",
+      "imageFamily": "Windows Server 2012 R2 Datacenter",
+      "domain": {
+        "netbiosname": "contoso",
+        "fqdn": "contoso.local",
+        "installmode": "NewForest",
+        "driveletter": "K"
+      },
+      "disks": {
+        "DATA": {
+          "size": 250,
+          "letter": "K",
+          "number": 2
+        }
+      }
+    },
+    {
+      "isdc": true,
+      "name": "dc2",
+      "service": "contosodcha",
+      "size": "Small",
+      "subnet": "domainng",
+      "ip": "10.0.0.5",
+      "storage": "contosodcstorage",
+      "imageFamily": "Windows Server 2012 R2 Datacenter",
+      "domain": {
+        "netbiosname": "contoso",
+        "fqdn": "contoso.local",
+        "installmode": "Replica",
+        "driveletter": "K"
+      },
+      "disks": {
+        "DATA": {
+          "size": 250,
+          "letter": "K",
+          "number": 2
+        }
+      }
+    },
+    {
+      "isdc": false,
+      "name": "sql1",
+      "service": "contosodbha",
+      "availset": "sqlhadr",
+      "size": "A5",
+      "subnet": "datang",
+      "ip": "10.0.0.21",
+      "storage": "contososqlstorage",
+      "imageFamily": "Windows Server 2012 R2 Datacenter",
+      "domain": {
+        "netbiosname": "contoso",
+        "fqdn": "contoso.local"
+      },
+      "disks": {
+        "LOGS": {
+          "size": 250,
+          "letter": "K",
+          "number": 2
+        },
+        "DATA": {
+          "size": 500,
+          "letter": "L",
+          "number": 3
+        }
+      }
+    },
+    {
+      "isdc": false,
+      "name": "sql2",
+      "service": "contosodbha",
+      "availset": "sqlhadr",
+      "size": "A5",
+      "subnet": "datang",
+      "ip": "10.0.0.22",
+      "storage": "contososqlstorage",
+      "imageFamily": "Windows Server 2012 R2 Datacenter",
+      "domain": {
+        "netbiosname": "contoso",
+        "fqdn": "contoso.local"
+      },
+      "disks": {
+        "LOGS": {
+          "size": 250,
+          "letter": "K",
+          "number": 2
+        },
+        "DATA": {
+          "size": 500,
+          "letter": "L",
+          "number": 3
+        }
+      }
+    }
+  ]
+}

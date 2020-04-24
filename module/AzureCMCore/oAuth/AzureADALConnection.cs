@@ -52,7 +52,7 @@ namespace AzureCMCore.oAuth
             }
             catch (Exception ex)
             {
-                _iLogger.LogError(ex, $"Claiming Azure AD Token Failed {ex.Message}");
+                _iLogger.LogError(ex, Properties.Resources.TokenAsyncResultFailure, ex.Message);
             }
 
             if (string.IsNullOrEmpty(bearerToken))

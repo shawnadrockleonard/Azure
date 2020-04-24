@@ -1,0 +1,18 @@
+﻿{
+    "ConnectionFields": [
+        {
+            "IsEncrypted": false,
+            "IsOptional": false,
+            "Name": "StorageAccountName",
+            "TypeName": "System.String"
+        },
+        {
+            "IsEncrypted": true,
+            "IsOptional": false,
+            "Name": "StorageAccountKey",
+            "TypeName": "System.String"
+        }
+    ],
+    "ConnectionTypeName": "ModuleAzureStorage",
+    "IntegrationModuleName": "ModuleAzure"
+}

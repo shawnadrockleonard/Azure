@@ -1,0 +1,211 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location of the storage account"
+      }
+    },
+    "availabilitySetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Availability Set Name where the VM will be placed"
+      }
+    },
+    "vmName": {
+      "type": "string"
+    },
+    "hardwareProfile": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_B4ms",
+        "Standard_A4_v2",
+        "Standard_DS3_v2"
+      ],
+      "metadata": {
+        "description": "Size of the virtual machine"
+      }
+    },
+    "imagePublisher": {
+      "type": "string",
+      "allowedValues": [
+        "MicrosoftWindowsServer",
+        "MicrosoftWindowsDesktop"
+      ],
+      "metadata": {
+        "description": "Select image offer for the virtual machine"
+      }
+    },
+    "imageOffer": {
+      "type": "string",
+      "allowedValues": [
+        "WindowsServer",
+        "Windows-10"
+      ],
+      "metadata": {
+        "description": "Select image offer for the virtual machine"
+      }
+    },
+    "windowsOsVersion": {
+      "type": "string",
+      "allowedValues": [
+        "2019-Datacenter",
+        "rs5-pro",
+        "19h2-pro"
+      ],
+      "metadata": {
+        "description": "Select image SKU (aka os edition) for the virtual machine"
+      }
+    },
+    "managedDiskType": {
+      "type": "string",
+      "allowedValues": [
+        "Premium_LRS",
+        "Standard_LRS",
+        "StandardSSD_LRS"
+      ]
+    },
+    "enableAutomaticUpdates": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "diagnosticStorageName": {
+      "type": "string"
+    },
+    "vnetName": {
+      "type": "string"
+    },
+    "subnetName": {
+      "type": "string"
+    },
+    "subnetStaticIp": {
+      "type": "string"
+    },
+    "enableAcceleratedNetworking": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable accelerated networking, note: only available in specific sizes"
+      }
+    },
+    "adminUsername": {
+      "type": "string"
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Local admin password of the virtual machine"
+      }
+    }
+  },
+  "variables": {
+    "vm_nic_name": "[concat(parameters('vmName'), '-nic01')]",
+    "diagnosticStorageId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('diagnosticStorageName'))]",
+    "subnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "apiVersion": "2019-11-01",
+      "name": "[variables('vm_nic_name')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "primary": true,
+              "privateIPAddress": "[parameters('subnetStaticIp')]",
+              "privateIPAddressVersion": "IPv4",
+              "privateIPAllocationMethod": "Static",
+              "subnet": {
+                "id": "[variables('subnetId')]"
+              }
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": [
+          ]
+        },
+        "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]",
+        "enableIPForwarding": false
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "apiVersion": "2019-07-01",
+      "name": "[parameters('vmName')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('vm_nic_name'))]"
+      ],
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('hardwareProfile')]"
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('imagePublisher')]",
+            "offer": "[parameters('imageOffer')]",
+            "sku": "[parameters('windowsOsVersion')]",
+            "version": "latest"
+          },
+          "osDisk": {
+            "osType": "Windows",
+            "name": "[concat(parameters('vmName'), '_OsDisk01')]",
+            "createOption": "FromImage",
+            "caching": "ReadWrite",
+            "managedDisk": {
+              "storageAccountType": "[parameters('managedDiskType')]"
+            }
+          },
+          "dataDisks": [
+          ]
+        },
+        "osProfile": {
+          "computerName": "[parameters('vmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]",
+          "windowsConfiguration": {
+            "provisionVMAgent": true,
+            "enableAutomaticUpdates": "[parameters('enableAutomaticUpdates')]"
+          },
+          "secrets": [
+          ],
+          "allowExtensionOperations": true
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vm_nic_name'))]"
+            }
+          ]
+        },
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[reference(variables('diagnosticStorageId'), '2019-04-01').primaryEndpoints.blob]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "vmResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+    }
+  }
+}

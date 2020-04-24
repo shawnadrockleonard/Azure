@@ -28,13 +28,13 @@ namespace AzureCMCore
         }
 
         public DefaultUsageLogger(
-            Action<string, object[]> _actionInformation,
-            Action<string, object[]> _actionWarning,
-            Action<Exception, string, object[]> _actionError)
+            Action<string, object[]> actionInformation,
+            Action<string, object[]> actionWarning,
+            Action<Exception, string, object[]> actionError)
         {
-            actionError = _actionError;
-            actionWarning = _actionWarning;
-            actionInformation = _actionInformation;
+            this.actionError = actionError;
+            this.actionWarning = actionWarning;
+            this.actionInformation = actionInformation;
         }
 
         public void LogError(Exception ex, string format, params object[] args)

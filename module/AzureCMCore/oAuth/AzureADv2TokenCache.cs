@@ -138,7 +138,7 @@ namespace AzureCMCore.oAuth
         }
 
 
-        async public Task RedeemAuthCodeForAadGraphAsync(string code, string resource_uri)
+        async public Task RedeemAuthCodeForAadGraphAsync(string code, string redirect)
         {
             // Redeem the auth code and cache the result in the db for later use.
             var result = await _authContext.AuthenticationTokenAsync();

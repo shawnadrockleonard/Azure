@@ -1,0 +1,36 @@
+﻿{
+  "ConnectionFields": [
+    {
+      "IsEncrypted": false,
+      "IsOptional": false,
+      "Name": "SendGridServer",
+      "TypeName": "System.String"
+    },
+    {
+      "IsEncrypted": false,
+      "IsOptional": false,
+      "Name": "SendGridPort",
+      "TypeName": "System.Int32"
+    },
+    {
+      "IsEncrypted": false,
+      "IsOptional": false,
+      "Name": "SmtpFrom",
+      "TypeName": "System.String"
+    },
+    {
+      "IsEncrypted": false,
+      "IsOptional": false,
+      "Name": "SendGridUsername",
+      "TypeName": "System.String"
+    },
+    {
+      "IsEncrypted": true,
+      "IsOptional": false,
+      "Name": "SendGridPassword",
+      "TypeName": "System.String"
+    }
+  ],
+  "ConnectionTypeName": "SmtpSetting",
+  "IntegrationModuleName": "AzureCM.Automation"
+}

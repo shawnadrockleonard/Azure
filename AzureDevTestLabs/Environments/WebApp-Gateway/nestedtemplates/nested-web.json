@@ -2,6 +2,24 @@
     "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "vnetId": {
+            "type": "string",
+            "metadata": {
+                "description": "contains the resourceId of the VNet to which the site will be bound"
+            }
+        },
+        "certThumbprint": {
+            "type": "string",
+            "metadata": {
+                "description": "contains the thumbprint for the certificate"
+            }
+        },
+        "certBlob": {
+            "type": "string",
+            "metadata": {
+                "description": "contains the base64 of the certificate"
+            }
+        },
         "purpose": {
             "type": "string"
         },
@@ -38,8 +56,10 @@
                 "numberOfWorkers": 0
             },
             "sku": {
-                "Tier": "Standard",
-                "Name": "S1"
+                "name": "S1",
+                "tier": "Standard",
+                "size": "S1",
+                "family": "S"
             }
         },
         {
@@ -55,9 +75,34 @@
                 "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]"
             ],
             "properties": {
+                "enabled": true,
                 "name": "[variables('siteName')]",
-                "serverFarmId": "[variables('hostingPlanName')]",
-                "hostingEnvironment": ""
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('hostingPlanName'))]",
+                "hostingEnvironment": "",
+                "reserved": false,
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": true,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 0,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/virtualNetworkConnections",
+            "apiVersion": "2016-08-01",
+            "name": "[concat(variables('siteName'), '/shared-vnet')]",
+            "location": "East US 2",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('siteName'))]"
+            ],
+            "properties": {
+                "vnetResourceId": "[parameters('vnetId')]",
+                "certThumbprint": "[parameters('certThumbprint')]",
+                "certBlob": "[parameters('certBlob')]",
+                "resyncRequired": false,
+                "isSwift": false
             }
         }
     ]
