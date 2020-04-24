@@ -1,6 +1,6 @@
 [cmdletbinding()]
 param(
-	[Parameter(Mandatory = $true)]
+	[Parameter(Mandatory = $true, HelpMessage = "")]
 	[ValidateScript( { Test-Path $_ -PathType 'Container' })]
 	[string]$SourceDir
 )

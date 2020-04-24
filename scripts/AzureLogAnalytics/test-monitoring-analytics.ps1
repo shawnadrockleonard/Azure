@@ -11,14 +11,14 @@ Param(
     [Parameter(Mandatory = $true, HelpMessage = "resource group where log analytics exists.")] 
     [String]$resourceGroupName,
 
-    [Parameter(Mandatory = $false, HelpMessage = "specify if default subscription is not acting subscription.")] 
-    [String]$subscriptionId = "f59b8f71-6228-4888-b5dd-b155171027c3",
+    [Parameter(Mandatory = $true, HelpMessage = "specify if default subscription is not acting subscription.")] 
+    [String]$subscriptionId,
 
     [Parameter(Mandatory = $true, HelpMessage = "specify the storage account from which metrics will be queried.")] 
     [String]$storageAccountName,
 
     # Password for the service principal
-    [Parameter(Mandatory = $false)]
+    [Parameter(Mandatory = $true)]
     [securestring]$AzureADSecret
 )
 BEGIN {

@@ -1,0 +1,77 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "workspaceLocation": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "workspaceName": {
+      "type": "string",
+      "defaultValue": ""
+    }
+  },
+  "variables": {},
+  "resources": [
+    {
+      "apiVersion": "2015-11-01-preview",
+      "type": "Microsoft.OperationalInsights/workspaces/dataSources",
+      "location": "[parameters('workspaceLocation')]",
+      "name": "[Concat(parameters('workspaceName'), '/ChangeTrackingDataTypeConfiguration_Software')]",
+      "id": "[Concat('/subscriptions/', subscription().subscriptionId , '/resourceGroups/', resourceGroup().name , '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/dataSources/ChangeTrackingDataTypeConfiguration_Software')]",
+      "kind": "ChangeTrackingDataTypeConfiguration",
+      "properties": {
+        "DataTypeId": "Software",
+        "Enabled": "true"
+      }
+    },
+    {
+      "apiVersion": "2015-11-01-preview",
+      "type": "Microsoft.OperationalInsights/workspaces/dataSources",
+      "location": "[parameters('workspaceLocation')]",
+      "name": "[Concat(parameters('workspaceName'), '/ChangeTrackingDataTypeConfiguration_WindowsServices')]",
+      "id": "[Concat('/subscriptions/', subscription().subscriptionId , '/resourceGroups/', resourceGroup().name , '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/dataSources/ChangeTrackingDataTypeConfiguration_WindowsServices')]",
+      "kind": "ChangeTrackingDataTypeConfiguration",
+      "properties": {
+        "DataTypeId": "WindowsServices",
+        "Enabled": "true"
+      }
+    },
+    {
+      "apiVersion": "2015-11-01-preview",
+      "type": "Microsoft.OperationalInsights/workspaces/dataSources",
+      "location": "[parameters('workspaceLocation')]",
+      "name": "[Concat(parameters('workspaceName'), '/ChangeTrackingDataTypeConfiguration_Daemons')]",
+      "id": "[Concat('/subscriptions/', subscription().subscriptionId , '/resourceGroups/', resourceGroup().name , '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/dataSources/ChangeTrackingDataTypeConfiguration_Daemons')]",
+      "kind": "ChangeTrackingDataTypeConfiguration",
+      "properties": {
+        "DataTypeId": "Daemons",
+        "Enabled": "true"
+      }
+    },
+    {
+      "apiVersion": "2015-11-01-preview",
+      "type": "Microsoft.OperationalInsights/workspaces/dataSources",
+      "location": "[parameters('workspaceLocation')]",
+      "name": "[Concat(parameters('workspaceName'), '/ChangeTrackingDataTypeConfiguration_Files')]",
+      "id": "[Concat('/subscriptions/', subscription().subscriptionId , '/resourceGroups/', resourceGroup().name , '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/dataSources/ChangeTrackingDataTypeConfiguration_Files')]",
+      "kind": "ChangeTrackingDataTypeConfiguration",
+      "properties": {
+        "DataTypeId": "Files",
+        "Enabled": "true"
+      }
+    },
+    {
+      "apiVersion": "2015-11-01-preview",
+      "type": "Microsoft.OperationalInsights/workspaces/dataSources",
+      "location": "[parameters('workspaceLocation')]",
+      "name": "[Concat(parameters('workspaceName'), '/ChangeTrackingDataTypeConfiguration_Registry')]",
+      "id": "[Concat('/subscriptions/', subscription().subscriptionId , '/resourceGroups/', resourceGroup().name , '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspaceName'), '/dataSources/ChangeTrackingDataTypeConfiguration_Registry')]",
+      "kind": "ChangeTrackingDataTypeConfiguration",
+      "properties": {
+        "DataTypeId": "Registry",
+        "Enabled": "true"
+      }
+    }
+  ]
+}

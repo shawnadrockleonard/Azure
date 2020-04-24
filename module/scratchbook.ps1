@@ -22,6 +22,11 @@ PROCESS {
 
     Import-Module .\AzureServer\AzureServer.psm1 -Force
 
+    
+    Get-ProductKey
+
+
+
     $Path = (Get-Location)
     $splat = @{
         Path         = $Path

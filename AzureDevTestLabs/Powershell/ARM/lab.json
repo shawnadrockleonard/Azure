@@ -59,7 +59,8 @@
             "apiVersion": "2018-10-15-preview",
             "name": "[parameters('name')]",
             "location": "[parameters('regionId')]",
-            "tags": {},
+            "tags": {
+            },
             "properties": {
                 "labStorageType": "Premium"
             },

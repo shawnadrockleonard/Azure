@@ -49,6 +49,11 @@
     "storageAccountName": "[concat(parameters('systemName'), 'stgdiag')]",
     "logAnalyticsAccountName": "[concat(parameters('systemName'), 'stglogs')]",
     "vnetAddressPrefix": "10.1",
+    "recoveryServices": "[concat(parameters('systemName'), 'recovery')]",
+    "vmavailset": "[concat('vm-', parameters('systemName'), '-va-set')]",
+    "vmavailSku": "Aligned",
+    "vmavailFaultDomainCount": 2,
+    "vmavailUpdateDomainCount": 5,
     "vm01": "[concat('vm-', parameters('systemName'), '01')]",
     "vm02": "[concat('vm-', parameters('systemName'), '02')]"
   },
@@ -126,10 +131,38 @@
       }
     },
     {
+      "type": "Microsoft.Compute/availabilitySets",
+      "apiVersion": "2019-07-01",
+      "name": "[variables('vmavailset')]",
+      "location": "[parameters('location')]",
+      "tags": {
+      },
+      "sku": {
+        "name": "[variables('vmavailSku')]"
+      },
+      "properties": {
+        "platformFaultDomainCount": "[variables('vmavailFaultDomainCount')]",
+        "platformUpdateDomainCount": "[variables('vmavailUpdateDomainCount')]"
+      }
+    },
+    {
+      "type": "Microsoft.RecoveryServices/vaults",
+      "apiVersion": "2016-06-01",
+      "name": "[variables('recoveryServices')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "RS0",
+        "tier": "Standard"
+      },
+      "properties": {
+      }
+    },
+    {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2019-05-01",
       "name": "CostingMachine-01",
       "dependsOn": [
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('vmavailset'))]",
         "[resourceId('Microsoft.Resources/deployments', 'SharedVnet')]",
         "[resourceId('Microsoft.Resources/deployments', 'CostingStorage')]",
         "[resourceId('Microsoft.Resources/deployments', 'CostingAnalytics')]"
@@ -142,6 +175,9 @@
         "parameters": {
           "location": {
             "value": "[parameters('location')]"
+          },
+          "availabilitySetName": {
+            "value": "[variables('vmavailset')]"
           },
           "vmName": {
             "value": "[variables('vm01')]"
@@ -190,6 +226,7 @@
       "apiVersion": "2019-05-01",
       "name": "CostingMachine-01-ext-logs",
       "dependsOn": [
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('vmavailset'))]",
         "[resourceId('Microsoft.Resources/deployments', 'CostingMachine-01')]"
       ],
       "properties": {
@@ -275,6 +312,7 @@
       "apiVersion": "2019-05-01",
       "name": "CostingMachine-02",
       "dependsOn": [
+        "[resourceId('Microsoft.Compute/availabilitySets', variables('vmavailset'))]",
         "[resourceId('Microsoft.Resources/deployments', 'SharedVnet')]",
         "[resourceId('Microsoft.Resources/deployments', 'CostingStorage')]",
         "[resourceId('Microsoft.Resources/deployments', 'CostingAnalytics')]"
@@ -287,6 +325,9 @@
         "parameters": {
           "location": {
             "value": "[parameters('location')]"
+          },
+          "availabilitySetName": {
+            "value": "[variables('vmavailset')]"
           },
           "vmName": {
             "value": "[variables('vm02')]"

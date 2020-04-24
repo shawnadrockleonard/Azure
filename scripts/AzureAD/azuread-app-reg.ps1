@@ -6,7 +6,6 @@
     [securestring] $password,
     [Parameter(Mandatory = $false, HelpMessage = "Provide a SPN role assignment")]
     [string] $spnRole = "owner",
-   
     [Parameter(Mandatory = $false, HelpMessage = "Provide Azure environment name for your subscription")]
     [string] $environmentName = "AzureUSGovernment"
 )

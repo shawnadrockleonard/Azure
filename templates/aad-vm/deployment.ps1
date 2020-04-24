@@ -35,6 +35,27 @@ New-AzResourceGroupDeployment -Name "encryptedVm" -ResourceGroupName "armbastion
   -TemplateParameterFile .\azuredeploy.parameter.json `
   -keyVaultName $KeyVault.VaultName -keyVaultEncryptionUrl $KEK.Id -Verbose
 
+$workspace = Get-AzOperationalInsightsWorkspace -ResourceGroupName armbastion
+$workspaceKeys = $workspace | Get-AzOperationalInsightsWorkspaceSharedKey
+$workspaceSecure = ConvertTo-SecureString -String $workspaceKeys.PrimarySharedKey -AsPlainText -Force
+New-AzResourceGroupDeployment -Name ("{0}-ext-logs" -f $vmName) -ResourceGroupName "armbastion" -Mode Incremental `
+  -TemplateUri "https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/templates/aad-vm/nested/aad-vm-ext-logs.json" `
+  -vmName $vmName -location "usgovvirginia" -logAnalyticsWorkspaceId $workspace.CustomerId -logAnalyticsWorkspaceKey $workspaceSecure
+
+New-AzResourceGroupDeployment -Name ("{0}-ext-network" -f $vmName) -ResourceGroupName "armbastion" -Mode Incremental `
+  -TemplateUri "https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/templates/aad-vm/nested/aad-vm-ext-networkWatcher.json" `
+  -vmName $vmName -location "usgovvirginia" -Verbose
+
+New-AzResourceGroupDeployment -Name ("{0}-ext-encryption" -f $vmName) -ResourceGroupName "armbastion" -Mode Incremental `
+  -TemplateUri "https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/templates/aad-vm/nested/aad-vm-ext-encryption.json" `
+  -vmName $vmName -location "usgovvirginia" -keyVaultName $KeyVault.VaultName -keyVaultEncryptionUrl $KEK.Id -vmEncryptionType "OS" -Verbose
+
+New-AzResourceGroupDeployment -Name ("{0}-ext-malware" -f $vmName) -ResourceGroupName "armbastion" -Mode Incremental `
+  -TemplateUri "https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/templates/aad-vm/nested/aad-vm-ext-malware.json" `
+  -vmName $vmName -location "usgovvirginia" -Verbose
+
+
+
 
 Get-AzADServicePrincipal | Where-Object DisplayName -Like "*splcosting*"
 
@@ -46,3 +67,48 @@ az login
 az account set --subscription "<subscription-guid>"
 az keyvault update --name "splcostingkv" --resource-group "armbastion" --enabled-for-template-deployment "true"
 az keyvault key create --name "myKEK" --vault-name "splcostingkv" --kty RSA-HSM
+
+
+
+
+# Set variables
+$resourceGroup = "armbastion"
+$vmName = "vm-build02"
+$newAvailSetName = "vm-splcosting-va-set"
+
+# Get the details of the VM to be moved to the Availability Set
+$originalVM = Get-AzVM -ResourceGroupName $resourceGroup -Name $vmName
+
+# Create new availability set if it does not exist
+$availSet = Get-AzAvailabilitySet -ResourceGroupName $resourceGroup -Name $newAvailSetName  -ErrorAction Ignore
+ 
+
+# Remove the original VM
+Remove-AzVM -ResourceGroupName $resourceGroup -Name $vmName    
+
+# Create the basic configuration for the replacement VM. 
+$newVM = New-AzVMConfig -VMName $vmName -VMSize "Standard_B16ms" -AvailabilitySetId $availSet.Id
+
+# For a Linux VM, change the last parameter from -Windows to -Linux 
+Set-AzVMOSDisk `
+  -VM $newVM -CreateOption Attach `
+  -ManagedDiskId $osdisk.Id -Name $osdisk.Name -Windows
+
+Add-AzVMNetworkInterface `
+  -VM $newVM -Id $nic.Id -Primary
+
+# Recreate the VM
+New-AzVM `
+  -ResourceGroupName $resourceGroup `
+  -Location $availSet.Location `
+  -VM $newVM `
+  -DisableBginfoExtension
+
+
+Get-Command Set-Az*Extension*
+
+
+
+$nic = Get-AzNetworkInterface -Name "vm-splcosting02-nic01" -ResourceGroupName "armbastion"
+$nic.EnableAcceleratedNetworking = $False
+$nic | Set-AzNetworkInterface

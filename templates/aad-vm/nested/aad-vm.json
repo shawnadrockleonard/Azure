@@ -9,6 +9,12 @@
         "description": "Location of the storage account"
       }
     },
+    "availabilitySetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Availability Set Name where the VM will be placed"
+      }
+    },
     "vmName": {
       "type": "string"
     },
@@ -183,6 +189,9 @@
               "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('vm_nic_name'))]"
             }
           ]
+        },
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
         },
         "diagnosticsProfile": {
           "bootDiagnostics": {

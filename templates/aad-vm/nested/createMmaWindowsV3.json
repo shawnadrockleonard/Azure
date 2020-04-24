@@ -1,0 +1,77 @@
+﻿{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "vmLocation": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "vmResourceId": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "vmIdentityRequired": {
+            "defaultValue": "false",
+            "type": "Bool"
+        },
+        "workspaceName": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "workspaceId": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "workspaceResourceId": {
+            "defaultValue": "",
+            "type": "String"
+        },
+        "mmaExtensionName": {
+            "defaultValue": "",
+            "type": "String"
+        }
+    },
+    "variables": {
+        "vmIdentity": {
+            "type": "SystemAssigned"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('vmName')]",
+            "apiVersion": "2015-06-15",
+            "location": "[parameters('vmLocation')]",
+            "identity": "[if(parameters('vmIdentityRequired'), variables('vmIdentity'), json('null'))]",
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "[parameters('mmaExtensionName')]",
+                    "apiVersion": "2015-06-15",
+                    "location": "[parameters('vmLocation')]",
+                    "properties": {
+                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                        "type": "MicrosoftMonitoringAgent",
+                        "typeHandlerVersion": "1.0",
+                        "autoUpgradeMinorVersion": "true",
+                        "settings": {
+                            "workspaceId": "[parameters('workspaceId')]",
+                            "azureResourceId": "[parameters('vmResourceId')]",
+                            "stopOnMultipleConnections": "true"
+                        },
+                        "protectedSettings": {
+                            "workspaceKey": "[listKeys(parameters('workspaceResourceId'), '2015-03-20').primarySharedKey]"
+                        }
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+                    ]
+                }
+            ]
+        }
+    ]
+}

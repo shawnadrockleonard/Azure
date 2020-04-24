@@ -1,0 +1,59 @@
+﻿{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "id": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "resourceName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "category": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "displayName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "query": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "functionAlias": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "etag": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-04-26-preview",
+            "type": "Microsoft.OperationalInsights/workspaces/savedSearches",
+            "location": "[parameters('location')]",
+            "name": "[parameters('resourceName')]",
+            "id": "[parameters('id')]",
+            "properties": {
+                "displayname": "[parameters('displayName')]",
+                "category": "[parameters('category')]",
+                "query": "[parameters('query')]",
+                "functionAlias": "[parameters('functionAlias')]",
+                "etag": "[parameters('etag')]",
+                "tags": [
+                    {
+                        "Name": "Group", "Value": "Computer"
+                    }
+                ]
+            }
+        }
+    ]
+}

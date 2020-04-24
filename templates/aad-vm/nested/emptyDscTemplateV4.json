@@ -1,0 +1,52 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "AccountResourceId": {
+      "type": "String"
+    },
+    "RegistrationUrl": {
+      "type": "String"
+    },
+    "RefreshFrequencyMins": {
+      "type": "String"
+    },
+    "ConfigurationModeFrequencyMins": {
+      "type": "String"
+    },
+    "ConfigurationMode": {
+      "type": "String"
+    },
+    "ActionAfterReboot": {
+      "type": "String"
+    },
+    "vmName": {
+      "type": "String"
+    },
+    "vmLocation": {
+      "type": "String"
+    },
+    "RebootNodeifNeeded": {
+      "type": "Bool"
+    },
+    "AllowModuleOverwrite": {
+      "type": "Bool"
+    },
+    "AccountLocation": {
+      "type": "String"
+    },
+    "AutomationAccountName": {
+      "type": "String"
+    },
+    "AccountResourceGroup": {
+      "type": "String"
+    },
+    "deploymentName": {
+      "type": "String"
+    },
+    "dscSecurityBaselineType": {
+      "type": "String"
+    }
+  },
+  "resources": []
+}

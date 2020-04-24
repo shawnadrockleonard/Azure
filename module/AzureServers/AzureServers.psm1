@@ -170,6 +170,28 @@ function Get-NetBIOSSuffix {
     }
   }
 }
+
+function Get-CertificateData {
+  [CmdletBinding()]
+  Param(
+    [Parameter(Mandatory = $true, HelpMessage = "Provide the literal path to the CER file.")]
+    [ValidateScript( { Test-Path $_ -PathType Leaf })]
+    [string]$certificateWithPath
+  )
+  PROCESS {
+    $cer = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
+    $cer.Import($certificateWithPath)
+    $bin = $cer.GetRawCertData()
+    $base64Value = [System.Convert]::ToBase64String($bin)
+    $bin = $cer.GetCertHash()
+    $base64Thumbprint = [System.Convert]::ToBase64String($bin)
+    $keyid = [System.Guid]::NewGuid().ToString()
+
+    Write-host ("base64Thumbprint: {0}" -f $base64Thumbprint)
+    Write-host ("base64Value: {0}" -f $base64Value)
+    Write-host ("keyid: {0}" -f $keyid)
+  }
+}
   
 function Unprotect-GMSAAccountPassword {
   [CmdletBinding()]
@@ -350,7 +372,7 @@ Function Set-ADFSMetadata {
     $sts = $metadataDoc.EntityDescriptor.RoleDescriptor | Where-Object { $_.type -eq "fed:SecurityTokenServiceType" }
     
     # How many signing certs?
-    $signCount = ($sts.KeyDescriptor | ? { $_.use -eq "signing" } | Measure-Object).count
+    $signCount = ($sts.KeyDescriptor | Where-Object { $_.use -eq "signing" } | Measure-Object).count
     if ($signCount -eq 1) {
       $certB64 = $sts.KeyDescriptor.KeyInfo.X509Data.X509Certificate
       $newCert.Import($enc.GetBytes($certB64))
@@ -365,7 +387,7 @@ Function Set-ADFSMetadata {
     
     if ($newCert.Thumbprint -ne $null -and -not $adfsSTS.SigningCertificate.Equals($newCert)) {
       # Do we need to add the new cert as CA in SharePoint?
-      if ((Get-SPTrustedRootAuthority | ? { $_.Certificate.Thumbprint -eq $newCert.Thumbprint }) -eq $null) {
+      if ((Get-SPTrustedRootAuthority | Where-Object { $_.Certificate.Thumbprint -eq $newCert.Thumbprint }) -eq $null) {
         Write-Host "Adding the ADFS cert" $newCert.Subject "to the SharePoint trust store"
         If ($PSCmdlet.ShouldProcess("Adding the certificate to the STS Trusted Root Authority")) {
           Write-Warning "Whatif: not adding the certificate"
@@ -507,4 +529,209 @@ function Export-ADFSMetadata {
     Get-Command * -module ADFS
   }
 
+}
+
+function Enter-NetTrace {
+  [CmdletBinding()]
+  param(
+    [string]$nettracefile = "c:\temp\problemstate.etl",
+
+    [string]$findstr = ":636", 
+
+    [switch]$startTrace,
+
+    [switch]$stoptrace
+  )
+  process {
+    # do netsh on a loop
+    if ($startTrace -eq $false -and $stoptrace -eq $false) {
+      Write-Verbose "Now starting netsh loop"
+      $sleep = $true
+      do {
+
+        netstat -n | findstr $findstr
+        Start-Sleep -Seconds 1
+        #$h = Read-Host -Prompt "Stop Search (Y\N)"
+        if ($h -eq "Y") {
+          $sleep = $false
+        }
+      } while ($sleep)
+    }
+
+    if ($startTrace) {
+      Netsh Trace Start Capture=Yes Report=No  maxsize=250 filemode=circular overwrite=yes correlation=no TraceFile=$nettracefile
+    }
+
+    if ($stoptrace) {
+      Netsh Trace Stop
+    }
+  }
+}
+
+function Wait-KeepComputerAwake {
+  [cmdletbinding()]
+  Param ([int]$seconds = 10, [int]$idx = 1000) 
+  do {
+    Write-Host ("Starting sleep thread iteration {0}" -f $idx)
+    $millis = $seconds * 60
+    for ($jdx = 1; $jdx -le $millis + 1; $jdx++) {
+      Write-Host "." -NoNewline -ForegroundColor Yellow
+      Start-Sleep -Milliseconds 1
+      if (($jdx % 60) -eq 0) {
+        Write-Host ""
+      }
+    }
+    Write-Host ""
+
+    $idx--
+  }
+  while ($idx -gt 0)
+}
+
+function Get-ProductKey {
+  <#   
+ .SYNOPSIS   
+     Retrieves the product key and OS information from a local or remote system/s.
+      
+ .DESCRIPTION   
+     Retrieves the product key and OS information from a local or remote system/s. Queries of 64bit OS from a 32bit OS will result in 
+     inaccurate data being returned for the Product Key. You must query a 64bit OS from a system running a 64bit OS.
+     
+ .PARAMETER Computername
+     Name of the local or remote system/s.
+      
+ .NOTES   
+     Author: Boe Prox
+     Version: 1.1       
+         -Update of function from http://powershell.com/cs/blogs/tips/archive/2012/04/30/getting-windows-product-key.aspx
+         -Added capability to query more than one system
+         -Supports remote system query
+         -Supports querying 64bit OSes
+         -Shows OS description and Version in output object
+         -Error Handling
+  
+ .EXAMPLE 
+  Get-ProductKey -Computername Server1
+  
+ OSDescription                                           Computername OSVersion ProductKey                   
+ -------------                                           ------------ --------- ----------                   
+ Microsoft(R) Windows(R) Server 2003, Enterprise Edition Server1       5.2.3790  bcdfg-hjklm-pqrtt-vwxyy-12345     
+      
+     Description 
+     ----------- 
+     Retrieves the product key information from 'Server1'
+ #>         
+  [cmdletbinding()]
+  Param (
+    [parameter(ValueFromPipeLine = $True, ValueFromPipeLineByPropertyName = $True)]
+    [Alias("CN", "__Server", "IPAddress", "Server")]
+    [string[]]$Computername = $Env:Computername
+  )
+  Begin {   
+    $map = "BCDFGHJKMPQRTVWXY2346789" 
+  }
+  Process {
+    ForEach ($Computer in $Computername) {
+      Write-Verbose ("{0}: Checking network availability" -f $Computer)
+      If (Test-Connection -ComputerName $Computer -Count 1 -Quiet) {
+        Try {
+          Write-Verbose ("{0}: Retrieving WMI OS information" -f $Computer)
+          $OS = Get-WmiObject -ComputerName $Computer Win32_OperatingSystem -ErrorAction Stop                
+        }
+        Catch {
+          $OS = New-Object PSObject -Property @{
+            Caption = $_.Exception.Message
+            Version = $_.Exception.Message
+          }
+        }
+        Try {
+          Write-Verbose ("{0}: Attempting remote registry access" -f $Computer)
+          $remoteReg = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, $Computer)
+          If ($OS.OSArchitecture -eq '64-bit') {
+            $value = $remoteReg.OpenSubKey("SOFTWARE\Microsoft\Windows NT\CurrentVersion").GetValue('DigitalProductId4')[0x34..0x42]
+          }
+          Else {                        
+            $value = $remoteReg.OpenSubKey("SOFTWARE\Microsoft\Windows NT\CurrentVersion").GetValue('DigitalProductId')[0x34..0x42]
+          }
+          $ProductKey = ""  
+          Write-Verbose ("{0}: Translating data into product key" -f $Computer)
+          for ($i = 24; $i -ge 0; $i--) { 
+            $r = 0 
+            for ($j = 14; $j -ge 0; $j--) { 
+              $r = ($r * 256) -bxor $value[$j] 
+              $value[$j] = [math]::Floor([double]($r / 24)) 
+              $r = $r % 24 
+            } 
+            $ProductKey = $map[$r] + $ProductKey 
+            if (($i % 5) -eq 0 -and $i -ne 0) { 
+              $ProductKey = "-" + $ProductKey 
+            } 
+          }
+        }
+        Catch {
+          $ProductKey = $_.Exception.Message
+        }        
+        $object = New-Object PSObject -Property @{
+          Computername  = $Computer
+          ProductKey    = $ProductKey
+          OSDescription = $os.Caption
+          OSVersion     = $os.Version
+        } 
+        $object.pstypenames.insert(0, 'ProductKey.Info')
+        $object
+      }
+      Else {
+        $object = New-Object PSObject -Property @{
+          Computername  = $Computer
+          ProductKey    = 'Unreachable'
+          OSDescription = 'Unreachable'
+          OSVersion     = 'Unreachable'
+        }  
+        $object.pstypenames.insert(0, 'ProductKey.Info')
+        $object                           
+      }
+    }
+  }
+} 
+
+function Send-SmtpSendGrid {
+  param(
+    [string]$smtp = "smtp.sendgrid.net",
+    
+    [string]$smtp_username,
+
+    [securestring]$smtp_password,
+
+    [string]$msg_to,
+
+    [string]$msg_from,
+
+    [string]$msg_bcc,
+
+    [string]$msg_subject,
+
+    [string]$msg_body
+  )
+  begin {
+    Write-Verbose "[BEGIN] Sending Smtp Email Message"
+  }
+  process {
+
+    $cred = new-object -typename System.Management.Automation.PSCredential -argumentlist $smtp_username, $smtp_password
+
+    if ($msg_bcc -eq $null) {
+      $msg = Send-MailMessage -To $msg_to -From $msg_from -Body $msg_body -Subject $msg_subject -BodyAsHtml `
+        -UseSsl -Port 587 -Credential $cred -SmtpServer $smtp
+      Write-Host $msg
+    }
+    else {
+      $msg = Send-MailMessage -To $msg_to -Bcc $msg_bcc -From $msg_from -Body $msg_body -Subject $msg_subject -BodyAsHtml `
+        -UseSsl -Port 587 -Credential $cred -SmtpServer $smtp
+      Write-Host $msg
+    }
+    Write-Verbose "Completed sending message"
+  }
+  end {
+    Write-Verbose "[END] Sending Smtp Email Message"
+  }
 }

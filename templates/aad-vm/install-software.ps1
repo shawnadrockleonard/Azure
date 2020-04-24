@@ -2,7 +2,8 @@
 #check for existence of the readme file to determine if this script has already run (prevents re-running on re-deployments)
 $installedSoftwareTxt = "C:\installs\InstalledSoftware.txt"
 if (!(Test-Path $installedSoftwareTxt)) {
-  Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')); 
+  [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+  Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'));
   New-Item -Path "c:\installs" -ItemType Directory -Force | Out-Null
   ("{0}--Initialized" -f (get-date).ToString("o")) | Out-File -FilePath $installedSoftwareTxt;
 
