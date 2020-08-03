@@ -1,16 +1,14 @@
-Function Install-Choco
-{
- [CmdletBinding()]
- param()
- process {
+Function Install-Choco {
+  [CmdletBinding()]
+  param()
+  process {
     Set-ExecutionPolicy Bypass -force
-    If (!(Test-Path -Path "C:\ProgramData\chocolatey")) 
-    {
+    If (!(Test-Path -Path "C:\ProgramData\chocolatey")) {
       $env:chocolateyUseWindowsCompression = 'false'
       Invoke-WebRequest https://chocolatey.org/install.ps1 -UseBasicParsing | Invoke-Expression
       choco feature enable -n=allowGlobalConfirmation
     }
-}
+  }
 }
 
 
@@ -308,7 +306,6 @@ function Rename-Pictures {
   End { }
 }
 
-
 Function Use-FolderDirectory {
   [CmdletBinding()]
   PARAM( )
@@ -321,7 +318,7 @@ Function Use-FolderDirectory {
   }
 }
 
-function Convert-AacToMp4 {
+function Convert-Mp4ToAac {
   [CmdletBinding()]
   PARAM(
     [Parameter(Mandatory = $false)]
@@ -329,10 +326,11 @@ function Convert-AacToMp4 {
     [string]$FileDirectory = (Use-FolderDirectory)
   )
   PROCESS {
-    $fileList = Get-ChildItem -Path $FileDirectory | Select-Object BaseName #get a list of all files in the set path and strip out extension
+    $fileList = Get-ChildItem -Path $FileDirectory -Recurse -Filter "*.mp4" | Select-Object FullName, BaseName #get a list of all files in the set path and strip out extension
     foreach ($file in $fileList) { 
-      $filename = $file.BaseName; 
-      ffmpeg -i $FileDirectory\\$filename.mp4 -vn -acodec copy $FileDirectory\\$filename.aac
+      $filename = $file.FullName; 
+      $basename = $file.BaseName; 
+      ffmpeg -i $filename -vn -acodec copy $FileDirectory\\$basename.aac
     } # for every file, copy out the aac stream to its own file in the same directory 
   }
 }
@@ -345,15 +343,15 @@ function Convert-AacToMp3 {
     [string]$FileDirectory = (Use-FolderDirectory)
   )
   PROCESS {
-    $fileList = Get-ChildItem -Path $FileDirectory | Select-Object BaseName #get a list of all files in the set path and strip out extension
+    $fileList = Get-ChildItem -Path $FileDirectory -Recurse -Filter "*.aac" | Select-Object FullName, BaseName #get a list of all files in the set path and strip out extension
     foreach ($file in $fileList) { 
-      $filename = $file.BaseName; 
-      ffmpeg -i $FileDirectory\\$filename.aac $FileDirectory\\$filename.mp3
+      $filename = $file.FullName; 
+      $basename = $file.BaseName; 
+      ffmpeg -i $filename $FileDirectory\\$basename.mp3
     } 
     # for every file, output copy of aac to mp3 to its own file in the same directory      
   }
 }
-
   
 function Convert-M4aToMp3 {
   [CmdletBinding()]
@@ -363,33 +361,15 @@ function Convert-M4aToMp3 {
     [string]$FileDirectory = (Use-FolderDirectory)
   )
   PROCESS {
-    $fileList = Get-ChildItem -Path $FileDirectory | Select-Object BaseName #get a list of all files in the set path and strip out extension
+    $fileList = Get-ChildItem -Path $FileDirectory -Recurse -Filter "*.m4a" | Select-Object FullName, BaseName #get a list of all files in the set path and strip out extension
     foreach ($file in $fileList) { 
-      $filename = $file.BaseName; 
-      ffmpeg -i $FileDirectory\\$filename.m4a $FileDirectory\\$filename.mp3
+      $filename = $file.FullName; 
+      $basename = $file.BaseName; 
+      ffmpeg -i $filename $FileDirectory\\$basename.mp3
     } 
     # for every file, output copy of m4a to mp3 to its own file in the same directory      
   }
 }
-
-  
-function Convert-MkvToMp4 {
-  [CmdletBinding()]
-  PARAM(
-    [Parameter(Mandatory = $false)]
-    [ValidateScript( { Test-Path $_ -PathType 'Container' })]
-    [string]$FileDirectory = (Use-FolderDirectory)
-  )
-  PROCESS {
-    $fileList = Get-ChildItem -Path $FileDirectory | Select-Object BaseName #get a list of all files in the set path and strip out extension
-    foreach ($file in $fileList) { 
-      $filename = $file.BaseName; 
-      ffmpeg -i $FileDirectory\\$filename.mkv -codec copy $FileDirectory\\$filename.mp4
-    } 
-    # for every file, convert from mkv to mp4 in the same directory  
-  }
-}  
-
   
 function Convert-Mp3ToM4a {
   [CmdletBinding()]
@@ -399,11 +379,72 @@ function Convert-Mp3ToM4a {
     [string]$FileDirectory = (Use-FolderDirectory)
   )
   PROCESS {
-    $fileList = Get-ChildItem -Path $FileDirectory | Select-Object BaseName #get a list of all files in the set path and strip out extension
+    $fileList = Get-ChildItem -Path $FileDirectory -Recurse -Filter "*.mp3" | Select-Object FullName, BaseName #get a list of all files in the set path and strip out extension
     foreach ($file in $fileList) { 
-      $filename = $file.BaseName; 
-      ffmpeg -i $FileDirectory\\$filename.mp3 $FileDirectory\\$filename.m4a
+      $filename = $file.FullName; 
+      $basename = $file.BaseName; 
+      ffmpeg -i $filename $FileDirectory\\$basename.m4a
     } 
     # for every file, output copy of mp3 to m4a to its own file in the same directory
   }
 }  
+
+function Convert-FlacToMp3 {
+  [CmdletBinding()]
+  PARAM(
+    [Parameter(Mandatory = $false)]
+    [ValidateScript( { Test-Path $_ -PathType 'Container' })]
+    [string]$FileDirectory = (Use-FolderDirectory),
+    
+    [Parameter(Mandatory = $false)]
+    [ValidateScript( { Test-Path $_ -PathType 'Container' })]
+    [string]$NewDirectory = (Use-FolderDirectory)
+  )
+  PROCESS {
+    if (!(Test-Path $NewDirectory)) {
+      New-Item -Path $NewDirectory -ItemType Container -Force
+    }
+    $fileList = Get-ChildItem -Path $FileDirectory -Recurse -Filter "*.flac" | Select-Object FullName, BaseName #get a list of all files in the set path and strip out extension
+    foreach ($file in $fileList) { 
+      $filename = $file.FullName; 
+      $basename = $file.BaseName
+      ffmpeg -i $filename -ab 320k -map_metadata 0 -id3v2_version 3 $NewDirectory\\$basename.mp3
+    } 
+  }
+}
+  
+function Convert-MkvToMp4 {
+  [CmdletBinding()]
+  PARAM(
+    [Parameter(Mandatory = $false)]
+    [ValidateScript( { Test-Path $_ -PathType 'Container' })]
+    [string]$FileDirectory = (Use-FolderDirectory)
+  )
+  PROCESS {
+    $fileList = Get-ChildItem -Path $FileDirectory -Recurse -Filter "*.mkv" | Select-Object FullName, BaseName #get a list of all files in the set path and strip out extension
+    foreach ($file in $fileList) { 
+      $filename = $file.FullName; 
+      $basename = $file.BaseName; 
+      ffmpeg -i $filename -codec copy $FileDirectory\\$basename.mp4
+    } 
+    # for every file, convert from mkv to mp4 in the same directory  
+  }
+} 
+  
+function Convert-AviToMp4 {
+  [CmdletBinding()]
+  PARAM(
+    [Parameter(Mandatory = $false)]
+    [ValidateScript( { Test-Path $_ -PathType 'Container' })]
+    [string]$FileDirectory = (Use-FolderDirectory)
+  )
+  PROCESS {
+    $fileList = Get-ChildItem -Path $FileDirectory -Recurse -Filter "*.avi" | Select-Object FullName, BaseName #get a list of all files in the set path and strip out extension
+    foreach ($file in $fileList) { 
+      $filename = $file.FullName; 
+      $basename = $file.BaseName; 
+      ffmpeg -i $filename -c:v copy -c:a copy -y $FileDirectory\\$basename.mp4
+    } 
+    # for every file, convert from mkv to mp4 in the same directory  
+  }
+} 
