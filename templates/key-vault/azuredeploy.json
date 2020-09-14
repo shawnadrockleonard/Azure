@@ -3,7 +3,6 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "customer": {
-      "defaultValue": "ardev",
       "type": "string",
       "allowedValues": [
         "ardev",
