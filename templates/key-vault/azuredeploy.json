@@ -93,41 +93,6 @@
                 },
                 "accessTier": "Hot"
               }
-            },
-            {
-              "name": "[concat(variables('storageName'), '/default/', variables('storageContainers')[copyIndex()])]",
-              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-              "apiVersion": "2019-04-01",
-              "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
-              ],
-              "copy": {
-                "name": "containercopy",
-                "count": "[length(variables('storageContainers'))]"
-              }
-            },
-            {
-              "name": "[concat(variables('storageName'), '/default/', variables('storageFileShares')[copyIndex()])]",
-              "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
-              "apiVersion": "2019-06-01",
-              "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
-              ],
-              "copy": {
-                "name": "filesharecopy",
-                "count": "[length(variables('storageFileShares'))]"
-              },
-              "properties": {
-                "shareQuota": 2048
-              }
-            },
-            {
-              "name": "[concat(variables('storageName'), '/default/FeatureBits')]",
-              "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
-              "apiVersion": "2019-06-01",
-              "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
-              ]
             }
           ]
         }
