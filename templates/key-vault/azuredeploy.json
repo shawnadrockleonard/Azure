@@ -172,17 +172,6 @@
               ]
             },
             {
-              "name": "[concat(variables('keyVaultName'), '/', 'CoolbridgeSASToken')]",
-              "type": "Microsoft.KeyVault/vaults/secrets",
-              "apiVersion": "2018-02-14",
-              "dependsOn": [
-                "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
-              ],
-              "properties": {
-                "value": "[listAccountSas(variables('storageName'), '2018-07-01', variables('accountSasProperties')).accountSasToken]"
-              }
-            },
-            {
               "name": "[concat(variables('keyVaultName'), '/', 'AZBUILDSQLUSR')]",
               "type": "Microsoft.KeyVault/vaults/secrets",
               "apiVersion": "2018-02-14",
@@ -206,17 +195,6 @@
     "keyVaultUri": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName')), '2018-02-14').vaultUri]"
-    },
-    "sasToken": {
-      "type": "string",
-      "value": {
-        "reference": {
-          "keyVault": {
-            "id": "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
-          },
-          "secretName": "CoolbridgeSASToken"
-        }
-      }
     },
     "storageAccountName": {
       "type": "string",
