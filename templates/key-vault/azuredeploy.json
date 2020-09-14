@@ -94,7 +94,25 @@
                 "accessTier": "Hot"
               }
             }
-          ]
+          ],
+          "outputs": {
+            "storageAccountName": {
+              "type": "string",
+              "value": "[variables('storageName')]"
+            },
+            "storageAccountId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+            },
+            "storageAccountBlobEndpoint": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2019-04-01').primaryEndpoints.blob]"
+            },
+            "storageAccountConnection": {
+              "type": "string",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageName'), ';AccountKey=', listKeys(variables('storageName'), '2019-04-01').keys[0].value, ';EndpointSuffix=core.usgovcloudapi.net')]"
+            }
+          }
         }
       }
     },
@@ -147,7 +165,17 @@
                 "value": "[parameters('cbSqlPassword')]"
               }
             }
-          ]
+          ],
+          "outputs": {
+            "keyVaultId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+            },
+            "keyVaultUri": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName')), '2018-02-14').vaultUri]"
+            }
+          }
         }
       }
     }
@@ -155,27 +183,27 @@
   "outputs": {
     "keyVaultId": {
       "type": "string",
-      "value": "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+      "value": "[reference('keyVaultShared').outputs.keyVaultId.value]"
     },
     "keyVaultUri": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName')), '2018-02-14').vaultUri]"
+      "value": "[reference('keyVaultShared').outputs.keyVaultUri.value]"
     },
     "storageAccountName": {
       "type": "string",
-      "value": "[variables('storageName')]"
+      "value": "[reference('storageAccountShared').outputs.storageAccountName.value]"
     },
     "storageAccountId": {
       "type": "string",
-      "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+      "value": "[reference('storageAccountShared').outputs.storageAccountId.value]"
     },
     "storageAccountBlobEndpoint": {
       "type": "string",
-      "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2019-04-01').primaryEndpoints.blob]"
+      "value": "[reference('storageAccountShared').outputs.storageAccountBlobEndpoint.value]"
     },
     "storageAccountConnection": {
       "type": "string",
-      "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageName'), ';AccountKey=', listKeys(variables('storageName'), '2019-04-01').keys[0].value, ';EndpointSuffix=core.usgovcloudapi.net')]"
+      "value": "[reference('storageAccountShared').outputs.storageAccountConnection.value]"
     },
     "subscriptionId": {
       "type": "string",
