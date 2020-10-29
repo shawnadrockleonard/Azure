@@ -323,14 +323,18 @@ function Convert-Mp4ToAac {
   PARAM(
     [Parameter(Mandatory = $false)]
     [ValidateScript( { Test-Path $_ -PathType 'Container' })]
-    [string]$FileDirectory = (Use-FolderDirectory)
+    [string]$FileDirectory = (Use-FolderDirectory),
+    
+    [Parameter(Mandatory = $false)]
+    [ValidateScript( { Test-Path $_ -PathType 'Container' })]
+    [string]$NewDirectory = (Use-FolderDirectory)
   )
   PROCESS {
     $fileList = Get-ChildItem -Path $FileDirectory -Recurse -Filter "*.mp4" | Select-Object FullName, BaseName #get a list of all files in the set path and strip out extension
     foreach ($file in $fileList) { 
       $filename = $file.FullName; 
       $basename = $file.BaseName; 
-      ffmpeg -i $filename -vn -acodec copy $FileDirectory\\$basename.aac
+      ffmpeg -i $filename -vn -acodec copy "$NewDirectory\\$basename.aac"
     } # for every file, copy out the aac stream to its own file in the same directory 
   }
 }
@@ -340,14 +344,18 @@ function Convert-AacToMp3 {
   PARAM(
     [Parameter(Mandatory = $false)]
     [ValidateScript( { Test-Path $_ -PathType 'Container' })]
-    [string]$FileDirectory = (Use-FolderDirectory)
+    [string]$FileDirectory = (Use-FolderDirectory),
+    
+    [Parameter(Mandatory = $false)]
+    [ValidateScript( { Test-Path $_ -PathType 'Container' })]
+    [string]$NewDirectory = (Use-FolderDirectory)
   )
   PROCESS {
     $fileList = Get-ChildItem -Path $FileDirectory -Recurse -Filter "*.aac" | Select-Object FullName, BaseName #get a list of all files in the set path and strip out extension
     foreach ($file in $fileList) { 
       $filename = $file.FullName; 
       $basename = $file.BaseName; 
-      ffmpeg -i $filename $FileDirectory\\$basename.mp3
+      ffmpeg -i "$filename" "$NewDirectory\\$basename.mp3"
     } 
     # for every file, output copy of aac to mp3 to its own file in the same directory      
   }
@@ -358,14 +366,18 @@ function Convert-M4aToMp3 {
   PARAM(
     [Parameter(Mandatory = $false)]
     [ValidateScript( { Test-Path $_ -PathType 'Container' })]
-    [string]$FileDirectory = (Use-FolderDirectory)
+    [string]$FileDirectory = (Use-FolderDirectory),
+    
+    [Parameter(Mandatory = $false)]
+    [ValidateScript( { Test-Path $_ -PathType 'Container' })]
+    [string]$NewDirectory = (Use-FolderDirectory)
   )
   PROCESS {
     $fileList = Get-ChildItem -Path $FileDirectory -Recurse -Filter "*.m4a" | Select-Object FullName, BaseName #get a list of all files in the set path and strip out extension
     foreach ($file in $fileList) { 
       $filename = $file.FullName; 
       $basename = $file.BaseName; 
-      ffmpeg -i $filename $FileDirectory\\$basename.mp3
+      ffmpeg -i "$filename" "$NewDirectory\\$basename.mp3"
     } 
     # for every file, output copy of m4a to mp3 to its own file in the same directory      
   }
@@ -376,18 +388,46 @@ function Convert-Mp3ToM4a {
   PARAM(
     [Parameter(Mandatory = $false)]
     [ValidateScript( { Test-Path $_ -PathType 'Container' })]
-    [string]$FileDirectory = (Use-FolderDirectory)
+    [string]$FileDirectory = (Use-FolderDirectory),
+    
+    [Parameter(Mandatory = $false)]
+    [ValidateScript( { Test-Path $_ -PathType 'Container' })]
+    [string]$NewDirectory = (Use-FolderDirectory)
   )
   PROCESS {
     $fileList = Get-ChildItem -Path $FileDirectory -Recurse -Filter "*.mp3" | Select-Object FullName, BaseName #get a list of all files in the set path and strip out extension
     foreach ($file in $fileList) { 
       $filename = $file.FullName; 
       $basename = $file.BaseName; 
-      ffmpeg -i $filename $FileDirectory\\$basename.m4a
+      ffmpeg -i "$filename" "$NewDirectory\\$basename.m4a"
     } 
     # for every file, output copy of mp3 to m4a to its own file in the same directory
   }
 }  
+
+function Convert-OggToMp3 {
+  [CmdletBinding()]
+  PARAM(
+    [Parameter(Mandatory = $false)]
+    [ValidateScript( { Test-Path $_ -PathType 'Container' })]
+    [string]$FileDirectory = (Use-FolderDirectory),
+    
+    [Parameter(Mandatory = $false)]
+    [ValidateScript( { Test-Path $_ -PathType 'Container' })]
+    [string]$NewDirectory = (Use-FolderDirectory)
+  )
+  PROCESS {
+    if (!(Test-Path $NewDirectory)) {
+      New-Item -Path $NewDirectory -ItemType Container -Force
+    }
+    $fileList = Get-ChildItem -Path $FileDirectory -Recurse -Filter "*.ogg" | Select-Object FullName, BaseName #get a list of all files in the set path and strip out extension
+    foreach ($file in $fileList) { 
+      $filename = $file.FullName; 
+      $basename = $file.BaseName
+      ffmpeg -i "$filename" "$NewDirectory\\$basename.mp3"
+    } 
+  }
+}
 
 function Convert-FlacToMp3 {
   [CmdletBinding()]

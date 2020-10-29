@@ -2,6 +2,20 @@
     "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "ResourceNamePrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide a 3 character unique prefix"
+            },
+            "defaultValue": "[take(uniqueString(resourceGroup().id), 3)]"
+        },
+        "ResourceNameSuffix": {
+            "type": "string",
+            "metadata": {
+                "description": "Provide a 6 character unique suffix"
+            },
+            "defaultValue": "[take(uniqueString(resourceGroup().id), 6)]"
+        },
         "Database Administrator Login": {
             "type": "string",
             "metadata": {
@@ -14,61 +28,96 @@
                 "description": "Database administrator password"
             }
         },
-        "sku": {
+        "storageAccountSku": {
             "type": "string",
-            "defaultValue": "Standard"
+            "allowedValues": [
+                "Standard_LRS",
+                "Standard_GRS",
+                "Standard_RAGRS",
+                "Standard_ZRS",
+                "Premium_LRS",
+                "Premium_ZRS",
+                "Standard_GZRS",
+                "Standard_RAGZRS"
+            ],
+            "defaultValue": "Standard_RAGRS",
+            "metadata": {
+                "description": "SKU to specify whether the Storage Account is a standard or premium and which replication should be used."
+            }
         },
-        "accessPolicies": {
+        "serverFarmSku": {
+            "type": "string",
+            "allowedValues": [
+                "D1",
+                "F1",
+                "B1",
+                "B2",
+                "B3",
+                "S1",
+                "S2",
+                "S3",
+                "P1",
+                "P2",
+                "P3",
+                "P1V2",
+                "P2V2",
+                "P3V2",
+                "I1",
+                "I2",
+                "I3",
+                "Y1"
+            ],
+            "defaultValue": "S1",
+            "metadata": {
+                "description": "The pricing tier for the App Service hosting plan."
+            }
+        },
+        "keyVaultSku": {
+            "type": "string",
+            "allowedValues": [
+                "Standard",
+                "Premium"
+            ],
+            "defaultValue": "Standard",
+            "metadata": {
+                "description": "SKU name to specify whether the key vault is a standard vault or a premium vault."
+            }
+        },
+        "keyVaultAccessPolicies": {
             "type": "array",
-            "defaultValue": []
-        },
-        "enabledForDeployment": {
-            "type": "bool",
-            "defaultValue": false
-        },
-        "enabledForTemplateDeployment": {
-            "type": "bool",
-            "defaultValue": true
-        },
-        "enabledForDiskEncryption": {
-            "type": "bool",
-            "defaultValue": false
-        },
-        "enableRbacAuthorization": {
-            "type": "bool",
-            "defaultValue": false
-        },
-        "enableSoftDelete": {
-            "type": "bool",
-            "defaultValue": true
-        },
-        "softDeleteRetentionInDays": {
-            "type": "int",
-            "defaultValue": 90
-        },
-        "networkAcls": {
-            "type": "object",
-            "defaultValue": {
-                "defaultAction": "allow",
-                "bypass": "AzureServices",
-                "ipRules": [],
-                "virtualNetworkRules": []
+            "defaultValue": [],
+            "metadata": {
+                "description": "Database administrator login name"
             }
         },
         "logAnalyticsSku": {
             "type": "string",
-            "defaultValue": "pergb2018"
+            "allowedValues": [
+                "pergb2018",
+                "Free",
+                "Standalone",
+                "PerNode",
+                "Standard",
+                "Premium"
+            ],
+            "defaultValue": "pergb2018",
+            "metadata": {
+                "description": "Pricing tier: PerGB2018 or legacy tiers (Free, Standalone, PerNode, Standard or Premium) which are not available to all customers."
+            }
         },
         "tags": {
             "type": "object",
-            "defaultValue": {}
+            "defaultValue": {},
+            "metadata": {
+                "description": "Database administrator login name"
+            }
         },
         "_artifactsLocation": {
             "type": "string",
             "metadata": {
                 "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
             },
-            "defaultValue": "https://github.com/shawnadrockleonard/azure-devtestlab/tree/master/Environments/WebApp-ASE-Nested"
+            "defaultValue": "https://github.com/shawnadrockleonard/AzureDevTestLabs/tree/master/Environments/WebApp-Identity-KeyVault"
         },
         "_artifactsLocationSasToken": {
             "type": "securestring",
@@ -80,16 +129,93 @@
     },
     "variables": {
         "resourceNamePrefix": "[take(uniqueString(resourceGroup().id), 3)]",
-        "hostingPlanName": "[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-sp'))]",
-        "siteName": "[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6)))]",
-        "serverName": "[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-db'))]",
-        "keyVaultName": "[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-kv'))]",
-        "appLogName": "[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-logs'))]",
-        "appInsightsName": "[toLower(concat(variables('resourceNamePrefix'), '-', take(uniqueString(resourceGroup().id), 6), '-insights'))]",
+        "resourceNameSuffix": "[take(uniqueString(resourceGroup().id), 6)]",
+        "resourceOverridePrefix": "",
+        "resourceOverrideSuffix": "",
+        "storageAccountName": "[toLower(concat(variables('resourceNamePrefix'), variables('resourceNameSuffix'), 'stg'))]",
+        "hostingPlanName": "[toLower(concat(variables('resourceNamePrefix'), '-', variables('resourceNameSuffix'), '-sp'))]",
+        "siteName": "[toLower(concat(variables('resourceNamePrefix'), '-', variables('resourceNameSuffix')))]",
+        "serverName": "[toLower(concat(variables('resourceNamePrefix'), '-', variables('resourceNameSuffix'), '-db'))]",
+        "keyVaultName": "[toLower(concat(variables('resourceNamePrefix'), '-', variables('resourceNameSuffix'), '-kv'))]",
+        "appLogName": "[toLower(concat(variables('resourceNamePrefix'), '-', variables('resourceNameSuffix'), '-logs'))]",
+        "appInsightsName": "[toLower(concat(variables('resourceNamePrefix'), '-', variables('resourceNameSuffix'), '-insights'))]",
         "databaseName": "[concat('db', uniqueString(resourceGroup().id, variables('siteName')))]",
-        "databaseVersion": "12.0"
+        "databaseVersion": "12.0",
+        "storageKind": "StorageV2",
+        "storageAccessTier": "Hot",
+        "storageSupportsHttpsTrafficOnly": true,
+        "storageAllowBlobPublicAccess": true,
+        "storageNetworkAclsBypass": "AzureServices",
+        "storageNetworkAclsDefaultAction": "Allow",
+        "keyVaultEnabledForDeployment": false,
+        "keyVaultEnabledForTemplateDeployment": true,
+        "keyVaultEnabledForDiskEncryption": false,
+        "keyVaultEnableRbacAuthorization": false,
+        "keyVaultEnableSoftDelete": true,
+        "keyVaultSoftDeleteRetentionInDays": 90,
+        "networkAcls": {
+            "defaultAction": "allow",
+            "bypass": "AzureServices",
+            "ipRules": [],
+            "virtualNetworkRules": []
+        }
     },
     "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[variables('storageAccountName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [],
+            "tags": "[parameters('tags')]",
+            "sku": {
+                "name": "[parameters('storageAccountSku')]"
+            },
+            "kind": "[variables('storageKind')]",
+            "properties": {
+                "accessTier": "[variables('storageAccessTier')]",
+                "supportsHttpsTrafficOnly": "[variables('storageSupportsHttpsTrafficOnly')]",
+                "allowBlobPublicAccess": "[variables('storageAllowBlobPublicAccess')]",
+                "networkAcls": {
+                    "bypass": "[variables('storageNetworkAclsBypass')]",
+                    "defaultAction": "[variables('storageNetworkAclsDefaultAction')]",
+                    "ipRules": []
+                }
+            },
+            "resources": [
+                {
+                    "type": "blobServices",
+                    "apiVersion": "2019-06-01",
+                    "name": "default",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                    ],
+                    "properties": {
+                        "cors": {
+                            "corsRules": []
+                        },
+                        "deleteRetentionPolicy": {
+                            "enabled": false
+                        }
+                    },
+                    "resources": [
+                        {
+                            "type": "containers",
+                            "apiVersion": "2019-06-01",
+                            "name": "$web",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageAccountName'), 'default')]"
+                            ],
+                            "properties": {
+                                "defaultEncryptionScope": "$account-encryption-key",
+                                "denyEncryptionScopeOverride": false,
+                                "publicAccess": "Container"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
         {
             "name": "[variables('hostingPlanName')]",
             "type": "Microsoft.Web/serverfarms",
@@ -103,8 +229,7 @@
                 "numberOfWorkers": 0
             },
             "sku": {
-                "Tier": "Standard",
-                "Name": "S1"
+                "Name": "[parameters('serverFarmSku')]"
             }
         },
         {
@@ -114,7 +239,8 @@
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
-                "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
+                "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]"
             ],
             "identity": {
                 "type": "SystemAssigned"
@@ -123,7 +249,15 @@
             "properties": {
                 "name": "[variables('siteName')]",
                 "serverFarmId": "[variables('hostingPlanName')]",
-                "hostingEnvironment": ""
+                "hostingEnvironment": "",
+                "siteConfig": {
+                    "cors": {
+                        "allowedOrigins": [
+                            "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2018-03-01-preview').PrimaryEndpoints.Web]"
+                        ],
+                        "supportCredentials": "boolean"
+                    }
+                }
             },
             "resources": [
                 {
@@ -191,19 +325,19 @@
             "dependsOn": [],
             "tags": "[parameters('tags')]",
             "properties": {
-                "enabledForDeployment": "[parameters('enabledForDeployment')]",
-                "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
-                "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
-                "enableRbacAuthorization": "[parameters('enableRbacAuthorization')]",
-                "accessPolicies": "[parameters('accessPolicies')]",
+                "enabledForDeployment": "[variables('keyVaultEnabledForDeployment')]",
+                "enabledForTemplateDeployment": "[variables('keyVaultEnabledForTemplateDeployment')]",
+                "enabledForDiskEncryption": "[variables('keyVaultEnabledForDiskEncryption')]",
+                "enableRbacAuthorization": "[variables('keyVaultEnableRbacAuthorization')]",
+                "accessPolicies": "[parameters('keyVaultAccessPolicies')]",
                 "tenantId": "[subscription().tenantId]",
                 "sku": {
-                    "name": "[parameters('sku')]",
+                    "name": "[parameters('keyVaultSku')]",
                     "family": "A"
                 },
-                "enableSoftDelete": "[parameters('enableSoftDelete')]",
-                "softDeleteRetentionInDays": "[parameters('softDeleteRetentionInDays')]",
-                "networkAcls": "[parameters('networkAcls')]"
+                "enableSoftDelete": "[variables('keyVaultEnableSoftDelete')]",
+                "softDeleteRetentionInDays": "[variables('keyVaultSoftDeleteRetentionInDays')]",
+                "networkAcls": "[variables('networkAcls')]"
             }
         },
         {
@@ -267,5 +401,11 @@
                 }
             }
         }
-    ]
+    ],
+    "outputs": {
+        "keyvaultname": {
+            "type": "string",
+            "value": "[reference(resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName')), '2018-02-14').vaultUri]"
+        }
+    }
 }
