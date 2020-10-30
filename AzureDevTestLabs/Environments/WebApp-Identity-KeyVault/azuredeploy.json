@@ -237,7 +237,7 @@
         {
             "name": "[variables('siteName')]",
             "type": "Microsoft.Web/sites",
-            "apiVersion": "2015-02-01",
+            "apiVersion": "2018-11-01",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Web/serverfarms/', variables('hostingPlanName'))]",
@@ -252,12 +252,13 @@
                 "name": "[variables('siteName')]",
                 "serverFarmId": "[variables('hostingPlanName')]",
                 "hostingEnvironment": "",
+                "location": "[resourceGroup().location]",
                 "siteConfig": {
                     "cors": {
                         "allowedOrigins": [
                             "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2018-03-01-preview').PrimaryEndpoints.Web]"
                         ],
-                        "supportCredentials": "boolean"
+                        "supportCredentials": false
                     }
                 }
             },
@@ -293,7 +294,7 @@
                 {
                     "name": "[variables('sqlDatabaseName')]",
                     "type": "databases",
-                    "apiVersion": "2015-01-01",
+                    "apiVersion": "2017-03-01-preview",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[variables('sqlServerName')]"
@@ -301,7 +302,7 @@
                     "properties": {
                         "edition": "Basic",
                         "collation": "SQL_Latin1_General_CP1_CI_AS",
-                        "maxSizeBytes": "1073741824",
+                        "maxSizeBytes": 1073741824,
                         "requestedServiceObjectiveName": "Basic"
                     }
                 },
@@ -428,7 +429,7 @@
                         "value": "[variables('keyVaultName')]"
                     },
                     "SqlServerName": {
-                        "value": "[variables('sqlServerName')]"
+                        "value": "[reference(resourceId('Microsoft.Sql/servers', variables('sqlServerName'))).fullyQualifiedDomainName]"
                     },
                     "SqlDatabaseName": {
                         "value": "[variables('sqlDatabaseName')]"
