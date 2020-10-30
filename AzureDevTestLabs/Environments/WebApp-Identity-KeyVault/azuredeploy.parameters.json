@@ -35,12 +35,6 @@
         },
         "DatabaseAdministratorLoginPassword": {
             "value": ""
-        },
-        "_artifactsLocation": {
-            "value": ""
-        },
-        "_artifactsLocationSasToken": {
-            "value": ""
         }
     }
 }

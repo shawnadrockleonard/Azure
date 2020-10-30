@@ -1,5 +1,5 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "ResourceNamePrefix": {
@@ -112,20 +112,6 @@
             "defaultValue": {},
             "metadata": {
                 "description": "Add any number of KeyValuePairs { some:value }"
-            }
-        },
-        "_artifactsLocation": {
-            "type": "string",
-            "metadata": {
-                "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
-            },
-            "defaultValue": "https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/AzureDevTestLabs/Environments/WebApp-Identity-KeyVault"
-        },
-        "_artifactsLocationSasToken": {
-            "type": "securestring",
-            "defaultValue": "",
-            "metadata": {
-                "description": "The sasToken required to access _artifactsLocation. When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
             }
         }
     },
@@ -383,9 +369,8 @@
             ],
             "properties": {
                 "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/webapp-akv-policies.json', parameters('_artifactsLocationSasToken'))]",
-                    "contentVersion": "1.0.0.0"
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
                 },
                 "parameters": {
                     "tags": {
@@ -402,6 +387,61 @@
                             }
                         ]
                     }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "keyVaultName": {
+                            "type": "string"
+                        },
+                        "resourceIds": {
+                            "type": "array"
+                        },
+                        "tags": {
+                            "type": "object"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "type": "Microsoft.KeyVault/vaults/accessPolicies",
+                            "name": "[concat(parameters('keyVaultName'), '/add')]",
+                            "apiVersion": "2018-02-14",
+                            "location": "[resourceGroup().location]",
+                            "tags": "[parameters('tags')]",
+                            "dependsOn": [
+                            ],
+                            "properties": {
+                                "tenantId": "[subscription().tenantId]",
+                                "copy": [
+                                    {
+                                        "name": "accessPolicies",
+                                        "count": "[length(parameters('resourceIds'))]",
+                                        "input": {
+                                            "tenantId": "[subscription().tenantId]",
+                                            "objectId": "[reference(concat(parameters('resourceIds')[copyIndex('accessPolicies')].objectId, '/providers/Microsoft.ManagedIdentity/Identities/default'), '2018-11-30').principalId]",
+                                            "permissions": {
+                                                "keys": [
+                                                    "Get",
+                                                    "List"
+                                                ],
+                                                "secrets": [
+                                                    "Get",
+                                                    "List",
+                                                    "Set"
+                                                ],
+                                                "certificates": [
+                                                    "Get",
+                                                    "List",
+                                                    "Import"
+                                                ]
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
                 }
             }
         },
@@ -417,9 +457,8 @@
             ],
             "properties": {
                 "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/keyvault-secrets.json', parameters('_artifactsLocationSasToken'))]",
-                    "contentVersion": "1.0.0.0"
+                "expressionEvaluationOptions": {
+                    "scope": "inner"
                 },
                 "parameters": {
                     "tags": {
@@ -443,6 +482,69 @@
                     "AppInsightsName": {
                         "value": "[variables('appInsightsName')]"
                     }
+                },
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "keyVaultName": {
+                            "type": "string"
+                        },
+                        "SqlServerName": {
+                            "type": "string"
+                        },
+                        "SqlDatabaseName": {
+                            "type": "string"
+                        },
+                        "DatabaseAdministratorLogin": {
+                            "type": "string"
+                        },
+                        "DatabaseAdministratorLoginPassword": {
+                            "type": "securestring"
+                        },
+                        "AppInsightsName": {
+                            "type": "string"
+                        },
+                        "tags": {
+                            "type": "object"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "condition": "[if(contains(environment().name, 'AzureUSGovernment'), bool('true'), bool('false'))]",
+                            "type": "Microsoft.KeyVault/vaults/secrets",
+                            "name": "[concat(parameters('keyVaultName'), '/ApplicationInsights--TelemetryChannel--EndpointAddress')]",
+                            "apiVersion": "2016-10-01",
+                            "tags": "[parameters('tags')]",
+                            "properties": {
+                                "value": "https://dc.applicationinsights.us/v2/track",
+                                "recoveryLevel": "Purgeable"
+                            },
+                            "dependsOn": []
+                        },
+                        {
+                            "type": "Microsoft.KeyVault/vaults/secrets",
+                            "name": "[concat(parameters('keyVaultName'), '/ApplicationInsights--InstrumentationKey')]",
+                            "apiVersion": "2016-10-01",
+                            "tags": "[parameters('tags')]",
+                            "properties": {
+                                "value": "[reference(resourceId('Microsoft.Insights/components', parameters('AppInsightsName')), '2015-05-01').InstrumentationKey]",
+                                "recoveryLevel": "Purgeable"
+                            },
+                            "dependsOn": []
+                        },
+                        {
+                            "type": "Microsoft.KeyVault/vaults/secrets",
+                            "name": "[concat(parameters('keyVaultName'), '/ConnectionStrings--DefaultConnectionString')]",
+                            "apiVersion": "2016-10-01",
+                            "tags": "[parameters('tags')]",
+                            "properties": {
+                                "value": "[concat('Server=', parameters('SqlServerName'), ';Initial Catalog=', parameters('SqlDatabaseName'), ';User ID=', parameters('DatabaseAdministratorLogin') ,';Password=', parameters('DatabaseAdministratorLoginPassword') ,';Persist Security Info=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;')]",
+                                "recoveryLevel": "Purgeable"
+                            },
+                            "dependsOn": []
+                        }
+                    ]
                 }
             }
         }
