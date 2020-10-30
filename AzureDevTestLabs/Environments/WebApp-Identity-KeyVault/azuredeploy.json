@@ -7,22 +7,24 @@
             "metadata": {
                 "description": "Provide a 3 character unique prefix"
             },
-            "defaultValue": "[take(uniqueString(resourceGroup().id), 3)]"
+            "defaultValue": "",
+            "maxLength": 3
         },
         "ResourceNameSuffix": {
             "type": "string",
             "metadata": {
                 "description": "Provide a 6 character unique suffix"
             },
-            "defaultValue": "[take(uniqueString(resourceGroup().id), 6)]"
+            "defaultValue": "",
+            "maxLength": 6
         },
-        "Database Administrator Login": {
+        "DatabaseAdministratorLogin": {
             "type": "string",
             "metadata": {
                 "description": "Database administrator login name"
             }
         },
-        "Database Administrator Login Password": {
+        "DatabaseAdministratorLoginPassword": {
             "type": "securestring",
             "metadata": {
                 "description": "Database administrator password"
@@ -87,7 +89,7 @@
             "type": "array",
             "defaultValue": [],
             "metadata": {
-                "description": "Database administrator login name"
+                "description": "Key Vault Access Policies array, look at documentation - https://docs.microsoft.com/en-us/azure/templates/microsoft.keyvault/allversions"
             }
         },
         "logAnalyticsSku": {
@@ -109,7 +111,7 @@
             "type": "object",
             "defaultValue": {},
             "metadata": {
-                "description": "Database administrator login name"
+                "description": "Add any number of KeyValuePairs { some:value }"
             }
         },
         "_artifactsLocation": {
@@ -130,16 +132,16 @@
     "variables": {
         "resourceNamePrefix": "[take(uniqueString(resourceGroup().id), 3)]",
         "resourceNameSuffix": "[take(uniqueString(resourceGroup().id), 6)]",
-        "resourceOverridePrefix": "",
-        "resourceOverrideSuffix": "",
-        "storageAccountName": "[toLower(concat(variables('resourceNamePrefix'), variables('resourceNameSuffix'), 'stg'))]",
-        "hostingPlanName": "[toLower(concat(variables('resourceNamePrefix'), '-', variables('resourceNameSuffix'), '-sp'))]",
-        "siteName": "[toLower(concat(variables('resourceNamePrefix'), '-', variables('resourceNameSuffix')))]",
-        "serverName": "[toLower(concat(variables('resourceNamePrefix'), '-', variables('resourceNameSuffix'), '-db'))]",
-        "keyVaultName": "[toLower(concat(variables('resourceNamePrefix'), '-', variables('resourceNameSuffix'), '-kv'))]",
-        "appLogName": "[toLower(concat(variables('resourceNamePrefix'), '-', variables('resourceNameSuffix'), '-logs'))]",
-        "appInsightsName": "[toLower(concat(variables('resourceNamePrefix'), '-', variables('resourceNameSuffix'), '-insights'))]",
-        "databaseName": "[concat('db', uniqueString(resourceGroup().id, variables('siteName')))]",
+        "resourceOverridePrefix": "[if(lessOrEquals(length(parameters('ResourceNamePrefix')), 2), variables('resourceNamePrefix'), parameters('ResourceNamePrefix'))]",
+        "resourceOverrideSuffix": "[if(lessOrEquals(length(parameters('ResourceNameSuffix')), 2), variables('resourceNameSuffix'), parameters('ResourceNameSuffix'))]",
+        "storageAccountName": "[toLower(concat(variables('resourceOverridePrefix'), variables('resourceOverrideSuffix'), 'stg'))]",
+        "hostingPlanName": "[toLower(concat(variables('resourceOverridePrefix'), '-', variables('resourceOverrideSuffix'), '-sp'))]",
+        "siteName": "[toLower(concat(variables('resourceOverridePrefix'), '-', variables('resourceOverrideSuffix')))]",
+        "sqlServerName": "[toLower(concat(variables('resourceOverridePrefix'), '-', variables('resourceOverrideSuffix'), '-db'))]",
+        "keyVaultName": "[toLower(concat(variables('resourceOverridePrefix'), '-', variables('resourceOverrideSuffix'), '-kv'))]",
+        "appLogName": "[toLower(concat(variables('resourceOverridePrefix'), '-', variables('resourceOverrideSuffix'), '-logs'))]",
+        "appInsightsName": "[toLower(concat(variables('resourceOverridePrefix'), '-', variables('resourceOverrideSuffix'), '-insights'))]",
+        "sqlDatabaseName": "[concat('db', uniqueString(resourceGroup().id, variables('siteName')))]",
         "databaseVersion": "12.0",
         "storageKind": "StorageV2",
         "storageAccessTier": "Hot",
@@ -264,6 +266,7 @@
                     "type": "config",
                     "name": "appsettings",
                     "apiVersion": "2016-08-01",
+                    "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Web/Sites', variables('siteName'))]"
                     ],
@@ -276,24 +279,24 @@
             ]
         },
         {
-            "name": "[variables('serverName')]",
+            "name": "[variables('sqlServerName')]",
             "type": "Microsoft.Sql/servers",
             "apiVersion": "2014-04-01",
             "location": "[resourceGroup().location]",
             "tags": "[parameters('tags')]",
             "properties": {
-                "administratorLogin": "[parameters('Database Administrator Login')]",
-                "administratorLoginPassword": "[parameters('Database Administrator Login Password')]",
+                "administratorLogin": "[parameters('DatabaseAdministratorLogin')]",
+                "administratorLoginPassword": "[parameters('DatabaseAdministratorLoginPassword')]",
                 "version": "[variables('databaseVersion')]"
             },
             "resources": [
                 {
-                    "name": "[variables('databaseName')]",
+                    "name": "[variables('sqlDatabaseName')]",
                     "type": "databases",
                     "apiVersion": "2015-01-01",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
-                        "[variables('serverName')]"
+                        "[variables('sqlServerName')]"
                     ],
                     "properties": {
                         "edition": "Basic",
@@ -306,7 +309,7 @@
                     "type": "firewallrules",
                     "apiVersion": "2014-04-01",
                     "dependsOn": [
-                        "[variables('serverName')]"
+                        "[variables('sqlServerName')]"
                     ],
                     "location": "[resourceGroup().location]",
                     "name": "AllowAllWindowsAzureIps",
@@ -372,7 +375,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2019-05-01",
-            "name": "[concat('AppServiceEnvironmentWebAppPolicies.', variables('siteName'))]",
+            "name": "[concat('KeyVaultPolicies.', variables('siteName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/Sites',variables('siteName'))]",
                 "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
@@ -400,12 +403,61 @@
                     }
                 }
             }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-05-01",
+            "name": "[concat('KeyVaultSecrets.', variables('siteName'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/Sites',variables('siteName'))]",
+                "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]",
+                "[resourceId('Microsoft.Sql/servers', variables('sqlServerName'))]",
+                "[resourceId('microsoft.insights/components', variables('appInsightsName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(parameters('_artifactsLocation'), '/nestedtemplates/keyvault-secrets.json', parameters('_artifactsLocationSasToken'))]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "tags": {
+                        "value": "[parameters('tags')]"
+                    },
+                    "keyVaultName": {
+                        "value": "[variables('keyVaultName')]"
+                    },
+                    "SqlServerName": {
+                        "value": "[variables('sqlServerName')]"
+                    },
+                    "SqlDatabaseName": {
+                        "value": "[variables('sqlDatabaseName')]"
+                    },
+                    "DatabaseAdministratorLogin": {
+                        "value": "[parameters('DatabaseAdministratorLogin')]"
+                    },
+                    "DatabaseAdministratorLoginPassword": {
+                        "value": "[parameters('DatabaseAdministratorLoginPassword')]"
+                    },
+                    "AppInsightsName": {
+                        "value": "[variables('appInsightsName')]"
+                    }
+                }
+            }
         }
     ],
     "outputs": {
         "keyvaultname": {
             "type": "string",
             "value": "[reference(resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName')), '2018-02-14').vaultUri]"
+        },
+        "storageAccountName": {
+            "type": "string",
+            "value": "[variables('storageAccountName')]"
+        },
+        "sqlServerFqdn": {
+            "type": "string",
+            "value": "[reference(concat('Microsoft.Sql/servers/', variables('sqlServerName'))).fullyQualifiedDomainName]"
         }
     }
 }

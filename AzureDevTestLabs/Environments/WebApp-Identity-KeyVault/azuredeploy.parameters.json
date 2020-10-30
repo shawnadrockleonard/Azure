@@ -1,0 +1,46 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ResourceNamePrefix": {
+            "value": "cbx"
+        },
+        "ResourceNameSuffix": {
+            "value": "cbxis5"
+        },
+        "DatabaseAdministratorLogin": {
+            "value": "x_admin"
+        },
+        "storageAccountSku": {
+            "value": "Standard_RAGRS"
+        },
+        "serverFarmSku": {
+            "value": "S1"
+        },
+        "keyVaultSku": {
+            "value": "Standard"
+        },
+        "keyVaultAccessPolicies": {
+            "value": []
+        },
+        "logAnalyticsSku": {
+            "value": "pergb2018"
+        },
+        "tags": {
+            "value": {
+                "environment": "devtestlabs",
+                "customer": "workshops",
+                "purpose": "demonstrations"
+            }
+        },
+        "DatabaseAdministratorLoginPassword": {
+            "value": ""
+        },
+        "_artifactsLocation": {
+            "value": ""
+        },
+        "_artifactsLocationSasToken": {
+            "value": ""
+        }
+    }
+}
