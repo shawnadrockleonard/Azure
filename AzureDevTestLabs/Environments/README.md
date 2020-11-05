@@ -11,8 +11,8 @@ For quickstarts and examples take a look at [Azure Resource Manager Templates](h
 This area is specific to the DevTest Labs activate series.  Any submission should be fully functional.
 
 
-- Name: sirona-devtestlabs
-- Git Clone URI: https://sirona.visualstudio.com/Solutions/_git/Solutions.Apps.ActivateDevTestLabs
+- Name: shawn-devtestlabs
+- Git Clone URI: https://github.com/shawnadrockleonard/Azure.git
 - Branch: empty or your branch [shawns/labspoc]
 - Personal Access Token: must be created in UI
 - ARM template folder Path: /Activate Azure with DevTest Labs/Development/Code/Environments
