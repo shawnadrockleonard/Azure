@@ -65,7 +65,7 @@
         {
             "name": "[variables('DTLEnvironVmNicName')]",
             "type": "Microsoft.Network/networkInterfaces",
-            "location": "southeastasia",
+            "location": "[resourceGroup().location]",
             "apiVersion": "2016-03-30",
             "dependsOn": [],
             "tags": {

@@ -1,0 +1,65 @@
+{
+  "properties": {
+    "displayName": "Overwrite a resource group tag with the subscription tag",
+    "description": "Overwrites resource group tag from subscription tag",
+    "policyType": "Custom",
+    "mode": "All",
+    "metadata": {
+      "category": "Tags"
+    },
+    "parameters": {
+      "tagName": {
+        "type": "String",
+        "metadata": {
+          "displayName": "Tag Name",
+          "description": "The tag name inherited from the subscription."
+        }
+      }
+    },
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Resources/subscriptions/resourceGroups"
+          },
+          {
+            "value": "[subscription().tags[parameters('tagName')]]",
+            "notEquals": ""
+          },
+          {
+            "anyOf": [
+              {
+                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                "notEquals": "[subscription().tags[parameters('tagName')]]"
+              },
+              {
+                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                "equals": ""
+              },
+              {
+                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                "exists": "false"
+              }
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "modify",
+        "details": {
+          "roleDefinitionIds": [
+            "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+          ],
+          "operations": [
+            {
+              "operation": "addOrReplace",
+              "field": "[concat('tags[', parameters('tagName'), ']')]",
+              "value": "[subscription().tags[parameters('tagName')]]"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

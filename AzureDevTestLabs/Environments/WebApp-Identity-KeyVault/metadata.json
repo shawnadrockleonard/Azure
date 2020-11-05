@@ -1,0 +1,6 @@
+{
+  "itemDisplayName": "Web App, SQL, KeyVault - Managed Identity",
+  "description": "This template creates an Azure Web App, Azure SQL Database, KeyVault, App Insights, Log Analytics.",
+  "githubUsername": "ActivateAzureDevTestLabs",
+  "summary": "Deploys an Azure Web App with a SQL database with managed identity and key vault as an environment in a DevTest Lab."
+}

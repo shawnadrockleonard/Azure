@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "customer": {
+      "value": "ardev"
+    },
+    "environment": {
+      "value": ""
+    },
+    "cbSqlPassword": {
+      "value": ""
+    },
+    "baseTime": {
+      "value": "20201230T23:59:59Z"
+    }
+  }
+}

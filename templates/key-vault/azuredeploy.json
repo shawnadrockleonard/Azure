@@ -1,0 +1,326 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "customer": {
+      "type": "string",
+      "allowedValues": [
+        "ardev",
+        "arprod"
+      ]
+    },
+    "environment": {
+      "type": "string",
+      "defaultValue": "shared"
+    },
+    "cbSqlPassword": {
+      "type": "securestring"
+    },
+    "baseTime": {
+      "type": "string",
+      "defaultValue": "[utcNow('u')]"
+    }
+  },
+  "variables": {
+
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
+      "name": "storageAccountShared",
+      "dependsOn": [],
+      "properties": {
+        "mode": "Incremental",
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "parameters": {
+          "customer": {
+            "value": "[parameters('customer')]"
+          },
+          "environment": {
+            "value": "[parameters('environment')]"
+          },
+          "baseTime": {
+            "value": "[parameters('baseTime')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "customer": {
+              "type": "string"
+            },
+            "environment": {
+              "type": "string"
+            },
+            "baseTime": {
+              "type": "string"
+            }
+          },
+          "variables": {
+            "storageName": "[toLower(concat(parameters('customer'), 'storage'))]",
+            "storageContainers": [
+              "devtest",
+              "staging"
+            ],
+            "storageFileShares": [
+              "arprodssis",
+              "arproddownloads",
+              "cloudcli"
+            ],
+            "accountSasStart": "[dateTimeAdd(parameters('baseTime'), '-PT6H')]",
+            "accountSasExpiry": "[dateTimeAdd(parameters('baseTime'), 'P6M')]",
+            "accountSasProperties": {
+              "signedServices": "bf",
+              "signedPermission": "r",
+              "signedStart": "[variables('accountSasStart')]",
+              "signedExpiry": "[variables('accountSasExpiry')]",
+              "signedResourceTypes": "sco"
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.Storage/storageAccounts",
+              "apiVersion": "2018-07-01",
+              "name": "[variables('storageName')]",
+              "location": "[resourceGroup().location]",
+              "tags": {
+                "Customer": "[parameters('customer')]",
+                "environment": "[parameters('environment')]",
+                "displayName": "storage"
+              },
+              "kind": "StorageV2",
+              "sku": {
+                "name": "Standard_RAGRS",
+                "tier": "Standard"
+              },
+              "properties": {
+                "networkAcls": {
+                  "bypass": "AzureServices",
+                  "virtualNetworkRules": [
+                  ],
+                  "ipRules": [
+                  ],
+                  "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                  "services": {
+                    "file": {
+                      "enabled": true
+                    },
+                    "blob": {
+                      "enabled": true
+                    }
+                  },
+                  "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+              }
+            },
+            {
+              "name": "[concat(variables('storageName'), '/default/', variables('storageContainers')[copyIndex()])]",
+              "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+              "apiVersion": "2019-04-01",
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+              ],
+              "copy": {
+                "name": "containercopy",
+                "count": "[length(variables('storageContainers'))]"
+              }
+            },
+            {
+              "name": "[concat(variables('storageName'), '/default/', variables('storageFileShares')[copyIndex()])]",
+              "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+              "apiVersion": "2019-06-01",
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+              ],
+              "copy": {
+                "name": "filesharecopy",
+                "count": "[length(variables('storageFileShares'))]"
+              },
+              "properties": {
+                "shareQuota": 2048
+              }
+            },
+            {
+              "name": "[concat(variables('storageName'), '/default/FeatureBits')]",
+              "type": "Microsoft.Storage/storageAccounts/tableServices/tables",
+              "apiVersion": "2019-06-01",
+              "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "storageAccountName": {
+              "type": "string",
+              "value": "[variables('storageName')]"
+            },
+            "storageAccountId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+            },
+            "storageAccountBlobEndpoints": {
+              "type": "object",
+              "value": "[reference(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2019-04-01').primaryEndpoints]"
+            },
+            "storageAccountConnection": {
+              "type": "string",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageName'), ';AccountKey=', listKeys(variables('storageName'), '2019-04-01').keys[0].value, ';EndpointSuffix=', environment().suffixes.storage)]"
+            },
+            "storageAccountSasToken": {
+              "type": "string",
+              "value": "[listAccountSas(variables('storageName'), '2018-07-01', variables('accountSasProperties')).accountSasToken]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2019-05-01",
+      "name": "keyVaultShared",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'storageAccountShared')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "parameters": {
+          "customer": {
+            "value": "[parameters('customer')]"
+          },
+          "environment": {
+            "value": "[parameters('environment')]"
+          },
+          "cbSqlPassword": {
+            "value": "[parameters('cbSqlPassword')]"
+          },
+          "sasToken": {
+            "value": "[reference('storageAccountShared').outputs.storageAccountSasToken.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "variables": {
+            "keyVaultName": "[toLower(concat(parameters('customer'), 'kv'))]"
+          },
+          "parameters": {
+            "customer": {
+              "type": "string"
+            },
+            "environment": {
+              "type": "string"
+            },
+            "cbSqlPassword": {
+              "type": "securestring"
+            },
+            "sasToken": {
+              "type": "securestring"
+            }
+          },
+          "resources": [
+            {
+              "name": "[variables('keyVaultName')]",
+              "type": "Microsoft.KeyVault/vaults",
+              "apiVersion": "2018-02-14",
+              "location": "[resourceGroup().location]",
+              "tags": {
+                "Customer": "[parameters('customer')]",
+                "environment": "[parameters('environment')]",
+                "displayName": "key vault"
+              },
+              "properties": {
+                "sku": {
+                  "family": "A",
+                  "name": "Premium"
+                },
+                "tenantId": "[subscription().tenantId]",
+                "enabledForDeployment": true,
+                "enabledForDiskEncryption": true,
+                "enabledForTemplateDeployment": true,
+                "enableRbacAuthorization": false,
+                "accessPolicies": []
+              }
+            },
+            {
+              "name": "[concat(variables('keyVaultName'), '/', 'CoolbridgeSASToken')]",
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2018-02-14",
+              "dependsOn": [
+                "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
+              ],
+              "properties": {
+                "value": "[parameters('sasToken')]"
+              }
+            },
+            {
+              "name": "[concat(variables('keyVaultName'), '/', 'AZBUILDSQLUSR')]",
+              "type": "Microsoft.KeyVault/vaults/secrets",
+              "apiVersion": "2018-02-14",
+              "dependsOn": [
+                "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
+              ],
+              "properties": {
+                "value": "[parameters('cbSqlPassword')]"
+              }
+            }
+          ],
+          "outputs": {
+            "keyVaultId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+            },
+            "keyVaultUri": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName')), '2018-02-14').vaultUri]"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "subscriptionId": {
+      "type": "string",
+      "value": "[subscription().subscriptionId]"
+    },
+    "keyVaultId": {
+      "type": "string",
+      "value": "[reference('keyVaultShared').outputs.keyVaultId.value]"
+    },
+    "keyVaultUri": {
+      "type": "string",
+      "value": "[reference('keyVaultShared').outputs.keyVaultUri.value]"
+    },
+    "storageAccountName": {
+      "type": "string",
+      "value": "[reference('storageAccountShared').outputs.storageAccountName.value]"
+    },
+    "storageAccountId": {
+      "type": "string",
+      "value": "[reference('storageAccountShared').outputs.storageAccountId.value]"
+    },
+    "storageAccountBlobEndpoint": {
+      "type": "object",
+      "value": "[reference('storageAccountShared').outputs.storageAccountBlobEndpoints.value]"
+    },
+    "storageAccountConnection": {
+      "type": "string",
+      "value": "[reference('storageAccountShared').outputs.storageAccountConnection.value]"
+    },
+    "storageAccountSasToken": {
+      "type": "string",
+      "value": "[reference('storageAccountShared').outputs.storageAccountSasToken.value]"
+    }
+  }
+}
