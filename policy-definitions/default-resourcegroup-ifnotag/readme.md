@@ -1,6 +1,10 @@
-# Add a subscription tag to resource groups
+# Add a subscription tag to resource groups where one does not exist
 
-Adds the specified tag subscription value when any resource group missing this tag is created or updated. Existing resource groups can be remediated by triggering a remediation task. If the tag exists with a different value it will not be changed.
+Adds the specified tag subscription value when any resource group missing this tag is created or updated. 
+Existing resource groups can be remediated by triggering a remediation task. 
+If the tag exists with a different value it will not be changed.  
+Note: As a result of this targetting Resource Group the Mode must be **All** 
+
 
 ## Try on Portal
 
@@ -9,9 +13,9 @@ Adds the specified tag subscription value when any resource group missing this t
 ## Try with PowerShell
 
 ````powershell
-$definition = New-AzPolicyDefinition -Name "add-resourcegroup-defaulttag" -DisplayName "Add a subscription tag to resource groups" -description "Adds the specified subscription tag value when any resource group missing this tag is created or updated." -Policy 'https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/policy-definitions/default-resourcegroup-ifnotag/azurepolicy.rules.json' -Parameter 'https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/policy-definitions/default-resourcegroup-ifnotag/azurepolicy.parameters.json' -Mode Indexed
+$definition = New-AzPolicyDefinition -Name "add-resourcegroup-default-ifnotag" -DisplayName "Add a subscription tag to resource groups" -description "Adds the specified subscription tag value when any resource group missing this tag is created or updated." -Policy 'https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/policy-definitions/default-resourcegroup-ifnotag/azurepolicy.rules.json' -Parameter 'https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/policy-definitions/default-resourcegroup-ifnotag/azurepolicy.parameters.json' -Mode All
 $definition
 
-$assignment = New-AzPolicyAssignment -Name "add-resourcegroup-defaulttag-assignment" -Scope <scope>  -tagName <tagName> -PolicyDefinition $definition
+$assignment = New-AzPolicyAssignment -Name "add-resourcegroup-default-ifnotag-assignment" -Scope <scope>  -tagName <tagName> -PolicyDefinition $definition
 $assignment 
 ````
