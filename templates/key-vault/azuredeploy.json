@@ -172,7 +172,7 @@
             },
             "storageAccountConnection": {
               "type": "string",
-              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageName'), ';AccountKey=', listKeys(variables('storageName'), '2019-04-01').keys[0].value, ';EndpointSuffix=core.usgovcloudapi.net')]"
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageName'), ';AccountKey=', listKeys(variables('storageName'), '2019-04-01').keys[0].value, ';EndpointSuffix=', environment().suffixes.storage)]"
             },
             "storageAccountSasToken": {
               "type": "string",

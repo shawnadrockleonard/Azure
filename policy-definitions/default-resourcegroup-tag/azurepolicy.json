@@ -3,7 +3,7 @@
     "displayName": "Add a tag to resource groups, defaulting to subscription tag",
     "description": "Provides defaulting Resource group subscription tag",
     "policyType": "Custom",
-    "mode": "Indexed",
+    "mode": "All",
     "metadata": {
       "category": "Tags"
     },
@@ -36,6 +36,10 @@
               {
                 "field": "[concat('tags[', parameters('tagName'), ']')]",
                 "equals": ""
+              },
+              {
+                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                "notEquals": "[subscription().tags[parameters('tagName')]]"
               }
             ]
           }
