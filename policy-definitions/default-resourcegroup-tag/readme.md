@@ -1,0 +1,16 @@
+# Add a subscription tag to resource groups
+
+Adds the specified tag subscription value when any resource group missing this tag is created or updated. Existing resource groups can be remediated by triggering a remediation task. If the tag exists with a different value it will not be changed.
+
+## Try on Portal
+
+[![Deploy to Azure](https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/templates/metadata/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshawnadrockleonard%2FAzure%2Fshawns%2Fdotnetcore%2Fpolicy-definitions%2Fdefault-resourcegroup-tag%2Fazurepolicy.json)
+
+## Try with PowerShell
+
+````powershell
+$definition = New-AzPolicyDefinition -Name "add-resourcegroup-defaulttag" -DisplayName "Add a subscription tag to resource groups" -description "Adds the specified subscription tag value when any resource group missing this tag is created or updated." -Policy 'https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/policy-definitions/default-resourcegroup-tag/azurepolicy.rules.json' -Parameter 'https://raw.githubusercontent.com/shawnadrockleonard/Azure/shawns/dotnetcore/policy-definitions/default-resourcegroup-tag//azurepolicy.parameters.json' -Mode Indexed
+$definition
+$assignment = New-AzPolicyAssignment -Name "add-resourcegroup-defaulttag-assignment" -Scope <scope>  -tagName <tagName> -PolicyDefinition $definition
+$assignment 
+````

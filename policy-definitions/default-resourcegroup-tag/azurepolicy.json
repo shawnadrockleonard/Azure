@@ -1,12 +1,11 @@
 {
   "properties": {
-    "displayName": "Inherit a tag from the subscription",
-    "policyType": "BuiltIn",
+    "displayName": "Add a tag to resource groups, defaulting to subscription tag",
+    "description": "Provides defaulting Resource group subscription tag",
+    "policyType": "Custom",
     "mode": "Indexed",
-    "description": "Adds or replaces the specified tag and value from the containing subscription when any resource is created or updated. Existing resources can be remediated by triggering a remediation task.",
     "metadata": {
-      "category": "Tags",
-      "version": "1.0.0"
+      "category": "Tags"
     },
     "parameters": {
       "tagName": {
@@ -21,12 +20,24 @@
       "if": {
         "allOf": [
           {
-            "field": "[concat('tags[', parameters('tagName'), ']')]",
-            "notEquals": "[subscription().tags[parameters('tagName')]]"
+            "field": "type",
+            "equals": "Microsoft.Resources/subscriptions/resourceGroups"
           },
           {
             "value": "[subscription().tags[parameters('tagName')]]",
             "notEquals": ""
+          },
+          {
+            "anyOf": [
+              {
+                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                "exists": "false"
+              },
+              {
+                "field": "[concat('tags[', parameters('tagName'), ']')]",
+                "equals": ""
+              }
+            ]
           }
         ]
       },
@@ -46,8 +57,5 @@
         }
       }
     }
-  },
-  "id": "/providers/Microsoft.Authorization/policyDefinitions/b27a0cbd-a167-4dfa-ae64-4337be671140",
-  "type": "Microsoft.Authorization/policyDefinitions",
-  "name": "b27a0cbd-a167-4dfa-ae64-4337be671140"
+  }
 }
