@@ -9,10 +9,10 @@
       "value": ""
     },
     "cbSqlPassword": {
-      "value": null
+      "value": ""
     },
     "baseTime": {
-        "value": "20201230T23:59:59Z"
+      "value": "20201230T23:59:59Z"
     }
   }
 }

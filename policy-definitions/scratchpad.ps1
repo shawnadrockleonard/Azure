@@ -12,8 +12,8 @@ $location = (Get-AzLocation)[0]
 
 
 $definition = New-AzPolicyDefinition -Name "subscription-resource-ifnotag" -Description "Provides subscription tag, defaulting to Resource group" `
-    -Policy 'C:\Repos\shawnadrockleonard\Azure\policy-definitions\default-resourcegroup-tag\azurepolicy.rules.json' `
-    -Parameter 'C:\Repos\shawnadrockleonard\Azure\policy-definitions\default-resourcegroup-tag\azurepolicy.parameters.json' `
+    -Policy 'C:\Repos\shawnadrockleonard\Azure\policy-definitions\default-resourcegroup-ifnotag\azurepolicy.rules.json' `
+    -Parameter 'C:\Repos\shawnadrockleonard\Azure\policy-definitions\default-resourcegroup-ifnotag\azurepolicy.parameters.json' `
     -Metadata '{"category":"Tags"}' -Mode Indexed -Verbose
 
 $definition

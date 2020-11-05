@@ -10,8 +10,20 @@
         "notEquals": ""
       },
       {
-        "field": "[concat('tags[', parameters('tagName'), ']')]",
-        "exists": "false"
+        "anyOf": [
+          {
+            "field": "[concat('tags[', parameters('tagName'), ']')]",
+            "notEquals": "[subscription().tags[parameters('tagName')]]"
+          },
+          {
+            "field": "[concat('tags[', parameters('tagName'), ']')]",
+            "equals": ""
+          },
+          {
+            "field": "[concat('tags[', parameters('tagName'), ']')]",
+            "exists": "false"
+          }
+        ]
       }
     ]
   },

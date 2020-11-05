@@ -1,7 +1,7 @@
 {
   "properties": {
-    "displayName": "Add a tag to resource groups, defaulting to subscription tag",
-    "description": "Provides defaulting Resource group subscription tag",
+    "displayName": "Add a resource group tag only if it doesn't exist, defaults to subscription tag",
+    "description": "Provides default Resource group tag from subscription tag",
     "policyType": "Custom",
     "mode": "All",
     "metadata": {
@@ -12,7 +12,7 @@
         "type": "String",
         "metadata": {
           "displayName": "Tag Name",
-          "description": "Name of the tag, such as 'environment'"
+          "description": "The tag name inherited from the subscription."
         }
       }
     },
@@ -31,15 +31,11 @@
             "anyOf": [
               {
                 "field": "[concat('tags[', parameters('tagName'), ']')]",
-                "exists": "false"
-              },
-              {
-                "field": "[concat('tags[', parameters('tagName'), ']')]",
                 "equals": ""
               },
               {
                 "field": "[concat('tags[', parameters('tagName'), ']')]",
-                "notEquals": "[subscription().tags[parameters('tagName')]]"
+                "exists": "false"
               }
             ]
           }

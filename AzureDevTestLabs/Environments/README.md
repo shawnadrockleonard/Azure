@@ -4,6 +4,8 @@ This folder represents the Azure DevTest Labs Private Environment Repo, as shown
 
 For information about [environments](https://docs.microsoft.com/en-us/azure/lab-services/devtest-lab-concepts#environment) and how they can be leveraged in Azure DevTest Labs, refer to [Configure and use public environments in Azure DevTest Labs](https://docs.microsoft.com/en-us/azure/lab-services/devtest-lab-configure-use-public-environments).
 
+For quickstarts and examples take a look at [Azure Resource Manager Templates](https://github.com/Azure/azure-devtestlab/tree/master/Environments)
+
 ## Contributions
 
 This area is specific to the DevTest Labs activate series.  Any submission should be fully functional.
