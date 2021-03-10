@@ -5,13 +5,18 @@
 param(
     [ValidateScript( { Test-Path $_ -PathType 'Container' })] 
     [string]$DestPath = $(Read-Host -prompt "destination path"),
+
     [Parameter(HelpMessage = "Should be a ~35 character string insert your info here")]
     [string]$ClientID = $(Read-Host -prompt "Client ID: Should be a ~35 character string insert your info here"),
-    [Parameter(HelpMessage = "Should be a ~44 character string insert your info here")]
+
+    [parameter(HelpMessage = "Should be a ~44 character string insert your info here")]
     [string]$ClientSecret = $(Read-Host -prompt "Client Secret: Should be a ~44 character string insert your info here"), 
+
     [string]$loginURL = "https://login.windows.net",
+
     [Parameter(HelpMessage = "For example, contoso.onmicrosoft.com")]
     [string]$tenantdomain = $(Read-Host -prompt "tenant domain"),
+
     [string]$tenantId = $(Read-Host -prompt "tenant ID")
 )
 PROCESS {

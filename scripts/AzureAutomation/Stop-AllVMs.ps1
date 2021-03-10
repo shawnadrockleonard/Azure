@@ -1,4 +1,5 @@
-workflow Stop-AllVMs {
+workflow Stop-AllVMs
+{
     # Specify Azure Subscription Name
     $subName = '[YOUR-AZURE-SUBSCRIPTION-NAME]'
     
@@ -14,7 +15,8 @@ workflow Stop-AllVMs {
     
     Get-AzureService | select ServiceName | foreach { 
         Get-AzureVM -ServiceName $_.ServiceName | foreach {
-            if ($_.InstanceStatus -eq 'ReadyRole') {
+            if ($_.InstanceStatus -eq 'ReadyRole')
+            {
          
                 $currentTime = Get-Date
                 $vmName = $_.Name

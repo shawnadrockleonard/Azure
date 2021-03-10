@@ -1,21 +1,21 @@
-﻿$VerbosePreference=”Continue”
+﻿$VerbosePreference = ”Continue”
 
 
-    .\connect-subscription.ps1 -subscriptionName "MyUltimateMSDN"
+.\connect-subscription.ps1 -subscriptionName "MyUltimateMSDN"
 
-    $automationAccountName = "splautomsdn"
-    $params = @{ vmStackConnName="vms-dev"; vmWeekly=$true }
-    $jobid = Start-AzureAutomationRunbook -Name "Start-wkazurevms" -AutomationAccountName $automationAccountName -Parameters $params
+$automationAccountName = "splautomsdn"
+$params = @{ vmStackConnName = "vms-dev"; vmWeekly = $true }
+$jobid = Start-AzureAutomationRunbook -Name "Start-wkazurevms" -AutomationAccountName $automationAccountName -Parameters $params
 
 do
 {
-    $switch=$true
+    $switch = $true
     $vm = Get-AzureAutomationJob -Id $jobid.Id -AutomationAccountName $automationAccountName
-    Write-Verbose ("Instance {0} is in state {1} check at {2}" -f $vm.RunbookName,$vm.Status,$vm.LastStatusModifiedTime)
+    Write-Verbose ("Instance {0} is in state {1} check at {2}" -f $vm.RunbookName, $vm.Status, $vm.LastStatusModifiedTime)
                 
     if ($vm.Status -ne "Completed")
     {
-        $switch=$false
+        $switch = $false
         Get-AzureAutomationJobOutput -Id $jobid.Id -AutomationAccountName $automationAccountName -Stream Any
     }
                 

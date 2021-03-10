@@ -187,6 +187,7 @@ function Get-CertificateData {
     $base64Thumbprint = [System.Convert]::ToBase64String($bin)
     $keyid = [System.Guid]::NewGuid().ToString()
 
+    Write-host ("Thumbprint: {0}" -f $cer.Thumbprint)
     Write-host ("base64Thumbprint: {0}" -f $base64Thumbprint)
     Write-host ("base64Value: {0}" -f $base64Value)
     Write-host ("keyid: {0}" -f $keyid)
