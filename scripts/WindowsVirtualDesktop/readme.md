@@ -6,7 +6,7 @@
 #  ║  [WARNING!]                                                                      ║ #
 #  ║                                                                                  ║ #
 #  ║  You are using this document at our own risk. This is a document of my           ║ #
-#  ║  experience and provided 'as is' without warranty of any kind,      	      ║ #
+#  ║  experience and provided 'as is' without warranty of any kind,                   ║ #
 #  ║  either express or implied, including but not limited to the implied warranties  ║ #
 #  ║  of merchantability and/or fitness for a particular purpose. This readme is      ║ #
 #  ║  only meant to be a sample which should demonstrate a specific technique and is  ║ #
