@@ -1,26 +1,46 @@
 # WVD Cross Cloud / Subscription Provisioning - Configuration Walkthrough
 
+```
+#  ╔══════════════════════════════════════════════════════════════════════════════════╗ #
+#  ║                                                                                  ║ #
+#  ║  [WARNING!]                                                                      ║ #
+#  ║                                                                                  ║ #
+#  ║  You are using this document at our own risk. This is a document of my      	  ║ #
+#  ║  experience and provided 'as is' without warranty of any kind,      			  ║ #
+#  ║  either express or implied, including but not limited to the implied warranties  ║ #
+#  ║  of merchantability and/or fitness for a particular purpose. This readme is      ║ #
+#  ║  only meant to be a sample which should demonstrate a specific technique and is  ║ #
+#  ║  intended to be a 'point to start from'. It is not intended to be a 'ready to    ║ #
+#  ║  use' application. Please do understand that there is no guarantee that this     ║ #
+#  ║  will run with any given environment or configuration.                           ║ #
+#  ║                                                                                  ║ #
+#  ║  There is no support for this doc.                                               ║ #
+#  ║  I highly recommend you contact Microsoft Fast Track.                            ║ #
+#  ║                                                                                  ║ #
+#  ╚══════════════════════════════════════════════════════════════════════════════════╝ #
+```
+
 
 ## Contents
 
-- Overview	1
-- Typical WVD Deployment	2
-- Challenge:  Separate Clouds Complicates Deployment	2
-- Cross Cloud / Cross Subscription Deployment	4
-- Deployment Process	6
-- Create Empty Target Pool in Azure Commercial (~2 minutes)	6
-- Create Full Source Pool in Azure Government (~20 minutes w/VM provisioning)	8
-- Register VMs with Target Pool with PowerShell (~5 minutes)	11
-- Required Information	11
-- Install WVD Azure PowerShell Module	12
-- Retrieve Target Host Pool Token	12
-- Create Script to Inject into VMs to Unregister / Reregister	12
-- Retrieve Source Host Pool VMs and Reconfigure	13
-- Setup Process Results	13
-- Identified Limitations (The Downside)	15
-- Monitoring	15
-- Power Management / Compute Optimization	15
-- Other Maintenance (Pool Expansion)	15
+- Overview
+- Typical WVD Deployment
+- Challenge:  Separate Clouds Complicates Deployment
+- Cross Cloud / Cross Subscription Deployment
+- Deployment Process
+- Create Empty Target Pool in Azure Commercial (~2 minutes)
+- Create Full Source Pool in Azure Government (~20 minutes w/VM provisioning)
+- Register VMs with Target Pool with PowerShell (~5 minutes)
+- Required Information
+- Install WVD Azure PowerShell Module
+- Retrieve Target Host Pool Token
+- Create Script to Inject into VMs to Unregister / Reregister
+- Retrieve Source Host Pool VMs and Reconfigure
+- Setup Process Results
+- Identified Limitations (The Downside)
+- Monitoring
+- Power Management / Compute Optimization
+- Other Maintenance (Pool Expansion)
 
 ## Overview
 Thousands of Microsoft U.S. government and regulated industry customers use the Office 365 Government Community Cloud (GCC) for end-user identity and productivity services.  Azure Active Directory (AAD) for the GCC lives in a U.S.-only partition of AAD in the Azure Commercial service.
@@ -127,7 +147,7 @@ Other than properly permissioned credentials for each cloud->tenant->subscriptio
 $GovResourceGroup 	= "GBBComm"
 $GovSubscriptionID	= "11111111-1111-1111-1111-111111111111”
 $GovHostPool		= "Commercial"	
-$CommResourceGroup 	= "kelbleyWVD"
+$CommResourceGroup 	= "WVDResourceGroup"
 $CommSubscriptionID	= "22222222-2222-2222-2222-222222222222”
 $CommHostPool		= "Gov"	
 ```
@@ -145,6 +165,7 @@ If you do not have it already, you will need the Azure WVD PowerShell Module (as
 
 Retrieve Target Host Pool Token 
 Log into the cloud->tenant->subscription with AAD access, and retrieve the token required to join VMs to the deployment:
+
 #################################
 
 ### Step 1 - Connect to Azure Commercial and retrieve Commercial Host Pool Token
