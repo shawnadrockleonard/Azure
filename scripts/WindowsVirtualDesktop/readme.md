@@ -66,9 +66,9 @@ Instead the approach could be to use the existing identity and WVD core services
 This approach can provide seamless access to end-users (same login experience they would have for Office 365 resources) with desktop and application services inside Azure Government, near existing data assets.
 Cross Cloud / Cross Subscription Deployment
 A WVD deployment which crosses cloud / subscription boundaries has the same high-level requirements of a typical deployment:
-•	Azure Active Directory synchronized with Active Directory Domain Services (AD) or AADDS
-•	Active Directory Domain Services available in Azure (for machine join and profile management)
-•	Microsoft 365 licensing entitlements to support the use of Windows 10 Enterprise as well as key desired security features (example:  Conditional Access)
+- Azure Active Directory synchronized with Active Directory Domain Services (AD) or AADDS
+- Active Directory Domain Services available in Azure (for machine join and profile management)
+- Microsoft 365 licensing entitlements to support the use of Windows 10 Enterprise as well as key desired security features (example:  Conditional Access)
 
 The proposed process to create a cross cloud / cross subscription deployment takes advantage of the fact that VMs in Host Pools do not need to live within the subscription where the host pool is defined – the VMs have the ability to be manually registered the host pool to provide session access even if they are in another cloud.  Detail on how to manually attach a VM to a WVD host pool can be found here:  [https://docs.microsoft.com/en-us/azure/virtual-desktop/create-host-pools-powershell#prepare-the-virtual-machines-for-windows-virtual-desktop-agent-installations](https://docs.microsoft.com/en-us/azure/virtual-desktop/create-host-pools-powershell#prepare-the-virtual-machines-for-windows-virtual-desktop-agent-installations) . 
 
@@ -122,6 +122,7 @@ Required Information
 Other than properly permissioned credentials for each cloud->tenant->subscription, only the following information is required to run the code (need to update with your deployment specific information):
 #################################
 # Azure Settings & other parms
+``` posh
 #################################
 $GovResourceGroup 	= "GBBComm"
 $GovSubscriptionID	= "11111111-1111-1111-1111-111111111111”
@@ -129,27 +130,42 @@ $GovHostPool		= "Commercial"
 $CommResourceGroup 	= "kelbleyWVD"
 $CommSubscriptionID	= "22222222-2222-2222-2222-222222222222”
 $CommHostPool		= "Gov"	
+```
  
 Install WVD Azure PowerShell Module
 If you do not have it already, you will need the Azure WVD PowerShell Module (as well as other Azure-related modules to connect to Azure and manipulate the VMs):
+
 #################################
-#Step 0 - Install WVD Module... in case you don't have it
+### Step 0 - Install WVD Module... in case you don't have it
 #################################
+
+``` posh
 # Install-Module -Name Az.DesktopVirtualization
+```
+
 Retrieve Target Host Pool Token 
 Log into the cloud->tenant->subscription with AAD access, and retrieve the token required to join VMs to the deployment:
 #################################
-#Step 1 - Connect to Azure Commercial and retrieve Commercial Host Pool Token
+
+### Step 1 - Connect to Azure Commercial and retrieve Commercial Host Pool Token
 #################################
+
+``` posh
 Connect-AzAccount 
 Select-AzSubscription -SubscriptionId $CommSubscriptionID
 $CommPool = Get-AzWvdRegistrationInfo -ResourceGroupName $CommResourceGroup -HostPoolName $CommHostPool
 $Token = $CommPool.Token
+```
+
 Create Script to Inject into VMs to Unregister / Reregister
 Save a custom .PS1 file on your local host which includes the necessary host pool token, with all necessary commands to unregister and reregister the VM to the target host pool.  The file will be executed later in the code in each VM:
+
 #################################
-#Step 2 - Build Command to run in VMs
+
+### Step 2 - Build Command to run in VMs
 #################################
+
+``` posh
 $remoteCommand =
 @"
 #### Run Unregister from Gov Pool / Reregister with Commercial Pool
@@ -161,12 +177,18 @@ Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\RDInfraAgent'
 "@
 ### Save the command to a local file
 Set-Content -Path .\RegNewPool.PS1 -Value $remoteCommand
- 
+```
+
 Retrieve Source Host Pool VMs and Reconfigure
 Log into Azure Government (the cloud->tenant->subscription with VMs in a Host Pool), get the list of VMs, disconnect them from that pool, and reconnect them to the other pool.
+
 #################################
-#Step 3 - Remove VMs from Gov Pool & register with Commercial Pool
+
+### Step 3 - Remove VMs from Gov Pool & register with Commercial Pool
 #################################
+
+
+``` posh
 Connect-AzAccount -EnvironmentName AzureUSGovernment 
 Select-AzSubscription -SubscriptionId $GovSubscriptionID
 $VMs = Get-AZWVDSessionHost -ResourceGroupName $GovResourceGroup -HostPoolName $GovHostPool 
@@ -182,11 +204,21 @@ Foreach ($VM in $VMs) {
 	#################################
 	Invoke-AzVMRunCommand -Name $VMname -ResourceGroupName $GovResourceGroup -CommandId 'RunPowerShellScript' -ScriptPath .\RegNewPool.PS1
 }
+```
+
 #################################
 ### Clean-up the local file
 #################################
+
+``` posh
 Remove-Item .\RegNewPool.PS1
-Setup Process Results
+```
+
+#################################
+
+### Setup Process Results
+#################################
+
 After (hopefully) successful execution of the PowerShell, VMs from the source (Gov) Host Pool should be registered and available in the target (Commercial) Host Pool: 
  
 You will need to configure a Workspace / App Groups /add Access, but one that is completed published desktop and application resources running on the VMs will be accessible:
