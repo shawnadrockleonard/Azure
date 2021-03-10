@@ -81,7 +81,7 @@ function CheckScheduleEntry ([string]$TimeRange)
         # Parse as range if contains '->'
         if ($TimeRange -like "*->*")
         {
-            $timeRangeComponents = $TimeRange -split "->" | foreach {$_.Trim()}
+            $timeRangeComponents = $TimeRange -split "->" | ForEach-Object { $_.Trim() }
             if ($timeRangeComponents.Count -eq 2)
             {
                 $rangeStart = Get-Date $timeRangeComponents[0]
@@ -167,7 +167,7 @@ function AssertVirtualMachinePowerState
     # Get VM depending on type
     if ($VirtualMachine.Type -eq "Microsoft.Compute/virtualMachines")
     {
-        $resourceManagerVM = $ResourceManagerVMList | where Name -eq $VirtualMachine.Name
+        $resourceManagerVM = $ResourceManagerVMList | Where-Object Name -eq $VirtualMachine.Name
         AssertResourceManagerVirtualMachinePowerState -VirtualMachine $resourceManagerVM -DesiredState $DesiredState -Simulate $Simulate
     }
     else
@@ -187,7 +187,7 @@ function AssertResourceManagerVirtualMachinePowerState
 
     # Get VM with current status
     $resourceManagerVM = Get-AzureRmVM -ResourceGroupName $VirtualMachine.ResourceGroupName -Name $VirtualMachine.Name -Status
-    $currentStatus = $resourceManagerVM.Statuses | where Code -like "PowerState*" 
+    $currentStatus = $resourceManagerVM.Statuses | Where-Object Code -like "PowerState*" 
     $currentStatus = $currentStatus.Code -replace "PowerState/", ""
 
     # If should be started and isn't, start VM
@@ -256,11 +256,11 @@ try
 
 
     # Get a list of all virtual machines in subscription
-    $resourceManagerVMList = @(Get-AzureRmVM | sort Name)
+    $resourceManagerVMList = @(Get-AzureRmVM | Sort-Object Name)
 
     # Get resource groups that are tagged for automatic shutdown of resources
-    $taggedResourceGroups = @(Get-AzureRmResourceGroup | where {$_.Tags.Count -gt 0 -and $_.Tags.Keys -contains "ShutdownStartup-Dev-A"})
-    $taggedResourceGroupNames = @($taggedResourceGroups | select -ExpandProperty ResourceGroupName)
+    $taggedResourceGroups = @(Get-AzureRmResourceGroup | Where-Object { $_.Tags.Count -gt 0 -and $_.Tags.Keys -contains "ShutdownStartup-Dev-A" })
+    $taggedResourceGroupNames = @($taggedResourceGroups | Select-Object -ExpandProperty ResourceGroupName)
     Write-Output "Found [$($taggedResourceGroups.Count)] schedule-tagged resource groups in subscription"	
 
     # For each VM, determine
@@ -282,7 +282,7 @@ try
         elseif ($taggedResourceGroupNames -contains $vm.ResourceGroupName)
         {
             # VM belongs to a tagged resource group. Use the group tag
-            $parentGroup = $taggedResourceGroups | where ResourceGroupName -eq $vm.ResourceGroupName
+            $parentGroup = $taggedResourceGroups | Where-Object ResourceGroupName -eq $vm.ResourceGroupName
             $schedule = ($parentGroup.Tags.Values)
             Write-Output "[$($vm.Name)]: Found parent resource group schedule tag with value: $schedule"
         }
@@ -294,14 +294,14 @@ try
         }
 
         # Check that tag value was succesfully obtained
-        if ($schedule -eq $null)
+        if ($null -eq $schedule)
         {
             Write-Output "[$($vm.Name)]: Failed to get tagged schedule for virtual machine. Skipping this VM."
             continue
         }
 
         # Parse the ranges in the Tag value. Expects a string of comma-separated time ranges, or a single time range
-        $timeRangeList = @($schedule -split "," | foreach {$_.Trim()})
+        $timeRangeList = @($schedule -split "," | ForEach-Object { $_.Trim() })
     
         # Check each range against the current time to see if any schedule is matched
         $scheduleMatched = $false

@@ -2,11 +2,11 @@
 {   
     Param
     (
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [String]$VmStackConnName
     )
     
-    $VerbosePreference=”Continue”
+    $VerbosePreference = ”Continue”
 
     # Connect to Azure Subscription
     Connect-AzureSubscription
@@ -23,21 +23,22 @@
         Write-Output "In the script searching for azure vms"
 
         $jsonobjects | Sort-Object { $_.shutorder } | ForEach-Object {
-        Write-Verbose ("Now Stopping ServiceName {0} `t`tVirtualMachine {1}" -f $_.ServiceName, $_.ComputerName)
+            Write-Verbose ("Now Stopping ServiceName {0} `t`tVirtualMachine {1}" -f $_.ServiceName, $_.ComputerName)
         
             do
             {
-                $switch=$true
+                $switch = $true
                 $vm = Get-AzureVM -ServiceName $_.ServiceName -Name $_.ComputerName
                 Write-Output ("Instance {0} is in state {1}" -f $vm.Name, $vm.Status )
-                if ($vm.Status -eq 'ReadyRole' -or $vm.Status -ne "StoppedDeallocated" ) {
+                if ($vm.Status -eq 'ReadyRole' -or $vm.Status -ne "StoppedDeallocated" )
+                {
                     Write-Output ("{0} is ready to be shutdown" -f $vm.ServiceName)
                     $vm | Stop-AzureVM -Force    
                 }
                 
                 if ($vm.Status -ne "StoppedDeallocated")
                 {
-                    $switch=$false
+                    $switch = $false
                 }
                 
                 if (-Not($switch))
