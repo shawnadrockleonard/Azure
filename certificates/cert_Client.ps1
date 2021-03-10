@@ -27,7 +27,7 @@
 .SAMPLE
 
 # Run this on a server by server basis
-    .\cert_Client.ps1 -FriendlyName "csp.shawniq.com" `
+    .\certificates\cert_Client.ps1 -FriendlyName "csp.shawniq.com" `
         -ClientCertificateXmlFilename "L:\temp\client-cert.xml" `
         -ClientConfigFile "L:\temp\client-sample.config" `
         -ServerConfigFile "L:\temp\server-sample.config" -Verbose
@@ -37,22 +37,23 @@ param(
     [Parameter(Mandatory = $true, Position = 1)]
     [string]$FriendlyName,  
 
-    [ValidateScript( {Test-Path $_ -PathType Leaf})]
+    [ValidateScript( { Test-Path $_ -PathType Leaf })]
     [Parameter(Mandatory = $true)]
     [string]$ClientCertificateXmlFilename,
 
-    [ValidateScript( {Test-Path $_ -PathType Leaf})]
+    [ValidateScript( { Test-Path $_ -PathType Leaf })]
     [Parameter(Mandatory = $true)]
     [string]$ClientConfigFile,
 
-    [ValidateScript( {Test-Path $_ -PathType Leaf})]
+    [ValidateScript( { Test-Path $_ -PathType Leaf })]
     [Parameter(Mandatory = $true)]
     [string]$ServerConfigFile
 )
-begin {
+begin
+{
 
     
-    Import-Module .\CACert.Module -Force -Verbose:$false
+    Import-Module .\module\CACert.Module -Force -Verbose:$false
 
 
     # Global Variables
@@ -65,26 +66,26 @@ begin {
     # Establish the running directories
     $outputDirectory = ("{0}\temp" -f $env:HOMEDRIVE)
     $scriptDirectory = [System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
-    if (!(Test-Path -Path $scriptDirectory -PathType 'Container' -ErrorAction SilentlyContinue)) {
+    if (!(Test-Path -Path $scriptDirectory -PathType 'Container' -ErrorAction SilentlyContinue))
+    {
         $scriptDirectory = (New-Item -Path $outputDirectory -ItemType Directory -Force).FullName
     }
 
     $certPath = Join-Path -Path $scriptDirectory -ChildPath "issued-certs"
-    if (!(Test-Path -Path $certPath -PathType 'Container' -ErrorAction SilentlyContinue)) {
+    if (!(Test-Path -Path $certPath -PathType 'Container' -ErrorAction SilentlyContinue))
+    {
         $certPath = (New-Item -Path $certPath -ItemType Directory -Force).FullName
     }
-
-    # Move to running directory
-    Set-Location $scriptDirectory
-
 }
-PROCESS {
+PROCESS
+{
 
     
     Write-Verbose ("Reading [Client] Certificate XML contents of {0} into memory" -f $ClientCertificateXmlFilename)
     $certConfig = [xml](Get-Content -Path $ClientCertificateXmlFilename)
     $friendlyNameNode = $certConfig.SelectSingleNode("/Objects/Object/Property[@Name='friendlyName']")
-    if (!($friendlyNameNode.IsEmpty) -and $friendlyNameNode.InnerText -ne $FriendlyName) {
+    if (!($friendlyNameNode.IsEmpty) -and $friendlyNameNode.InnerText -ne $FriendlyName)
+    {
         Write-Warning "The friendly name provided in the parameter does not match the friendly name in the XML file"
         return
     }
@@ -97,22 +98,27 @@ PROCESS {
     Write-Verbose ("Found {0} serial number in the file {1}" -f $serialNo, $ClientCertificateXmlFilename)
 
 
-    if ($serialNo.Length -le 1 -or $base64RAW.Length -le 1) {
+    if ($serialNo.Length -le 1 -or $base64RAW.Length -le 1)
+    {
         Write-Warning ("No serial number or base64 is populated in the file {0}" -f $ServerCertificateXmlFilename)
     }
-    else {
+    else
+    {
 
 
         # Export the Cert to disk
         $base64cer = Get-ChildItem -path Cert:\LocalMachine\My | Where-Object { $Null -ne $_.SerialNumber -and $_.SerialNumber -eq $serialNo } | Sort-Object -Property NotBefore -Descending
         $base64CertificateCount = ($base64cer | Measure-Object).Count
-        if ($null -eq $base64cer -or ($base64CertificateCount -le 0)) {
+        if ($null -eq $base64cer -or ($base64CertificateCount -le 0))
+        {
             Write-Warning ("Could not find a certificate in the LocalMachine\My store for SerialNo:{0}" -f $serialNo)
             Write-Warning ("Ensure you have run the Generate/Complete/Export/Import commands before proceeding......")
         }
-        else {   
+        else
+        {   
         
-            if ($base64CertificateCount -gt 1) {
+            if ($base64CertificateCount -gt 1)
+            {
                 Write-Warning ("Found more than one certificate in the store.....")
                 Write-Warning ("The process should emit multiple files per the serial numbers")
             }

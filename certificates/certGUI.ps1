@@ -31,7 +31,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$FriendlyName
 )
-BEGIN {
+BEGIN
+{
 
     Add-Type -AssemblyName System.Windows.Forms
     [System.Windows.Forms.Application]::EnableVisualStyles()
@@ -55,12 +56,14 @@ BEGIN {
     # Establish the running directories
     $outputDirectory = ("{0}\temp" -f $env:HOMEDRIVE)
     $scriptDirectory = [System.IO.Path]::GetDirectoryName($myInvocation.MyCommand.Definition)
-    if (!(Test-Path -Path $scriptDirectory -PathType 'Container' -ErrorAction SilentlyContinue)) {
+    if (!(Test-Path -Path $scriptDirectory -PathType 'Container' -ErrorAction SilentlyContinue))
+    {
         $scriptDirectory = (New-Item -Path $outputDirectory -ItemType Directory -Force).FullName
     }
 
     $certPath = Join-Path -Path $scriptDirectory -ChildPath "issued-certs"
-    if (!(Test-Path -Path $certPath -PathType 'Container' -ErrorAction SilentlyContinue)) {
+    if (!(Test-Path -Path $certPath -PathType 'Container' -ErrorAction SilentlyContinue))
+    {
         $certPath = (New-Item -Path $certPath -ItemType Directory -Force).FullName
     }
 
@@ -68,10 +71,12 @@ BEGIN {
     Set-Location $scriptDirectory
 
 }
-PROCESS {
+PROCESS
+{
 
 
-    function Update-WizardProgress {
+    function Update-WizardProgress
+    {
         <#
         .SYNOPSIS
         Adds status messages to the progress check box
@@ -86,15 +91,18 @@ PROCESS {
             [Parameter(Mandatory = $False)]
             [System.Drawing.Color]$FontColor
         )
-        process {
+        process
+        {
             $progress = $textboxWizardProgress.text + "`r`n"
             $progress = $progress + $Message
             $textboxWizardProgress.Text = $progress
 
-            if ($null -ne $FontColor) {
+            if ($null -ne $FontColor)
+            {
                 $textboxWizardProgress.ForeColor = $FontColor
             }
-            else {
+            else
+            {
                 $textboxWizardProgress.ForeColor = [System.Drawing.Color]::Black
             }
             $textboxWizardProgress.SelectionStart = $textboxWizardProgress.TextLength
@@ -113,17 +121,20 @@ PROCESS {
     $Form_FormClosing = {
         # Capture form closing event ie user clicked red X. Prompt for validation and cancel event if user has exietd by mistake
     
-        If ($wizstatus -eq $false) {
+        If ($wizstatus -eq $false)
+        {
             #Pre requisites failed so kill form
             #[environment]::exit(0)
             $MainForm.Close()
         }
         $closeme = Show-MessageBox -Msg "Do you want to close down the Wizard?" -YesNo 
     
-        If ($closeme -eq "Yes") {
+        If ($closeme -eq "Yes")
+        {
             $wizstatus = $false
         }
-        Else {
+        Else
+        {
             $_.Cancel = $true # $_.Cancel actually cancels the FormClosing Event and so FormClosed never fires
             Show-MessageBox "Carry on regardless"
         }
@@ -143,7 +154,8 @@ PROCESS {
         $certtype = "generic"
         $certRequest = ("CN={0}" -f $tbCN.Text)
 
-        if ($null -eq $tbCN.Text -or $tbCN.Text.Length -le 1) {
+        if ($null -eq $tbCN.Text -or $tbCN.Text.Length -le 1)
+        {
             Update-WizardProgress "-------"
             Update-WizardProgress "You must provide a CN for the request"
             $tbCN.ForeColor = [System.Drawing.Color]::Red
@@ -155,21 +167,25 @@ PROCESS {
 
         $certdnsarray = New-Object -TypeName System.Collections.ArrayList
         $sanCert = ""
-        if ($tbdns1.Text.Length -gt 0 -or $tbdns2.Text.Length -gt 0 -or $tbdns3.Text.Length -gt 0 -or $tbdns4.Text.Length -gt 0) {
+        if ($tbdns1.Text.Length -gt 0 -or $tbdns2.Text.Length -gt 0 -or $tbdns3.Text.Length -gt 0 -or $tbdns4.Text.Length -gt 0)
+        {
 
             $certsanstatus = $true
             $sanCertDn = ""
             $sanCertEx = ""
             $sanCertAttr = ("dns={0}" -f $tbCN.Text)
 
-            if ($tbdns1.Text.Length -gt 0) {
-                if ($tbdns1ref.Text.length -le 1) {
+            if ($tbdns1.Text.Length -gt 0)
+            {
+                if ($tbdns1ref.Text.length -le 1)
+                {
                     Update-WizardProgress ("You must provide a DNS Ref for the DNS {0}" -f $tbdns1.Text)
                     $textboxWizardProgress.ForeColor = [System.Drawing.Color]::Red
                     $tbdns1ref.ForeColor = [System.Drawing.Color]::Red
                     $dnsError = $true
                 }
-                else {
+                else
+                {
                     $tbdns1ref.ForeColor = [System.Drawing.Color]::Black
                     $sanCertAttr = ("{0}&dns={1}" -f $sanCertAttr, $tbdns1.Text)
                     $sancertDn = ("{0},CN={1},CN=Ref:{2}" -f $sancertDn, $tbdns1.Text, $tbdns1ref.Text)
@@ -187,8 +203,10 @@ _continue_ = "dns={0}&"
                 }
             }
 
-            if ($tbdns2.Text.Length -gt 0) {
-                if ($tbdns2ref.Text.length -le 1) {
+            if ($tbdns2.Text.Length -gt 0)
+            {
+                if ($tbdns2ref.Text.length -le 1)
+                {
                     Update-WizardProgress ("You must provide a DNS Ref for the DNS {0}" -f $tbdns2.Text)
                     $textboxWizardProgress.ForeColor = [System.Drawing.Color]::Red
                     $dnsError = $true
@@ -207,8 +225,10 @@ _continue_ = "dns={0}&"
                 $certdnsarray.Add((New-Object PSObject -Property $certDns))
             }
 
-            if ($tbdns3.Text.Length -gt 0) {
-                if ($tbdns3ref.Text.length -le 1) {
+            if ($tbdns3.Text.Length -gt 0)
+            {
+                if ($tbdns3ref.Text.length -le 1)
+                {
                     Update-WizardProgress ("You must provide a DNS Ref for the DNS {0}" -f $tbdns3.Text)
                     $textboxWizardProgress.ForeColor = [System.Drawing.Color]::Red
                     $dnsError = $true
@@ -227,8 +247,10 @@ _continue_ = "dns={0}&"
                 $certdnsarray.Add((New-Object PSObject -Property $certDns))
             }
 
-            if ($tbdns4.Text.Length -gt 0) {
-                if ($tbdns4ref.Text.length -le 1) {
+            if ($tbdns4.Text.Length -gt 0)
+            {
+                if ($tbdns4ref.Text.length -le 1)
+                {
                     Update-WizardProgress ("You must provide a DNS Ref for the DNS {0}" -f $tbdns4.Text)
                     $textboxWizardProgress.ForeColor = [System.Drawing.Color]::Red
                     $dnsError = $true
@@ -247,8 +269,10 @@ _continue_ = "dns={0}&"
                 $certdnsarray.Add((New-Object PSObject -Property $certDns))
             }
 
-            if ($tbdns5.Text.Length -gt 0) {
-                if ($tbdnsref5.Text.length -le 1) {
+            if ($tbdns5.Text.Length -gt 0)
+            {
+                if ($tbdnsref5.Text.length -le 1)
+                {
                     Update-WizardProgress ("You must provide a DNS Ref for the DNS {0}" -f $tbdns5.Text)
                     $textboxWizardProgress.ForeColor = [System.Drawing.Color]::Red
                     $dnsError = $true
@@ -267,8 +291,10 @@ _continue_ = "dns={0}&"
                 $certdnsarray.Add((New-Object PSObject -Property $certDns))
             }
 
-            if ($tbdns6.Text.Length -gt 0) {
-                if ($tbdnsref6.Text.length -le 1) {
+            if ($tbdns6.Text.Length -gt 0)
+            {
+                if ($tbdnsref6.Text.length -le 1)
+                {
                     Update-WizardProgress ("You must provide a DNS Ref for the DNS {0}" -f $tbdns6.Text)
                     $textboxWizardProgress.ForeColor = [System.Drawing.Color]::Red
                     $dnsError = $true
@@ -287,8 +313,10 @@ _continue_ = "dns={0}&"
                 $certdnsarray.Add((New-Object PSObject -Property $certDns))
             }
 
-            if ($tbdns7.Text.Length -gt 0) {
-                if ($tbdnsref7.Text.length -le 1) {
+            if ($tbdns7.Text.Length -gt 0)
+            {
+                if ($tbdnsref7.Text.length -le 1)
+                {
                     Update-WizardProgress ("You must provide a DNS Ref for the DNS {0}" -f $tbdns7.Text)
                     $textboxWizardProgress.ForeColor = [System.Drawing.Color]::Red
                     $dnsError = $true
@@ -307,8 +335,10 @@ _continue_ = "dns={0}&"
                 $certdnsarray.Add((New-Object PSObject -Property $certDns))
             }
 
-            if ($tbdns8.Text.Length -gt 0) {
-                if ($tbdnsref8.Text.length -le 1) {
+            if ($tbdns8.Text.Length -gt 0)
+            {
+                if ($tbdnsref8.Text.length -le 1)
+                {
                     Update-WizardProgress ("You must provide a DNS Ref for the DNS {0}" -f $tbdns8.Text)
                     $textboxWizardProgress.ForeColor = [System.Drawing.Color]::Red
                     $dnsError = $true
@@ -347,14 +377,16 @@ SAN="{3}"
         }
 
 
-        if ($sancertDn.Length -gt 0) {
+        if ($sancertDn.Length -gt 0)
+        {
             $certRequest += ("{0},CN={1}" -f $sancertDn, $tbCN.Text)
         }
 
 
 
         
-        if ($RadioButton2.Checked) {
+        if ($RadioButton2.Checked)
+        {
             $keyUsage = @"
 OID=1.3.6.1.5.5.7.3.2; Client Authentication
 "@
@@ -362,7 +394,8 @@ OID=1.3.6.1.5.5.7.3.2; Client Authentication
             $certTemplate = "WorkstationAuthenticationCertAuth"
             $certtype = "client"
         }
-        else {   
+        else
+        {   
             $keyUsage = @"
 OID=1.3.6.1.5.5.7.3.1; Server Authentication
 OID=1.3.6.1.5.5.7.3.2; Client Authentication
@@ -372,65 +405,77 @@ OID=1.3.6.1.5.5.7.3.2; Client Authentication
             $certtype = "server"
         }
 
-        if ($null -eq $tbOrg.Text -or $tbOrg.Text.Length -le 1) {
+        if ($null -eq $tbOrg.Text -or $tbOrg.Text.Length -le 1)
+        {
             Update-WizardProgress "Provide an ORG"
             $tbOrg.ForeColor = [System.Drawing.Color]::Red
             $dnsError = $true
         }
-        else {
+        else
+        {
             $certRequest += (",O={0}" -f $tbOrg.Text)
             $tbOrg.ForeColor = [System.Drawing.Color]::Black
         }
 
-        if ($null -eq $tbOrgUnit.Text -or $tbOrgUnit.Text.Length -le 1) {
+        if ($null -eq $tbOrgUnit.Text -or $tbOrgUnit.Text.Length -le 1)
+        {
             Update-WizardProgress "Provide an ORG Unit"
             $tbOrgUnit.ForeColor = [System.Drawing.Color]::Red
             $dnsError = $true
         }
-        else {
+        else
+        {
             $certRequest += (",OU={0}" -f $tbOrgUnit.Text)
             $tbOrgUnit.ForeColor = [System.Drawing.Color]::Black
         }
 
-        if ($null -eq $tbLocation.Text -or $tbLocation.Text.Length -le 1) {
+        if ($null -eq $tbLocation.Text -or $tbLocation.Text.Length -le 1)
+        {
             Update-WizardProgress "Provide a Location"
             $tbLocation.ForeColor = [System.Drawing.Color]::Red
             $dnsError = $true
         }
-        else {
+        else
+        {
             $certRequest += (",L={0}" -f $tbLocation.Text)
             $tbLocation.ForeColor = [System.Drawing.Color]::Black
         }
 
-        if (-1 -ge $lboxState.SelectedIndex) {
+        if (-1 -ge $lboxState.SelectedIndex)
+        {
             Update-WizardProgress "Select a State"
             $lboxState.ForeColor = [System.Drawing.Color]::Red
             $dnsError = $true
         }
-        else {
+        else
+        {
             $certRequest += (",ST={0}" -f $lboxState.SelectedItem)
             $lboxState.ForeColor = [System.Drawing.Color]::Black
         }
 
-        if (-1 -ge $lboxCountry.SelectedIndex) {
+        if (-1 -ge $lboxCountry.SelectedIndex)
+        {
             Update-WizardProgress "Select a Country"
             $lboxCountry.ForeColor = [System.Drawing.Color]::Red
             $dnsError = $true
         }
-        else {
+        else
+        {
             $certRequest += (",C={0}" -f $lboxCountry.SelectedItem)
             $lboxCountry.ForeColor = [System.Drawing.Color]::Black
         }
 
 
-        if ($dnsError -eq $true) {
+        if ($dnsError -eq $true)
+        {
             Write-Warning -Message "Invalid request, please complete all fields...."
             Update-WizardProgress "Invalid request, please complete all fields listed above...."
             $textboxWizardProgress.ForeColor = [System.Drawing.Color]::Red
             $Button1.Text = "Generate"
             $Button1.Enabled = $true
         }
-        else {
+        else
+        {
 
 
             $certstatusmsg = ""
@@ -464,15 +509,18 @@ CertificateTemplate = {4}  ; Modify for your environment by using the LDAP commo
 
 
             $Isboxadmin = Test-IsLocalAdmin -identity $script:identity -Verbose:$VerbosePreference
-            If ($Isboxadmin -eq $false) {
+            If ($Isboxadmin -eq $false)
+            {
                 Update-WizardProgress "Is User Local Admin returns FALSE"
             }
-            else {
+            else
+            {
                 Update-WizardProgress "Is User Local Admin returns TRUE"
             }
 
             $filenameInf = ("{0}-{1}.inf" -f $certtype, ($tbFriendly.text -replace $pattern, ""))
-            if ($certsanstatus -eq $true) {
+            if ($certsanstatus -eq $true)
+            {
                 $filenameInf = "san-" + $filenameInf 
             }
 
@@ -524,11 +572,12 @@ CertificateTemplate = {4}  ; Modify for your environment by using the LDAP commo
         Write-Verbose -Message ("# Will generate the REQ file for the Certificate authority")
         Write-Verbose -Message ""
         Write-Warning -Message ("Use this command:")
-        Write-Warning -Message (">>> .\certProcess.ps1 -FriendlyName ""{0}"" -GenerateREQ -infFilename ""{1}"" -Verbose" -f $tbFriendly.Text, $script:xmlfilename.Replace(".xml", ".inf"))
+        Write-Warning -Message (">>> .\certificates\certProcess.ps1 -FriendlyName ""{0}"" -GenerateREQ -infFilename ""{1}"" -Verbose" -f $tbFriendly.Text, $script:xmlfilename.Replace(".xml", ".inf"))
 
                 
         #Remove all event handlers from the controls
-        try {
+        try
+        {
             $Button1.remove_Click($buttonStart_Click)
             $MainForm.remove_Load($OnLoadFormEvent)
             $MainForm.remove_Load($Form_StateCorrection_Load)
@@ -635,7 +684,7 @@ CertificateTemplate = {4}  ; Modify for your environment by using the LDAP commo
     $lboxState.TabIndex = 7
     $lboxState.text = "State"
     $lboxState.Size = New-Object System.Drawing.Size(200, 45)
-    @('Maryland', 'Virginia', 'District of Columbia') | ForEach-Object {[void] $lboxState.Items.Add($_)}
+    @('Maryland', 'Virginia', 'District of Columbia') | ForEach-Object { [void] $lboxState.Items.Add($_) }
     $lboxState.location = New-Object System.Drawing.Point(145, 210)
 
     $lbCountry = New-Object system.Windows.Forms.Label
@@ -649,7 +698,7 @@ CertificateTemplate = {4}  ; Modify for your environment by using the LDAP commo
     $lboxCountry.TabIndex = 8
     $lboxCountry.text = "listBox"
     $lboxCountry.Size = New-Object System.Drawing.Size(75, 35)
-    @('US') | ForEach-Object {[void] $lboxCountry.Items.Add($_)}
+    @('US') | ForEach-Object { [void] $lboxCountry.Items.Add($_) }
     $lboxCountry.location = New-Object System.Drawing.Point(145, 260)
 
     #endregion Group Box
@@ -998,7 +1047,8 @@ CertificateTemplate = {4}  ; Modify for your environment by using the LDAP commo
     [void] $MainForm.ShowDialog()
 
 } 
-END {
+END
+{
     # Closing out the GUI
     Write-Verbose "Closing out the GUI"
 }

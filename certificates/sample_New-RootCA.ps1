@@ -1,8 +1,11 @@
-﻿#.Synopsis
-#   Generate a self-signed root certificate and then generate an SSL certificate signed by it.
-#.Description
-#   Generates a self-signed root certificate and an SSL certificate signed by it.
-#   Puts the root public key in a .pem file for adding to PHP's CAcert.pem
+﻿<#
+.Synopsis
+    Generate a self-signed root certificate and then generate an SSL certificate signed by it.
+
+.Description
+    Generates a self-signed root certificate and an SSL certificate signed by it.
+    Puts the root public key in a .pem file for adding to PHP's CAcert.pem
+#>
 param(
     # Used as the CN for the Root certificate
     $RootName = "NO LIABILITY ACCEPTED - Test Root $(get-date -f "yyyy-MM-dd")",
@@ -13,10 +16,10 @@ param(
 )
 
 $Certificate = @{
-    Extension =[System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($true, $true, 0, $true)
-    Subject =  "CN=$RootName"
-    NotAfter = (Get-Date).AddYears(2)
-    KeyUsage = "CertSign"
+    Extension       = [System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($true, $true, 0, $true)
+    Subject         = "CN=$RootName"
+    NotAfter        = (Get-Date).AddYears(2)
+    KeyUsage        = "CertSign"
     KeyExportPolicy = "NonExportable"
 }
 
@@ -33,8 +36,11 @@ $RootPem = Join-Path $OutputPath "TrustedRoot.pem"
 Get-Item $RootPem
 
 # Output the whole private key
-if($Env:USERDOMAIN -eq $DomainName) {
+if ($Env:USERDOMAIN -eq $DomainName)
+{
     Export-PfxCertificate $Cert -FilePath (Join-Path $OutputPath "$Subject.pfx") -ProtectTo Administrators
-} else {
+}
+else
+{
     Export-PfxCertificate $Cert -FilePath (Join-Path $OutputPath "$Subject.pfx") -Password (Read-Host "Certificate Password" -AsSecureString)
 }

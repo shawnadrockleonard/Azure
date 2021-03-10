@@ -27,7 +27,6 @@ https://www.locktar.nl/programming/webservices/connect-soapui-wcf-service-certif
 https://www.youtube.com/watch?v=vzHtJ33cIng
 
 
-https://statesv02.shawniq.com/
 
 ### Generate the WSDL and Service Reference files for C#
 
@@ -45,6 +44,7 @@ http://geekswithblogs.net/gvdmaaden/archive/2011/02/24/how-to-configure-soapui-w
 https://statecli02.shawniq.com/SYSTEMQueryNIEMwcf.svc
 text/xml; charset=utf-8
 
+``` xml
 <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:tem="http://tempuri.org/" xmlns:wcf="http://schemas.datacontract.org/2004/07/WcfService1">
    <soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
 	<wsa:To>https://localhost:44321/SYSTEMQueryNIEMwcf.svc</wsa:To>
@@ -61,4 +61,4 @@ text/xml; charset=utf-8
       </tem:RetrieveQuery>
    </soap:Body>
 </soap:Envelope>
-
+```
