@@ -5,8 +5,8 @@
 #  ║                                                                                  ║ #
 #  ║  [WARNING!]                                                                      ║ #
 #  ║                                                                                  ║ #
-#  ║  You are using this document at our own risk. This is a document of my      	  ║ #
-#  ║  experience and provided 'as is' without warranty of any kind,      			  ║ #
+#  ║  You are using this document at our own risk. This is a document of my           ║ #
+#  ║  experience and provided 'as is' without warranty of any kind,      	      ║ #
 #  ║  either express or implied, including but not limited to the implied warranties  ║ #
 #  ║  of merchantability and/or fitness for a particular purpose. This readme is      ║ #
 #  ║  only meant to be a sample which should demonstrate a specific technique and is  ║ #
@@ -140,10 +140,12 @@ The sample code is provided in its entirety here:
 …with the following document section being a walkthrough / commentary on the code.
 Required Information
 Other than properly permissioned credentials for each cloud->tenant->subscription, only the following information is required to run the code (need to update with your deployment specific information):
+
 #################################
 # Azure Settings & other parms
-``` posh
 #################################
+
+``` posh
 $GovResourceGroup 	= "GBBComm"
 $GovSubscriptionID	= "11111111-1111-1111-1111-111111111111”
 $GovHostPool		= "Commercial"	
