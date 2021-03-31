@@ -15,16 +15,16 @@ LinkedIn - https://aka.ms/shawn-linkedin
 [cmdletbinding(HelpUri = "https://github.com/shawnadrockleonard/Azure/scripts/reservations/readme.md", SupportsShouldProcess = $true)]
 [CmdletBinding()]
 param (
-    [Parameter(Mandatory = $true, HelpMessage = "The AzureAD Object Id for the User, Group, Service Principal")]
-    [string]$BillingObjectId,
+    [Parameter(Mandatory = $false)]
+    [ValidateScript( { Test-Path $_ -PathType Container })]
+    [string]$RunningDirectory,
     
     [Parameter(Mandatory = $false, HelpMessage = "The level of access to grant.")]
     [ValidateSet("owner", "contributor", "reader")]
     [string]$ReservationRoleName = "owner",
 
-    [Parameter(Mandatory = $false)]
-    [ValidateScript( { Test-Path $_ -PathType Container })]
-    [string]$RunningDirectory
+    [Parameter(Mandatory = $true, HelpMessage = "The AzureAD Object Id for the User, Group, Service Principal")]
+    [string]$BillingObjectId
 )
 BEGIN
 {
@@ -71,7 +71,9 @@ PROCESS
     $orders = Get-AzReservationOrder | Select-Object Id, Name, Reservations, Term, RequestDateTime
     $orders | ForEach-Object { 
         $orderobj = $_
-        $orderId = $orderobj.Name 
+        $orderId = $orderobj.Id
+        $orderName = $orderobj.Name 
+        Write-Verbose "Created az role assignment for $orderName"
         
         $role = Get-AzRoleAssignment -ObjectId $BillingObjectId -RoleDefinitionName $AzAssignedRoleName -Scope $orderId -ErrorAction SilentlyContinue
         if ($null -eq $role)
