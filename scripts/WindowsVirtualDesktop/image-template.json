@@ -1,0 +1,154 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "customer": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Location of the Shared Image Gallery."
+            }
+        },
+        "galleryName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Shared Image Gallery."
+            }
+        },
+        "galleryImageDefinitionName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Image Definition."
+            }
+        },
+        "galleryImageVersionName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Image Version - should follow <MajorVersion>.<MinorVersion>.<Patch>."
+            }
+        },
+        "sourceManagedImageRg": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Resource group of the source managed image."
+            }
+        },
+        "sourceMachineName": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource name of the source vm."
+            }
+        },
+        "sourceOsType": {
+            "type": "string",
+            "defaultValue": "Windows",
+            "allowedValues": [ "Windows", "Linux" ]
+        },
+        "sourceManagedSku": {
+            "type": "string",
+            "defaultValue": "2019",
+            "allowedValues": [ "2012R2", "2016", "2019" ]
+        },
+        "endOfLifeDate": {
+            "type": "string",
+            "metadata": {
+                "description": "Expiry date in format yyyy-MM-dd."
+            }
+        }
+    },
+    "variables": {
+        "sourceDiskName": "[toLower(concat(parameters('sourceMachineName'), '-os-vhd'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Compute/galleries",
+            "name": "[parameters('galleryName')]",
+            "apiVersion": "2019-03-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "description": "Shared Image Gallery for my organization"
+            },
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "Customer": "[parameters('Customer')]"
+            }
+        },
+        {
+            "type": "Microsoft.Compute/galleries/images",
+            "name": "[concat(parameters('galleryName'), '/', parameters('galleryImageDefinitionName'))]",
+            "apiVersion": "2019-12-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/galleries', parameters('galleryName'))]"
+            ],
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "Customer": "[parameters('Customer')]"
+            },
+            "properties": {
+                "description": "Shared Image Gallery for my organization",
+                "osType": "[parameters('sourceOsType')]",
+                "osState": "Generalized",
+                "endOfLifeDate": "[parameters('endOfLifeDate')]",
+                "identifier": {
+                    "publisher": "Zelus",
+                    "offer": "WindowsServer",
+                    "sku": "[parameters('sourceManagedSku')]"
+                },
+                "recommended": {
+                    "vCPUs": {
+                        "min": "2",
+                        "max": "64"
+                    },
+                    "memory": {
+                        "min": "4096",
+                        "max": "307720"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/galleries/images/versions",
+            "name": "[concat(parameters('galleryName'), '/', parameters('galleryImageDefinitionName'), '/', parameters('galleryImageVersionName'))]",
+            "apiVersion": "2020-09-30",
+            "location": "[parameters('location')]",
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "Customer": "[parameters('Customer')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/galleries/images', parameters('galleryName'), parameters('galleryImageDefinitionName'))]"
+            ],
+            "properties": {
+                "publishingProfile": {
+                    "replicaCount": 1,
+                    "targetRegions": [
+                        { "name": "[parameters('location')]" }
+                    ],
+                    "excludeFromLatest": false,
+                    "endOfLifeDate": "[concat(parameters('endOfLifeDate'), 'T22:12:23.3363236Z')]"
+                },
+                "storageProfile": {
+                    "osDiskImage": {
+                        "source": {
+                            "id": "[resourceId(parameters('sourceManagedImageRg'), 'Microsoft.Compute/disks', variables('sourceDiskName'))]"
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "imageVersionId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Compute/galleries/images/versions', parameters('galleryName'), parameters('galleryImageDefinitionName'), parameters('galleryImageVersionName'))]"
+        }
+    }
+}

@@ -1,0 +1,179 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "customer": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "OriginalVirtualMachineName": {
+            "type": "string"
+        },
+        "OriginalDiskName": {
+            "type": "string"
+        },
+        "SnapshotSku": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_LRS",
+                "Premium_LRS",
+                "Standard_ZRS"
+            ]
+        },
+        "NewVirtualMachineName": {
+            "type": "string"
+        },
+        "NewDiskSku": {
+            "type": "string",
+            "allowedValues": [
+                "StandardSSD_LRS",
+                "Standard_LRS",
+                "Premium_LRS"
+            ]
+        },
+        "osType": {
+            "type": "string",
+            "allowedValues": [
+                "Windows",
+                "Linux"
+            ]
+        },
+        "createOption": {
+            "type": "string"
+        },
+        "virtualMachineSize": {
+            "type": "string"
+        },
+        "VirtualNetworkRG": {
+            "type": "string"
+        },
+        "VirtualNetworkName": {
+            "type": "string"
+        },
+        "VirtualNetworkSubnetName": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "sourceDiskId": "[resourceId('Microsoft.Compute/disks', parameters('originalDiskName'))]",
+        "snapshotName": "[toLower(concat(parameters('OriginalVirtualMachineName'), '-os-snap'))]",
+        "snapshotResourceId": "[resourceId('Microsoft.Compute/snapshots', variables('snapshotName'))]",
+        "newDiskName": "[toLower(concat(parameters('NewVirtualMachineName'), '-os-vhd'))]",
+        "vnetId": "[resourceId(parameters('VirtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('VirtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('VirtualNetworkSubnetName'))]",
+        "networkInterfaceName": "[toLower(concat(parameters('NewVirtualMachineName'), '-nic01'))]"
+    },
+    "resources": [
+        {
+            "apiVersion": "2019-07-01",
+            "type": "Microsoft.Compute/snapshots",
+            "name": "[variables('snapshotName')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "Customer": "[parameters('Customer')]"
+            },
+            "properties": {
+                "creationData": {
+                    "createOption": "[parameters('createOption')]",
+                    "sourceResourceId": "[variables('sourceDiskId')]"
+                },
+                "osType": "[parameters('osType')]",
+                "incremental": true
+            },
+            "sku": {
+                "name": "[parameters('snapshotSku')]"
+            }
+        },
+        {
+            "apiVersion": "2019-07-01",
+            "type": "Microsoft.Compute/disks",
+            "name": "[variables('newDiskName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/snapshots', variables('snapshotName'))]"
+            ],
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "Customer": "[parameters('Customer')]"
+            },
+            "properties": {
+                "creationData": {
+                    "createOption": "[parameters('createOption')]",
+                    "sourceResourceId": "[variables('snapshotResourceId')]"
+                },
+                "osType": "[parameters('osType')]"
+            },
+            "sku": {
+                "name": "[parameters('NewDiskSku')]"
+            }
+        },
+        {
+            "name": "[variables('networkInterfaceName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-10-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            },
+                            "privateIPAllocationMethod": "Dynamic"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('NewVirtualMachineName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]",
+                "[resourceId('Microsoft.Compute/disks', variables('newDiskName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachineSize')]"
+                },
+                "storageProfile": {
+                    "osDisk": {
+                        "createOption": "attach",
+                        "osType": "[parameters('osType')]",
+                        "managedDisk": {
+                            "id": "[resourceId('Microsoft.Compute/disks', variables('newDiskName'))]"
+                        }
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('networkInterfaceName'))]"
+                        }
+                    ]
+                },
+                "licenseType": "Windows_Server"
+            }
+        }
+    ],
+    "outputs": {
+        "snapshotResourceId": {
+            "type": "string",
+            "value": "[variables('snapshotResourceId')]"
+        },
+        "diskResourceId": {
+            "type": "string",
+            "value": "[resourceId('Microsoft.Compute/disks', variables('newDiskName'))]"
+        }
+    }
+}

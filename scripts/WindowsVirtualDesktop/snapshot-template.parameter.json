@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "customer": {
+            "value": "cloudone"
+        },
+        "environment": {
+            "value": "dev"
+        },
+        "location": {
+            "value": "usgovvirginia"
+        },
+        "OriginalVirtualMachineName": {
+            "value": "imageprep01"
+        },
+        "OriginalDiskName": {
+            "value": "imageprep01_OsDisk1"
+        },
+        "SnapshotSku": {
+            "value": "Standard_LRS"
+        },
+        "NewVirtualMachineName": {
+            "value": "SysprepImage01"
+        },
+        "NewDiskSku": {
+            "value": "StandardSSD_LRS"
+        },
+        "osType": {
+            "value": "Windows"
+        },
+        "createOption": {
+            "value": "copy"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_DS3_v2"
+        },
+        "VirtualNetworkRG": {
+            "value": "zelus-net-rg"
+        },
+        "VirtualNetworkName": {
+            "value": "zelus-vnet"
+        },
+        "VirtualNetworkSubnetName": {
+            "value": "devops"
+        }
+    }
+}
