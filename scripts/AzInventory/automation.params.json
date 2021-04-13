@@ -12,10 +12,13 @@
             "value": "usgovvirginia"
         },
         "automationAccountName": {
-            "value": "zelus-auto"
+            "value": "splauto"
         },
         "automationAccountSku": {
             "value": "Basic"
+        },
+        "storageAccountName": {
+            "value": "shawnazstorage"
         },
         "_artifactsLocation": {
             "value": ""

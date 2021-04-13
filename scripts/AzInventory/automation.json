@@ -33,6 +33,9 @@
         "automationAccountSku": {
             "type": "string"
         },
+        "storageAccountName": {
+            "type": "string"
+        },
         "redeployModules": {
             "type": "bool",
             "defaultValue": false
@@ -78,11 +81,23 @@
             },
             {
                 "name": "az.accounts",
-                "url": "https://psg-prod-eastus.azureedge.net/packages/az.accounts.2.2.6.nupkg"
+                "url": "https://psg-prod-eastus.azureedge.net/packages/az.accounts.2.2.7.nupkg"
+            },
+            {
+                "name": "Az.Compute",
+                "url": "https://psg-prod-eastus.azureedge.net/packages/az.compute.4.10.0.nupkg"
+            },
+            {
+                "name": "Az.Network",
+                "url": "https://psg-prod-eastus.azureedge.net/packages/az.network.4.7.0.nupkg"
+            },
+            {
+                "name": "Az.Resources",
+                "url": "https://psg-prod-eastus.azureedge.net/packages/az.resources.3.4.0.nupkg"
             },
             {
                 "name": "az.storage",
-                "url": "https://psg-prod-eastus.azureedge.net/packages/az.storage.3.4.0.nupkg"
+                "url": "https://psg-prod-eastus.azureedge.net/packages/az.storage.3.5.0.nupkg"
             }
         ],
         "dscRunbooks": [
@@ -137,6 +152,20 @@
                     "properties": {
                         "userName": "AutomationKey",
                         "password": "[listKeys(resourceId(resourceGroup().name, 'Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName')), '2015-01-01-preview').Keys[0].value]"
+                    }
+                },
+                {
+                    "name": "AzStorage",
+                    "type": "credentials",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "userName": "[parameters('storageAccountName')]",
+                        "password": "[first(listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-04-01').keys).value]"
                     }
                 }
             ]
@@ -193,7 +222,7 @@
             }
         },
         {
-            "condition": "[and(greater(length(variables('dscResources')), 0), equals(parameters('redeployModules'), bool('true')))]",
+            "condition": "[and(greater(length(variables('dscConfigurations')), 0), equals(parameters('redeployModules'), bool('true')))]",
             "type": "Microsoft.Automation/automationAccounts/configurations",
             "apiVersion": "2019-06-01",
             "name": "[concat(parameters('automationAccountName'), '/', variables('dscConfigurations')[copyIndex('dscCopy')].name)]",

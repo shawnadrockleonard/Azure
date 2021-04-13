@@ -77,7 +77,6 @@ function Update-AzInventory
         $blob = Set-AzStorageBlobContent -File $localFile -Container $ContainerName -Blob $file.Name -Context $ctx -Metadata $Metadata -Force
         if ($null -ne $blob)
         {
-            $uploaded = $true
             Write-Output "$localfile uploaded to Storage Account:$($ctx.StorageAccountName), Container:$ContainerName" 
             Write-Output "Successfully uploaded $($blob.Name) at $($blob.LastModified) in the Tier:$($blob.AccessTier)"
         }
