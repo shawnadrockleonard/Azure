@@ -20,10 +20,10 @@ The resulting CSV's will be uploaded into the storage account container 'azinven
 }
 ```
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshawnadrockleonard%2FAzure%2Fshawns%2Fdotnetcore%2FAzureDevTestLabs%2FEnvironments%2FWebApp-Identity-KeyVault%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshawnadrockleonard%2FAzure%2Fmaster%2Fscripts%2FAzInventory%2Fautomation.json" target="_blank">
     <img src="https://raw.githubusercontent.com/shawnadrockleonard/Azure/master/templates/metadata/deploytoazure.png"/> 
 </a>
 
-<a href="https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshawnadrockleonard%2FAzure%2Fshawns%2Fdotnetcore%2FAzureDevTestLabs%2FEnvironments%2FWebApp-Identity-KeyVault%2Fazuredeploy.json" target="_blank">
+<a href="https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fshawnadrockleonard%2FAzure%2Fmaster%2Fscripts%2FAzInventory%2Fautomation.json" target="_blank">
 <img src="https://raw.githubusercontent.com/shawnadrockleonard/Azure/master/templates/metadata/deploytoazuregov.png"/>
 </a>
