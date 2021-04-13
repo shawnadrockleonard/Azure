@@ -1,0 +1,224 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "outputs": {
+        "name": {
+            "type": "string",
+            "value": "[parameters('automationAccountName')]"
+        },
+        "registrationUrl": {
+            "type": "string",
+            "value": "[reference(concat('Microsoft.Automation/automationAccounts/', parameters('automationAccountName'))).registrationUrl]"
+        }
+    },
+    "parameters": {
+        "_artifactsLocation": {
+            "type": "string"
+        },
+        "_artifactsLocationSasToken": {
+            "type": "string"
+        },
+        "customer": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "automationAccountName": {
+            "type": "string"
+        },
+        "automationAccountSku": {
+            "type": "string"
+        },
+        "redeployModules": {
+            "type": "bool",
+            "defaultValue": false
+        }
+    },
+    "variables": {
+        "dscConfigurations": [
+            {
+                "name": "SetEnvironmentVariableConfig",
+                "description": "minimum viable configuration to set environment variables",
+                "script": "dsc/SetEnvironmentVariableConfig.ps1"
+            },
+            {
+                "name": "CreateADPDC",
+                "description": "minimum viable configuration for a DC promo",
+                "script": "dsc/CreateADPDC.ps1"
+            }
+        ],
+        "dscResources": [
+            {
+                "name": "xcertificate",
+                "url": "https://psg-prod-eastus.azureedge.net/packages/xcertificate.3.2.0.nupkg"
+            },
+            {
+                "name": "ComputerManagementDsc",
+                "url": "https://psg-prod-eastus.azureedge.net/packages/computermanagementdsc.5.0.0.nupkg"
+            },
+            {
+                "name": "xActiveDirectory",
+                "url": "https://psg-prod-eastus.azureedge.net/packages/xactivedirectory.3.0.0.nupkg"
+            },
+            {
+                "name": "xStorage",
+                "url": "https://psg-prod-eastus.azureedge.net/packages/xstorage.3.4.0.nupkg"
+            },
+            {
+                "name": "xNetworking",
+                "url": "https://psg-prod-eastus.azureedge.net/packages/xnetworking.5.7.0.nupkg"
+            },
+            {
+                "name": "xPendingReboot",
+                "url": "https://psg-prod-eastus.azureedge.net/packages/xpendingreboot.0.4.0.nupkg"
+            },
+            {
+                "name": "az.accounts",
+                "url": "https://psg-prod-eastus.azureedge.net/packages/az.accounts.2.2.6.nupkg"
+            },
+            {
+                "name": "az.storage",
+                "url": "https://psg-prod-eastus.azureedge.net/packages/az.storage.3.4.0.nupkg"
+            }
+        ],
+        "dscRunbooks": [
+            {
+                "name": "AzInventory",
+                "description": " An example runbook which gets all the ARM resources using the Run As Account (Service Principal).",
+                "url": "https://usgeoaasibizamarketprod2.blob.core.usgovcloudapi.net/marketplace-runbooks/AzureAutomationTutorial.ps1",
+                "version": "1.0.0.0",
+                "runbookType": "PowerShell"
+            }
+        ]
+    },
+    "resources": [
+        {
+            "name": "[parameters('automationAccountName')]",
+            "type": "Microsoft.Automation/automationAccounts",
+            "apiversion": "2019-06-01",
+            "location": "[parameters('location')]",
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "Customer": "[parameters('Customer')]"
+            },
+            "properties": {
+                "sku": {
+                    "name": "[parameters('automationAccountSku')]"
+                }
+            },
+            "resources": [
+                {
+                    "name": "AutomationEndpoint",
+                    "type": "variables",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "description": "Automation endpoint",
+                        "Value": "[concat('\"', reference(resourceId(resourceGroup().name, 'Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName')), '2015-01-01-preview').registrationUrl,'\"')]"
+                    }
+                },
+                {
+                    "name": "AutomationCredential",
+                    "type": "credentials",
+                    "apiVersion": "2015-10-31",
+                    "location": "[parameters('location')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName'))]"
+                    ],
+                    "tags": {},
+                    "properties": {
+                        "userName": "AutomationKey",
+                        "password": "[listKeys(resourceId(resourceGroup().name, 'Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName')), '2015-01-01-preview').Keys[0].value]"
+                    }
+                }
+            ]
+        },
+        {
+            "condition": "[greater(length(variables('dscRunbooks')), 0)]",
+            "type": "Microsoft.Automation/automationAccounts/runbooks",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('automationAccountName'), '/', variables('dscRunbooks')[copyIndex('runbookCopy')].name)]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Automation/automationAccounts/', parameters('AutomationAccountName'))]"
+            ],
+            "copy": {
+                "name": "runbookCopy",
+                "count": "[length(variables('dscRunbooks'))]"
+            },
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "Customer": "[parameters('Customer')]"
+            },
+            "properties": {
+                "runbookType": "[variables('dscRunbooks')[copyIndex('runbookCopy')].runbookType]",
+                "logProgress": false,
+                "logVerbose": true,
+                "description": "[variables('dscRunbooks')[copyIndex('runbookCopy')].description]",
+                "publishContentLink": {
+                    "uri": "[variables('dscRunbooks')[copyIndex('runbookCopy')].url]",
+                    "version": "[variables('dscRunbooks')[copyIndex('runbookCopy')].version]"
+                }
+            }
+        },
+        {
+            "condition": "[and(greater(length(variables('dscResources')), 0), equals(parameters('redeployModules'), bool('true')))]",
+            "type": "Microsoft.Automation/automationAccounts/modules",
+            "apiVersion": "2020-01-13-preview",
+            "name": "[concat(parameters('automationAccountName'), '/', variables('dscResources')[copyIndex('moduleCopy')].name)]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]"
+            ],
+            "copy": {
+                "name": "moduleCopy",
+                "count": "[length(variables('dscResources'))]"
+            },
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "Customer": "[parameters('Customer')]"
+            },
+            "properties": {
+                "contentLink": {
+                    "uri": "[variables('dscResources')[copyIndex('moduleCopy')].url]"
+                }
+            }
+        },
+        {
+            "condition": "[and(greater(length(variables('dscResources')), 0), equals(parameters('redeployModules'), bool('true')))]",
+            "type": "Microsoft.Automation/automationAccounts/configurations",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('automationAccountName'), '/', variables('dscConfigurations')[copyIndex('dscCopy')].name)]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]",
+                "moduleCopy"
+            ],
+            "copy": {
+                "name": "dscCopy",
+                "count": "[length(variables('dscConfigurations'))]"
+            },
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "Customer": "[parameters('Customer')]"
+            },
+            "properties": {
+                "state": "Published",
+                "overwrite": "true",
+                "description": "[variables('dscConfigurations')[copyIndex('dscCopy')].description]",
+                "source": {
+                    "type": "uri",
+                    "value": "[uri(parameters('_artifactsLocation'), concat(variables('dscConfigurations')[copyIndex('dscCopy')].script, parameters('_artifactsLocationSasToken')))]"
+                }
+            }
+        }
+    ]
+}
