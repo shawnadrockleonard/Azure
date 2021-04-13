@@ -117,7 +117,8 @@ BEGIN
                 Write-Host "$localfile uploaded to Storage Account:$($ctx.StorageAccountName), Container:$ContainerName" 
                 Write-Host "Successfully uploaded $($blob.Name) at $($blob.LastModified) in the Tier:$($blob.AccessTier)"
             }
-            else {
+            else
+            {
                 Write-Error "Failed to upload $localfile, Consult the logs."
             }
         }
@@ -138,7 +139,7 @@ BEGIN
 
     $diskcollection = @()
 
-    $date = Get-Date -Format "yyyy-MM-dd"
+    $todaydate = Get-Date -Format "yyyy-MM-dd"
     $jsonFile = Join-Path -Path $RunningDirectory -ChildPath "config.json"
     $vnetfile = ("{0}\Az_Inventory_VNets.csv" -f $logDirectory)
     $vnetsubnetfile = ("{0}\Az_Inventory_VNet_Subnets.csv" -f $logDirectory)
@@ -426,28 +427,28 @@ PROCESS
 
     # Virtual Network Details
     Write-Verbose ("Writing VNET details")
-    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $vnetfile -currentStamp $date -collection $vnetcollection
-    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $vnetsubnetfile -currentStamp $date -collection $vnetsubnets
-    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $vnetpeeringfile -currentStamp $date -collection $vnetpeerings
+    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $vnetfile -currentStamp $todaydate -collection $vnetcollection
+    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $vnetsubnetfile -currentStamp $todaydate -collection $vnetsubnets
+    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $vnetpeeringfile -currentStamp $todaydate -collection $vnetpeerings
     
     # Virtual Machine Details
     Write-Verbose ("Writing VM details")
-    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $vmfile -currentStamp $date -collection $vmcollection
-    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $vmnicfile -currentStamp $date -collection $vmnics
-    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $vmdiskfile -currentStamp $date -collection $vmdisks
+    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $vmfile -currentStamp $todaydate -collection $vmcollection
+    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $vmnicfile -currentStamp $todaydate -collection $vmnics
+    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $vmdiskfile -currentStamp $todaydate -collection $vmdisks
     
     # Storage Details
     Write-Verbose ("Writing Storage details")
-    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $storagefile -currentStamp $date -collection $storagecollection
+    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $storagefile -currentStamp $todaydate -collection $storagecollection
 
     # Virtual Machine sizing
     Write-Verbose ("Writing VM Sizes")
-    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $sizevafile -currentStamp $date -collection $sizesVA
-    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $sizetxfile -currentStamp $date -collection $sizesTX
+    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $sizevafile -currentStamp $todaydate -collection $sizesVA
+    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $sizetxfile -currentStamp $todaydate -collection $sizesTX
 
     # Unattached disks
     Write-Verbose ("Writing Storage disk details")
-    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $storagediskfile -currentStamp $date -collection $diskcollection
+    Update-AzInventory -ctx $ctx -ContainerName "azinventory" -localFile $storagediskfile -currentStamp $todaydate -collection $diskcollection
 }
 END
 {
