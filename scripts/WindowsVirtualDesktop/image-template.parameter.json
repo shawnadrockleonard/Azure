@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "customer": {
+            "value": "cloudone"
+        },
+        "environment": {
+            "value": "dev"
+        },
+        "location": {
+            "value": "usgovvirginia"
+        },
+        "galleryName": {
+            "value": "ZelusImages"
+        },
+        "galleryImageDefinitionName": {
+            "value": "DevOps2020withApps"
+        },
+        "galleryImageVersionName": {
+            "value": "1.0.0"
+        },
+        "sourceManagedImageRg": {
+            "value": "zelus-image-rg"
+        },
+        "sourceMachineName": {
+            "value": "SysprepImage01"
+        },
+        "sourceManagedSku": {
+            "value": "2019"
+        },
+        "endOfLifeDate": {
+            "value": "2030-01-01"
+        }
+    }
+}

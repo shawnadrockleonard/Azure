@@ -11,7 +11,7 @@ LinkedIn - https://aka.ms/shawn-linkedin
     $orders = .\scripts\reservations\get-reservations.ps1 -Verbose
     $orders = .\scripts\reservations\get-reservations.ps1 -AzEnvironment AzureUSGovernment -Verbose
 #>
-[cmdletbinding(HelpUri = "https://github.com/shawnadrockleonard/Azure/scripts/reservations/readme.md", SupportsShouldProcess = $true)]
+[cmdletbinding(HelpUri = "https://github.com/shawnadrockleonard/Azure/scripts/AzReservations/readme.md", SupportsShouldProcess = $true)]
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $false)]
@@ -41,8 +41,8 @@ BEGIN
     $AzContext = Get-AzContext
     if ($null -eq $AzContext -or $AzEnvironment -ne $AzContext.Environment.Name)
     {
-        Connect-AzAccount -Environment $AzEnvironment -UseDeviceAuthentication -ErrorAction Break
-    }     
+        Connect-AzAccount -Environment $AzEnvironment -UseDeviceAuthentication -ErrorAction Stop
+    }    
 
     $AzProfile = [Microsoft.Azure.Commands.Common.Authentication.Abstractions.AzureRmProfileProvider]::Instance.Profile
     if (-not $AzProfile.Accounts.Count)
@@ -51,7 +51,8 @@ BEGIN
         break
     }
 
-    $reservationFile = ("{0}\Az_Reservations.json" -f $logDirectory)
+    $reservationFile = Join-Path -Path $logDirectory -ChildPath "Az_Reservations.json" 
+
 }
 PROCESS
 {
@@ -79,7 +80,6 @@ PROCESS
     # Get Catalog of available SKUs and Number count of VMs that can fit
     # Get-AzReservationCatalog -ReservedResourceType VirtualMachines -Location usgovtexas
     # Get-AzReservationCatalog -ReservedResourceType VirtualMachines -Location usgovvirginia
-
 
     # Retreive orders
     $orderCollection = @()
@@ -129,8 +129,8 @@ PROCESS
         $reservationOrder = $orderDetails.OrderId
         $reservation = $orderDetails.ReservationId
 
-        $uri = ("$resourceManagerUrl/$reservationOrder/reservations/$reservation/providers/Microsoft.Consumption/reservationSummaries?grain=monthly&api-version=2019-10-01")
-        $uri = ("$resourceManagerUrl/{0}/reservations/{1}/providers/Microsoft.Consumption/reservationDetails?`$filter=properties/usageDate+ge+{2}+AND+properties/usageDate+le+{2}&api-version=2019-10-01" -f $reservationOrder, $reservation, $date)
+        $uri = ("{0}/{1}/reservations/{2}/providers/Microsoft.Consumption/reservationSummaries?grain=monthly&api-version=2019-10-01" -f $resourceManagerUrl, $reservationOrder, $reservation)
+        $uri = ("{0}/{1}/reservations/{2}/providers/Microsoft.Consumption/reservationDetails?`$filter=properties/usageDate+ge+{3}+AND+properties/usageDate+le+{3}&api-version=2019-10-01" -f $resourceManagerUrl, $reservationOrder, $reservation, $date)
         Write-Verbose ("GET {0}" -f $uri)
 
         $attemptoken = 0
@@ -183,9 +183,8 @@ PROCESS
     }
 
     Write-Verbose "Writing $reservationFile to disk...."
-    $orderCollection | ConvertTo-Json -Depth 5 | Out-File -Path $reservationFile -Force
+    $orderCollection | ConvertTo-Json -Depth 5 | Out-File -FilePath $reservationFile -Force
     Write-Output $orderCollection
-
 }
 END
 {

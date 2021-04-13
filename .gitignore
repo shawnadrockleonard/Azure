@@ -292,3 +292,5 @@ __pycache__/
 
 
 **/monitoring/**.json
+**/config.json
+**/_logs/**
