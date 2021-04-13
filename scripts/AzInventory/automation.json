@@ -12,13 +12,6 @@
         }
     },
     "parameters": {
-        "_artifactsLocation": {
-            "type": "string",
-            "metadata": {
-                "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
-            },
-            "defaultValue": "https://raw.githubusercontent.com/shawnadrockleonard/Azure/master/scripts/AzInventory"
-        },
         "_artifactsLocationSasToken": {
             "type": "securestring",
             "defaultValue": "",
@@ -33,7 +26,8 @@
             "type": "string"
         },
         "location": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
         },
         "automationAccountName": {
             "type": "string"
@@ -231,10 +225,9 @@
         },
         {
             "condition": "[and(greater(length(variables('dscConfigurations')), 0), equals(parameters('redeployModules'), bool('true')))]",
-            "type": "Microsoft.Automation/automationAccounts/configurations",
-            "apiVersion": "2019-06-01",
-            "name": "[concat(parameters('automationAccountName'), '/', variables('dscConfigurations')[copyIndex('dscCopy')].name)]",
-            "location": "[parameters('location')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "name": "[concat('Config-', parameters('automationAccountName'), '-', variables('dscConfigurations')[copyIndex('dscCopy')].name)]",
             "dependsOn": [
                 "[resourceId('Microsoft.Automation/automationAccounts', parameters('automationAccountName'))]",
                 "moduleCopy"
@@ -243,17 +236,36 @@
                 "name": "dscCopy",
                 "count": "[length(variables('dscConfigurations'))]"
             },
-            "tags": {
-                "environment": "[parameters('environment')]",
-                "Customer": "[parameters('Customer')]"
-            },
             "properties": {
-                "state": "Published",
-                "overwrite": "true",
-                "description": "[variables('dscConfigurations')[copyIndex('dscCopy')].description]",
-                "source": {
-                    "type": "uri",
-                    "value": "[uri(parameters('_artifactsLocation'), concat(variables('dscConfigurations')[copyIndex('dscCopy')].script, parameters('_artifactsLocationSasToken')))]"
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(uri(deployment().properties.templateLink.uri, 'automation-config.json'), parameters('_artifactsLocationSasToken'))]"
+                },
+                "parameters": {
+                    "_artifactsLocationSasToken": {
+                        "value": "[parameters('_artifactsLocationSasToken')]"
+                    },
+                    "customer": {
+                        "value": "[parameters('customer')]"
+                    },
+                    "environment": {
+                        "value": "[parameters('environment')]"
+                    },
+                    "location": {
+                        "value": "[parameters('location')]"
+                    },
+                    "automationAccountName": {
+                        "value": "[parameters('automationAccountName')]"
+                    },
+                    "configName": {
+                        "value": "[variables('dscConfigurations')[copyIndex('dscCopy')].name]"
+                    },
+                    "description": {
+                        "value": "[variables('dscConfigurations')[copyIndex('dscCopy')].description]"
+                    },
+                    "script": {
+                        "value": "[uri(deployment().properties.templateLink.uri, variables('dscConfigurations')[copyIndex('dscCopy')].script)]"
+                    }
                 }
             }
         }
