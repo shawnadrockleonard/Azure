@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "outputs": {
+        "name": {
+            "type": "string",
+            "value": "[parameters('automationAccountName')]"
+        }
+    },
+    "parameters": {
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "defaultValue": "",
+            "metadata": {
+                "description": "The sasToken required to access _artifactsLocation. When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+            }
+        },
+        "customer": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "automationAccountName": {
+            "type": "string"
+        },
+        "configName": {
+            "type": "string"
+        },
+        "script": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "sasToken": "[if(empty(parameters('_artifactsLocationSasToken')), '', parameters('_artifactsLocationSasToken'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Automation/automationAccounts/configurations",
+            "apiVersion": "2019-06-01",
+            "name": "[concat(parameters('automationAccountName'), '/', parameters('configName'))]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "environment": "[parameters('environment')]",
+                "Customer": "[parameters('Customer')]"
+            },
+            "properties": {
+                "state": "Published",
+                "overwrite": "true",
+                "description": "[parameters('description')]",
+                "source": {
+                    "type": "uri",
+                    "value": "[concat(parameters('script'), variables('sasToken'))]"
+                }
+            }
+        }
+    ]
+}

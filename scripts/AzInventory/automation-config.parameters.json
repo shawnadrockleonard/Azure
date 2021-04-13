@@ -14,11 +14,14 @@
         "automationAccountName": {
             "value": "splauto"
         },
-        "automationAccountSku": {
-            "value": "Basic"
+        "configName": {
+            "value": "CreateADPDC"
         },
-        "storageAccountName": {
-            "value": "shawnazstorage"
+        "script": {
+            "value": "https://raw.githubusercontent.com/shawnadrockleonard/Azure/master/scripts/AzInventory/dsc/CreateADPDC.ps1"
+        },
+        "description": {
+            "value": "minimum viable configuration for a DC promo"
         },
         "_artifactsLocationSasToken": {
             "value": ""
