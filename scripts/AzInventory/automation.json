@@ -33,7 +33,8 @@
             "type": "string"
         },
         "automationAccountSku": {
-            "type": "string"
+            "type": "string",
+            "allowedValues": [ "Basic", "Free" ]
         },
         "storageAccountName": {
             "type": "string"
