@@ -12,13 +12,13 @@ pool:
 variables:
   - group: common-keyvault
   - name: ArtifactsFeedName
-    value: "$[variables.ArtifactsFeedName]"
+    value: $[variables.ArtifactsFeedName]
   - name: ArtifactsModuleName
-    value: "$[variables.ArtifactsModuleName]"
+    value: $[variables.ArtifactsModuleName]
   - name: ArtifactsURI
-    value: "$[variables.ArtifactsURI]"
+    value: $[variables.ArtifactsURI]
   - name: SubscriptionId
-    value: "$[variables.SubscriptionId]"
+    value: $[variables.SubscriptionId]
 
 steps:
   - script: echo Hello, world!
