@@ -11,14 +11,7 @@ pool:
 
 variables:
   - group: common-keyvault
-  - name: ArtifactsFeedName
-    value: $[variables.ArtifactsFeedName]
-  - name: ArtifactsModuleName
-    value: $[variables.ArtifactsModuleName]
-  - name: ArtifactsURI
-    value: $[variables.ArtifactsURI]
-  - name: SubscriptionId
-    value: $[variables.SubscriptionId]
+  - group: common
 
 steps:
   - script: echo Hello, world!
