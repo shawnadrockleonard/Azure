@@ -1,0 +1,3 @@
+# Restrict IP ranges used in Storage Accounts firewall rules
+
+This policy restrict IP ranges used in Storage Accounts firewall rules. When a Storage Account is connected to a VNet service endpoint, this policy allows you to define what IP ranges are allowed to be white-listed in the Storage Account firewall rules. Any IP ranges that are not listed in the policy assignment will be blocked from been added to the firewall rules.

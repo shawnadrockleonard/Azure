@@ -1,0 +1,29 @@
+﻿{
+  "type": "Microsoft.Authorization/policyDefinitions",
+  "name": "restrict-public-storageAccounts-policyDef",
+  "properties": {
+    "displayName": "Restrict Public-Facing Storage Accounts",
+    "description": "This policy restrict creation of storage accounts that are not connected to a VNet Service Endpoint.",
+    "metadata": {
+      "category": "Storage"
+    },
+    "parameters": {},
+    "policyRule": {
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Storage/storageAccounts"
+          },
+          {
+            "field": "Microsoft.Storage/storageAccounts/networkAcls.defaultAction",
+            "notequals": "Deny"
+          }
+        ]
+      },
+      "then": {
+        "effect": "deny"
+      }
+    }
+  }
+}
