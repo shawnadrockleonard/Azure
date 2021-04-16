@@ -1,3 +1,8 @@
+<#
+
+.EXAMPLE
+    .\policies\deploy-ifnotag.ps1
+#>
 [CmdletBinding()]
 param
 (
@@ -11,12 +16,14 @@ param
     [ValidateSet("AzureUSGovernment", "AzureChinaCloud", "AzureCloud")]
     [string]$AzureEnvironment = "AzureCloud"
 )
-BEGIN {
+BEGIN
+{
 
     Add-AzAccount -Environment $AzureEnvironment -UseDeviceAuthentication
     
 }
-PROCESS {
+PROCESS
+{
 
     
     Select-AzSubscription -Subscription $SubscriptionName
@@ -32,13 +39,14 @@ PROCESS {
 
 
     $definition = New-AzPolicyDefinition -Name "subscription-resource-ifnotag" -Description "Provides defaulting Resource group tag from subscription" `
-        -Policy '.\default-resourcegroup-ifnotag\azurepolicy.rules.json' `
-        -Parameter '.\default-resourcegroup-ifnotag\azurepolicy.parameters.json' `
+        -Policy '.\policies\policy-definitions\default-resourcegroup-ifnotag\azurepolicy.rules.json' `
+        -Parameter '.\policies\policy-definitions\default-resourcegroup-ifnotag\azurepolicy.parameters.json' `
         -Metadata '{"category":"Tags"}' -Mode All -Verbose
 
     $definition
 
-    $assignment = New-AzPolicyAssignment -Name "subscription-resource-ifnotag-assignment" -Scope "/subscriptions/$($Subscription.Id)" -tagName $TagName `
+    $assignment = New-AzPolicyAssignment -Name "subscription-resource-ifnotag-assignment" `
+        -Scope "/subscriptions/$($Subscription.Id)" -tagName $TagName `
         -PolicyDefinition $definition -AssignIdentity -Location $location.Location
     $assignment 
 

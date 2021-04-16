@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "ms-vscode.azurecli",
+        "msazurermtools.azurerm-vscode-tools",
+        "ms-vscode.powershell"
+    ]
+}

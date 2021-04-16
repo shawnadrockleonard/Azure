@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+    <metadata>
+        <id>AzTestPolicy</id>
+        <version>1.0.1</version>
+        <authors>Derivative from Shawn Leonard</authors>
+        <owners>Derivative from Shawn Leonard</owners>
+        <description>Provides pre-defined pester tests for Azure Policy and Initiative definitions</description>
+        <releaseNotes></releaseNotes>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <copyright>(c) no copyright.</copyright>
+        <tags>Azure Azure Policy Pester PSModule PSIncludes_Function PSFunction_Test-AzPolicyDefinition PSFunction_Test-AzPolicySetDefinition PSFunction_Test-JSONContent PSCommand_Test-AzPolicyDefinition PSCommand_Test-AzPolicySetDefinition PSCommand_Test-JSONContent</tags>
+        <license type="file">LICENSE.md</license>
+        <projectUrl>https://dev.azure.com/shawniq/azureautomation/_git/azurepolicy</projectUrl>
+
+        <dependencies>
+            <dependency id='pester' version='4.7.0' />
+        </dependencies>
+    </metadata>
+</package>
