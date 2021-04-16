@@ -17,6 +17,10 @@ steps:
   - script: echo Hello, world!
     displayName: "Run a one-line script"
 
+  - bash: echo This script could use $SYSTEM_ACCESSTOKEN
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+
   - pwsh: |
       # Write your PowerShell commands here.
 
@@ -35,7 +39,7 @@ steps:
   - pwsh: |
       get-command -module powershellget
 
-      $patToken = ConvertTo-SecureString -String "$(System.AccessToken)" -AsPlainText -Force
+      $patToken = ConvertTo-SecureString -String "$SYSTEM_ACCESSTOKEN" -AsPlainText -Force
       $credential = New-Object System.Management.Automation.PSCredential("abc", $patToken)
 
       Register-PSResourceRepository -PSGallery -ErrorAction SilentlyContinue
@@ -44,16 +48,20 @@ steps:
       Get-PSResourceRepository
 
     displayName: "Register PS repository for Azure Artifacts Feed copy"
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
   - pwsh: |
-      $patToken = $env:SYSTEM_ACCESSTOKEN | ConvertTo-SecureString -AsPlainText -Force
-      $credential = New-Object System.Management.Automation.PSCredential($env:SYSTEM_ACCESSTOKEN, $patToken)
+      $patToken = $SYSTEM_ACCESSTOKEN | ConvertTo-SecureString -AsPlainText -Force
+      $credential = New-Object System.Management.Automation.PSCredential($SYSTEM_ACCESSTOKEN, $patToken)
 
 
       Install-Module "Pester" -Repository PSGallery -RequiredVersion 4.7.0 -force -scope CurrentUser
       Install-PSResource '$(ArtifactsModuleName)' -Repository $(ArtifactsFeedName) -Credential $credential -scope CurrentUser
 
     displayName: "Install required PowerShell modules"
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
   - pwsh: |
       Import-Module $(ArtifactsModuleName)

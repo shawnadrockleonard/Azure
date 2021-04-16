@@ -5,6 +5,7 @@
         "**/ci/*.yml": "azure-pipelines"
     },
     "azure-pipelines.customSchemaFile": "./docs/azdopipeline-schema.json",
+    "azure-pipelines.configure": true,
     "[azure-pipelines]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     }
