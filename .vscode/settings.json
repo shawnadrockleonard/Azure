@@ -1,4 +1,11 @@
 {
     "powershell.codeFormatting.addWhitespaceAroundPipe": true,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "files.associations": {
+        "**/ci/*.yml": "azure-pipelines"
+    },
+    "azure-pipelines.customSchemaFile": "./docs/azdopipeline-schema.json",
+    "[azure-pipelines]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }

@@ -4,16 +4,84 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+  - master
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+  - script: echo Hello, world!
+    displayName: "Run a one-line script"
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+  - script: |
+      echo Add other tasks to build, test, and deploy your project.
+      echo See https://aka.ms/yaml
+    displayName: "Run a multi-line script"
+
+  - powershell: |
+      # Write your PowerShell commands here.
+
+      Write-Host "ArtifactsFeedName $(ArtifactsFeedName)"
+      Write-Host "KV-acl-expires-value $(acl-expires-value)"
+      Write-Host "KV-acl-test-value $(acl-test-value)"
+      Write-Host "TeamProject $(System.TeamProject)"
+      Write-Host "Repo Name $(Build.Repository.Name)"
+      Write-Host "URI $(ArtifactsURI)"
+
+    displayName: "Write Values [for testing]"
+
+  - powershell: "Install-Module PowerShellGet -AllowPrerelease -Force -Scope CurrentUser"
+    pwsh: true
+    displayName: "install PowerShellGet prerelease"
+
+  - powershell: |
+      get-command -module powershellget
+
+      $patToken = ConvertTo-SecureString -String "$(System.AccessToken)" -AsPlainText -Force
+      $credential = New-Object System.Management.Automation.PSCredential("abc", $patToken)
+
+      Register-PSResourceRepository -PSGallery -ErrorAction SilentlyContinue
+      Register-PSResourceRepository -Name $(ArtifactsFeedName) -URL $(ArtifactsURI) -Trusted
+
+      Get-PSResourceRepository
+
+    pwsh: true
+    displayName: "Register PS repository for Azure Artifacts Feed copy"
+
+  - powershell: |
+      $patToken = $env:SYSTEM_ACCESSTOKEN | ConvertTo-SecureString -AsPlainText -Force
+      $credential = New-Object System.Management.Automation.PSCredential($env:SYSTEM_ACCESSTOKEN, $patToken)
+
+
+      Install-Module "Pester" -Repository PSGallery -RequiredVersion 4.7.0 -force -scope CurrentUser
+      Install-PSResource '$(ArtifactsModuleName)' -Repository $(ArtifactsFeedName) -Credential $credential -scope CurrentUser
+
+    pwsh: true
+    displayName: "Install required PowerShell modules"
+
+  - powershell: |
+      Import-Module $(ArtifactsModuleName)
+
+      Test-JSONContent -path $(Build.SourcesDirectory)\policies\policy-definitions -OutputFile $(Build.SourcesDirectory)\TEST-tenant-root-mg-Policy.JSCONContent.XML
+
+      Test-AzPolicyDefinition -Path $(Build.SourcesDirectory)\policies\policy-definitions -OutputFile $(Build.SourcesDirectory)\TEST-tenant-root-mg-PolicyDefinition.XML
+    errorActionPreference: continue
+    pwsh: true
+    displayName: "Pester Test Azure Policy Definitions"
+    continueOnError: true
+
+  - powershell: |
+      Import-Module $(ArtifactsModuleName)
+
+      Test-JSONContent -path $(Build.SourcesDirectory)\policies\initiative-definitions -OutputFile $(Build.SourcesDirectory)\TEST-tenant-root-mg-Initiative.JSCONContent.XML
+      Test-AzPolicySetDefinition -Path $(Build.SourcesDirectory)\policies\initiative-definitions -OutputFile $(Build.SourcesDirectory)\TEST-tenant-root-mg-InitiativeDefinition.XML
+    errorActionPreference: continue
+    pwsh: true
+    displayName: "Pester Test Azure Policy Initiative Definitions"
+    continueOnError: true
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results **\TEST-*.xml'
+    inputs:
+      testResultsFormat: NUnit
+      testResultsFiles: '**\TEST-*.xml'

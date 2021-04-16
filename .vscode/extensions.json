@@ -2,6 +2,7 @@
     "recommendations": [
         "ms-vscode.azurecli",
         "msazurermtools.azurerm-vscode-tools",
-        "ms-vscode.powershell"
+        "ms-vscode.powershell",
+        "ms-azure-devops.azure-pipelines"
     ]
 }
