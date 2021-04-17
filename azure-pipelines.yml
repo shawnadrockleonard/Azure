@@ -96,7 +96,7 @@ stages:
             displayName: "Publish Test Results **/TEST-*.xml"
             inputs:
               testResultsFormat: NUnit
-              testResultsFiles: "**/TEST-*.xml"
+              testResultsFiles: "**.xml"
               searchFolder: "$(System.SourcesDirectory)/policies/policy-results"
 
   - stage: "PublishArtifacts"
