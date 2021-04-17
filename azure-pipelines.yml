@@ -77,8 +77,8 @@ stages:
           - pwsh: |
               Import-Module $(ArtifactsModuleName)
 
-              Test-JSONContent -path $(Build.SourcesDirectory)\policies\policy-definitions -OutputFile $(Build.SourcesDirectory)\policies\testresults\TEST-tenant-root-mg-PolicyJSCONContent.XML
-              Test-AzPolicyDefinition -Path $(Build.SourcesDirectory)\policies\policy-definitions -OutputFile $(Build.SourcesDirectory)\policies\testresults\TEST-tenant-root-mg-PolicyDefinition.XML
+              Test-JSONContent -path $(Build.SourcesDirectory)\policies\policy-definitions -OutputFile $(Build.SourcesDirectory)\policies\policy-results\TEST-tenant-root-mg-PolicyJSCONContent.XML
+              Test-AzPolicyDefinition -Path $(Build.SourcesDirectory)\policies\policy-definitions -OutputFile $(Build.SourcesDirectory)\policies\policy-results\TEST-tenant-root-mg-PolicyDefinition.XML
             errorActionPreference: continue
             displayName: "Pester Test Azure Policy Definitions"
             continueOnError: true
@@ -86,8 +86,8 @@ stages:
           - pwsh: |
               Import-Module $(ArtifactsModuleName)
 
-              Test-JSONContent -path $(Build.SourcesDirectory)\policies\initiative-definitions -OutputFile $(Build.SourcesDirectory)\policies\testresults\TEST-tenant-root-mg-InitiativeJSCONContent.XML
-              Test-AzPolicySetDefinition -Path $(Build.SourcesDirectory)\policies\initiative-definitions -OutputFile $(Build.SourcesDirectory)\policies\testresults\TEST-tenant-root-mg-InitiativeDefinition.XML
+              Test-JSONContent -path $(Build.SourcesDirectory)\policies\initiative-definitions -OutputFile $(Build.SourcesDirectory)\policies\policy-results\TEST-tenant-root-mg-InitiativeJSCONContent.XML
+              Test-AzPolicySetDefinition -Path $(Build.SourcesDirectory)\policies\initiative-definitions -OutputFile $(Build.SourcesDirectory)\policies\policy-results\TEST-tenant-root-mg-InitiativeDefinition.XML
             errorActionPreference: continue
             displayName: "Pester Test Azure Policy Initiative Definitions"
             continueOnError: true
@@ -97,7 +97,7 @@ stages:
             inputs:
               testResultsFormat: NUnit
               testResultsFiles: "**/TEST-tenant-root-mg*.xml"
-              searchFolder: "$(System.DefaultWorkingDirectory)/policies/testresults"
+              searchFolder: "$(System.DefaultWorkingDirectory)/policies/policy-results"
 
   - stage: "PublishArtifacts"
     dependsOn:
