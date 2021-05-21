@@ -1,0 +1,81 @@
+# Parts Unlimited release/CD pipeline
+
+# build number format
+name: 1.0.0.$(BuildID)
+
+trigger:
+  batch: true
+  branches:
+    include:
+      - master
+
+pool:
+  vmImage: windows-2019
+
+variables:
+  - group: common-keyvault
+  - group: common
+  azstorage: 'csu10037ffe92ed5686'
+  WebsiteName: 'csu10037ffe92ed5686'
+  azlocation: 'USGov Virginia'
+
+
+stages:
+  - stage: ContinousDeployment
+    dependsOn: []
+    displayName: "Deploy Parts Unlimited e2e"
+    jobs:
+      - job: "ConfigAzAndDeploy"
+        displayName: "Configure Az and deploy components"
+        pool:
+          vmImage: windows-2019
+        variables:
+          skipComponentGovernanceDetection: false
+        steps:
+          - script: echo Hello, world!
+            displayName: "Run a one-line script"
+
+          - task: AzureResourceGroupDeployment@2
+            displayName: 'Azure Deployment'
+            inputs:
+              azureSubscription: 'spl-mag-partsunlimited'
+              resourceGroupName: '$(ResourceGroupName)'
+              location: '$(azlocation)'
+              csmFile: '$(System.DefaultWorkingDirectory)/PartsUnlimitedE2E/drop/ARM/WebApp-Identity-KeyVault/azuredeploy.json'
+              csmParametersFile: '$(System.DefaultWorkingDirectory)/PartsUnlimitedE2E/drop/ARM/WebApp-Identity-KeyVault/azuredeploy.parameters.json'
+              overrideParameters: '-ResourceNamePrefix "cbx" -ResourceNameSuffix "cbxis5" -DatabaseAdministratorLogin "x_admin" -DatabaseAdministratorLoginPassword "$(DatabasePassword)" -tags {"environment":"devtestlabs","customer":"workshops","purpose":"demonstrations"} '
+              deploymentName: 'DevOps-Release-PartsUnlimited'
+              deploymentOutputs: DevOpsTemplateOutput
+            enabled: false            
+
+          - powershell: |
+              $var=ConvertFrom-Json '$(DevOpsTemplateOutput)'
+              $value=$var.storageAccountName.value
+              Write-Host "##vso[task.setvariable variable=devlabStorageAccount]$value"
+              Write-Host $env:devLabStorageAccount
+            displayName: 'Grab ARM Output'
+            enabled: false
+
+          - task: AzureCLI@2
+            displayName: 'Azure CLI: Enable Static Websites'
+            inputs:
+              azureSubscription: 'spl-mag-partsunlimited'
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: 'az storage blob service-properties update --account-name $(azstorage) --static-website --index-document index.html'
+
+          - task: AzureCLI@2
+            displayName: 'Azure CLI: batch upload to storage'
+            inputs:
+              azureSubscription: 'spl-mag-partsunlimited'
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: 'az storage blob upload-batch --account-name $(azstorage) --account-key $(stgkey) --destination ‘$web’ --source ./'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/PartsUnlimitedE2E/drop/StaticWeb'
+
+          - task: AzureRmWebAppDeployment@3
+            displayName: 'Azure App Service Deploy'
+            inputs:
+              azureSubscription: 'spl-mag-partsunlimited'
+              WebAppName: '$(WebsiteName)'
+              Package: '$(System.DefaultWorkingDirectory)/PartsUnlimitedE2E/drop/PartsUnlimitedWebsite.zip'

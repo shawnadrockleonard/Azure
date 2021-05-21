@@ -60,15 +60,6 @@ New-AzResourceGroupDeployment -Name ("{0}-ext-malware" -f $vmName) -ResourceGrou
 Get-AzADServicePrincipal | Where-Object DisplayName -Like "*splcosting*"
 
 
-# https://docs.microsoft.com/en-us/azure/azure-government/documentation-government-get-started-connect-with-cli
-az cloud set --name AzureUSGovernment
-az cloud set --name AzureCloud
-az login
-az account set --subscription "<subscription-guid>"
-az keyvault update --name "splcostingkv" --resource-group "armbastion" --enabled-for-template-deployment "true"
-az keyvault key create --name "myKEK" --vault-name "splcostingkv" --kty RSA-HSM
-
-
 
 
 # Set variables

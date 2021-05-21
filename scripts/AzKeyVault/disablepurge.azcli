@@ -1,0 +1,13 @@
+
+az cloud set --name AzureUSGovernment
+az cloud set --name AzureCloud
+az login
+az account set --subscription "<subscription-guid>"
+
+$subid = "00000000-0000-0000-0000-000000000000"
+$resourcegroup = ""
+$keyvaultname = ""
+# Enable Soft Protection 
+az resource update --id /subscriptions/$subid/resourceGroups/$resourcegroup/providers/Microsoft.KeyVault/vaults/$keyvaultname --set properties.enablePurgeProtection=true properties.enableSoftDelete=true
+# Disable soft protection
+az resource update --id /subscriptions/$subid/resourceGroups/$resourcegroup/providers/Microsoft.KeyVault/vaults/$keyvaultname --set properties.enablePurgeProtection=false properties.enableSoftDelete=false
