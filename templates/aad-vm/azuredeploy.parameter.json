@@ -21,6 +21,9 @@
         "secretName": "vmloginpwd"
       }
     },
+    "keyVaultEncryptionUrl": {
+      "value": ""
+    },
     "artifact_sas_token": {
       "value": ""
     }
