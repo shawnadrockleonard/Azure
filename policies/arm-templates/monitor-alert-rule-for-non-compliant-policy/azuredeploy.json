@@ -1,8 +1,8 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json##",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "logAnalyticsWorkspaceResourceId" :{
+        "logAnalyticsWorkspaceResourceId": {
             "type": "string",
             "metadata": {
                 "description": "Log Analytics workspace Resource Id"
@@ -11,24 +11,24 @@
         }
     },
     "variables": {
-        "alertTag" : "[concat('hidden-link:', parameters('logAnalyticsWorkspaceResourceId'))]",
-        "alertSchedule":{
+        "alertTag": "[concat('hidden-link:', parameters('logAnalyticsWorkspaceResourceId'))]",
+        "alertSchedule": {
             "Frequency": 5,
             "Time": 5
         },
-        "policyNonCompliantResourceAlertSettings":{
+        "policyNonCompliantResourceAlertSettings": {
             "name": "PolicyNonCompliantResourceExampleAlert",
             "description": "Azure Policy non-compliant resource alert example",
             "Query": "let policyDefId = 'audit-resources-without-tags-policyDef'; AzureActivity | where Category == 'Policy' and Level != 'Informational' | extend p=todynamic(Properties) | extend policies=todynamic(tostring(p.policies)) | mvexpand policy = policies | where policy.policyDefinitionName in (policyDefId) and p.isComplianceCheck == 'False'",
             "SourceId": "[parameters('logAnalyticsWorkspaceResourceId')]",
             "actiongroup": "[concat(subscription().id, '/resourceGroups/', variables('resourceGroupName'), '/providers/microsoft.insights/actionGroups/', variables('action-groups')[0].name)]",
-            "Type":"ResultCount",
+            "Type": "ResultCount",
             "SeverityLevel": "0",
-            "SuppressTimeinMin":20
+            "SuppressTimeinMin": 20
         },
-        "policyNonCompliantResourceAlertTrigger":{
-            "Operator":"GreaterThan",
-            "Threshold":"0"
+        "policyNonCompliantResourceAlertTrigger": {
+            "Operator": "GreaterThan",
+            "Threshold": "0"
         },
         "resourceGroupName": "rg-ss-monitoring",
         "action-groups": [
@@ -60,8 +60,8 @@
                 "[resourceId('Microsoft.Resources/resourceGroups/', variables('resourceGroupName'))]"
             ],
             "properties": {
-                "mode":"Incremental",
-                "template":{
+                "mode": "Incremental",
+                "template": {
                     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                     "contentVersion": "1.0.0.0",
                     "resources": [
@@ -84,13 +84,13 @@
                                 ],
                                 "smsReceivers": [],
                                 "webhookReceivers": [],
-                                "itsmReceivers":[],
+                                "itsmReceivers": [],
                                 "azureAppPushReceivers": [],
                                 "automationRunbookReceivers": [],
-                                "voiceReceivers":[],
-                                "logicAppReceivers":[],
-                                "azureFunctionReceivers":[],
-                                "armRoleReceivers":[]
+                                "voiceReceivers": [],
+                                "logicAppReceivers": [],
+                                "azureFunctionReceivers": [],
+                                "armRoleReceivers": []
                             },
                             "dependsOn": []
                         }
@@ -109,8 +109,8 @@
                 "actionGroupLoop"
             ],
             "properties": {
-                "mode":"Incremental",
-                "template":{
+                "mode": "Incremental",
+                "template": {
                     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
                     "contentVersion": "1.0.0.0",
                     "parameters": {},
@@ -122,31 +122,31 @@
                             "name": "[variables('policyNonCompliantResourceAlertSettings').name]",
                             "apiVersion": "2018-04-16",
                             "location": "[replace(reference(parameters('logAnalyticsWorkspaceResourceId'), '2015-11-01-preview', 'Full').location, ' ', '')]",
-                            "tags": {"[variables('alertTag')]": "Resource"},
+                            "tags": { "[variables('alertTag')]": "Resource" },
                             "scale": null,
-                            "properties":{
+                            "properties": {
                                 "description": "[variables('policyNonCompliantResourceAlertSettings').description]",
                                 "enabled": "true",
                                 "source": {
                                     "query": "[variables('policyNonCompliantResourceAlertSettings').Query]",
                                     "dataSourceId": "[variables('policyNonCompliantResourceAlertSettings').SourceId]",
-                                    "queryType":"[variables('policyNonCompliantResourceAlertSettings').Type]"
+                                    "queryType": "[variables('policyNonCompliantResourceAlertSettings').Type]"
                                 },
-                                "schedule":{
+                                "schedule": {
                                     "frequencyInMinutes": "[variables('alertSchedule').Frequency]",
                                     "timeWindowInMinutes": "[variables('alertSchedule').Time]"
                                 },
-                                "action":{
+                                "action": {
                                     "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
-                                    "severity":"[variables('policyNonCompliantResourceAlertSettings').SeverityLevel]",
+                                    "severity": "[variables('policyNonCompliantResourceAlertSettings').SeverityLevel]",
                                     "throttlingInMin": "[variables('policyNonCompliantResourceAlertSettings').SuppressTimeinMin]",
-                                    "aznsAction":{
+                                    "aznsAction": {
                                         "actionGroup": "[array(variables('policyNonCompliantResourceAlertSettings').actiongroup)]",
-                                        "emailSubject":"Azure Policy Non-Compliant Resource: Detected Resource without required tags"
+                                        "emailSubject": "Azure Policy Non-Compliant Resource: Detected Resource without required tags"
                                     },
-                                    "trigger":{
-                                        "thresholdOperator":"[variables('policyNonCompliantResourceAlertTrigger').Operator]",
-                                        "threshold":"[variables('policyNonCompliantResourceAlertTrigger').Threshold]"
+                                    "trigger": {
+                                        "thresholdOperator": "[variables('policyNonCompliantResourceAlertTrigger').Operator]",
+                                        "threshold": "[variables('policyNonCompliantResourceAlertTrigger').Threshold]"
                                     }
                                 }
                             },

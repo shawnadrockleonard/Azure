@@ -1,5 +1,7 @@
 {
     "powershell.codeFormatting.addWhitespaceAroundPipe": true,
+    "powershell.codeFormatting.newLineAfterOpenBrace": true,
+    "powershell.codeFormatting.openBraceOnSameLine": false,
     "editor.formatOnSave": true,
     "files.associations": {
         "**/ci/*.yml": "azure-pipelines"

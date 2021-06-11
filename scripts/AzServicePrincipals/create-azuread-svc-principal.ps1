@@ -1,9 +1,14 @@
 <#
-Create a Service Principal
+.DESCRIPTION
+    Create a Service Principal
 
 .EXAMPLE
     $securepassword = ConvertTo-SecureString -String "<a secure password>" -AsPlainText -Force 
-    .\create-azuread-svc-principal.ps1 -subscriptionName "SPL-MAG-AIRS" -password $securepassword -spnRole contributor -environmentName AzureUSGovernment -Verbose    
+    .\scripts\AzServicePrincipals\create-azuread-svc-principal.ps1 -subscriptionName "SPL-MAG-AIRS" `
+        -password $securepassword `
+        -spnRole contributor `
+        -environmentName AzureUSGovernment `
+        -Verbose    
 
 #>
 [CmdLetBinding(SupportsShouldProcess = $true)]
