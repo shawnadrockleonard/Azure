@@ -9,6 +9,6 @@
     "azure-pipelines.customSchemaFile": "./docs/azdopipeline-schema.json",
     "azure-pipelines.configure": true,
     "[azure-pipelines]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
+        "editor.defaultFormatter": "ms-azure-devops.azure-pipelines"
     }
 }

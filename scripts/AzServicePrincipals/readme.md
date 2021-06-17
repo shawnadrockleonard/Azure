@@ -6,12 +6,21 @@ This particular scriptlet is designed to automate the creation of an SPN for Azu
 
 [[_TOC_]]
 
-
 ## Executing the script
 
 ```powershell
-.\scripts\create-azuread-svc-principal.ps1
+# This will be your initial 'Secret' in the App Registration
+$securepassword = ConvertTo-SecureString -String "<a secure password>" -AsPlainText -Force 
 
+# Executing the scriptlet from the command line
+.\scripts\AzServicePrincipals\Create-AzADServicePrincipal.ps1 `
+    -subscriptionName "<Your Az Subscription Name>" `
+    -password $securepassword `
+    -spnRole contributor `  # Will associate the Role in Azure to the SPN
+    -environmentName AzureUSGovernment ` # Default is Commercial
+    -Verbose  # Increased log output
+
+# The execution will emit the following:
 # Copy and Paste below values for Service Connection
 # ***************************************************************************
 Connection Name: (SPN)
@@ -24,6 +33,25 @@ Tenant Id:
 # ***************************************************************************
 ```
 
+```powershell
+# Query Azure AD
+
+# Note: The script will create an application with the naming convention 'AzDevOps.{0}.{1}' 0 = Username; 1 = Guid.New
+Get-AzAdApplication -DisplayNameStartWith "AzDevOps."
+```
+
+### Result of the script
+
+After you run the scriptlet you'll have a new "Enterprise App" in Azure.  The output of the scriptlet "Service Principal Id" is the "Application ID".  This value will be used in the manual configuration for the "Service Principal Id".  The output of the create svc principal scriptlet will be 1 application with 2 components (Enterprise Application and an App Registration)
+
+The Enterprise Application:
+
+- ![Enterprise App](./docs/spn01.png)
+
+Azure AD Application Registration.  In this area you will maintain 'Certificate & secret' keys which can be used for authentication.  An initial secret is created on your behalf during the scriptlet.
+
+- ![Azure Ad App](./docs/spn02.png)
+
 ## Azure DevOps Labs
 
 A conveniently published series of screenshots is available on DevOps Labs
@@ -31,8 +59,7 @@ A conveniently published series of screenshots is available on DevOps Labs
 
 ## Azure DevOps Manual configuration
 
-For Azure Government, Azure Germany, Azure China you'll need to connect a service connection via Manual steps.  
-Included below are the steps to connect your new SPN.
+For Azure Government, Azure Germany, Azure China you'll need to connect a service connection via Manual steps.  Please run the powershell script identified above.  Capture the output from the script.  I tend to store the secrets in an Azure Key Vault for safe keeping.  You'll use those settings in these manual configuration steps.   Included below are the steps to connect your new SPN.
 
 ### Screenshots for connecting the SPN in Az DevOps 'Service Connections'
 
