@@ -1,93 +1,133 @@
-# Azure Subscription Policies
+# Azure Subscription Management
 
-This is a demo repository that contains:
+This is a readme to extend a fantastic [Blog](https://blog.tyang.org/2019/05/19/deploying-azure-policy-definitions-via-azure-devops-part-1/) with respect to validating and deploying Policies to Azure.    This will be an attempt to extend that discussion with Azure RBAC, DevOps (pipelines), DevOps (Artifacts), and GitHub integrations.
 
-**Azure Resource Manager Templates for Policy:** Azure policies can be curated or deployed via the Azure Portal or through scripts. These policies help ensure your resources adhere to corporate/agency standards.
+A few of the topics we will cover:
 
-- There are 2 policy definitions contained here:
-  1. [default-resourcegroup-ifnotag](https://github.com/shawnadrockleonard/Azure/tree/shawns/dotnetcore/policy-definitions/default-resourcegroup-ifnotag) enables Add/Update Resource Group tag from the Subscription Tag if one does not exist or is empty
-  2. [default-resourcegroup-overwritetag](https://github.com/shawnadrockleonard/Azure/tree/shawns/dotnetcore/policy-definitions/default-resourcegroup-overwritetag) enables Overwrite Resource Group tag from the Subscription Tag regardless of its value.
+- **Azure Roles Based Access Controls:** RBAC ensures users and automated accounts mainain least privilege ***only the minimum access necessary to perform an operation should be granted***
+- **Azure Resource Manager Templates for Policy:** Azure policies ensure your Az resources adhere to corporate/agency standards.
+- **Azure Dev Ops:** pipelines (Build, Release) enable continuous development, validation, integration, and deployment
+- **GitHub:** yaml, source code, and documentation. We'll then integrate with DevOps for full lifecycle
+- **Azure:** review Azure pre and post deployment, compliance, and resources.  
 
-## Tutorials
+## Tutorials you'll find interesting
+
+I don't believe I should cover any of these topics in this readme.  I highly recommend you read these either before or after you follow the steps I outline as we'll cover these topics.
+
+### Security | RBAC
+
+Least privilege is an important topic.  You can assign individual policies to users or service principals but I've found the most effective approach is management groups.  Then assign users, groups, service principals to the mgmt groups.  Assign roles to the mgmt groups and you have an effective way of maintaining and reviewing access across the platform.  Read these links to understand this terminology.
+
+- [Quickstart: Create a management group](https://docs.microsoft.com/en-us/azure/governance/management-groups/create-management-group-portal)
+- [Organizing resources / hierarchy](https://docs.microsoft.com/en-us/azure/governance/management-groups/overview#hierarchy-of-management-groups-and-subscriptions)
+- [Resource Policy Contributor](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#resource-policy-contributor)
+
+### Policies
+
+Policy Definitions and Assignments are a fantastic way to ensure your Az Subscriptions are well maintained.  Included in this Github repo are a number of policy definitions.  However, understanding what you can do and should do with policies can be found in these links.
 
 - [Azure Policy built-in policy definitions](https://docs.microsoft.com/en-us/azure/governance/policy/samples/built-in-policies)
 - [Azure Policy definition structure](https://docs.microsoft.com/en-us/azure/governance/policy/concepts/definition-structure)
 - [Tutorial: Create and manage policies to enforce compliance](https://docs.microsoft.com/en-us/azure/governance/policy/tutorials/create-and-manage)
 - [Tutorial: Manage tag governance with Azure Policy](https://docs.microsoft.com/en-us/azure/governance/policy/tutorials/govern-tags)
+- [Open source policy definitions on GitHub](https://github.com/Azure/azure-policy)
 
-## Samples / Templates / Source
+### Build GitHub repositories
 
-You can find Azure Policy community templates on [github](https://github.com/Azure/azure-policy)
+We will build github repositories in a DevOps pipeline.  I'll take a few screenshots but for a more in depth outline take a peek at this detail.
 
-## Installs
-
-```azurepowershell
-find-module Pester -MaximumVersion 4.7.0 | Install-module -Scope CurrentUser
-
-Get-ChildItem -Path .\modules\AzTestPolicy\ -Recurse -File | Select-Object FullName | ForEach-Object { Unblock-File -Path $_.FullName }
-
-Set-Location .\modules
-import-module .\AzTestPolicy
-
-nuget pack .\AzTestPolicy\AzTestPolicy.nuspec
-nuget sources Add -Name "PowershellModules" -Source "https://pkgs.dev.azure.com/shawniq/_packaging/AzPolicy_Feed/nuget/v3/index.json" -username "sleonard@microsoft.com" -password "<personal_access_token(PAT)>"
-nuget push -Source "PowershellModules" -ApiKey AzureDevOpsServices ".\AzTestPolicy.1.0.1.nupkg"
-nuget push -Source "PowershellModules" -ApiKey AzureDevOpsServices ".\pester.4.7.0.nupkg"
-
-```
-
-## Latest
-
-It would appear that policy deployments by the Management Group are supported
-[Managment Template](https://github.com/Azure/azure-quickstart-templates/tree/master/managementgroup-deployments/mg-policy)
-
-## Nuget Feeds
-
-I ran the nuget code locally and published to my created Feeds
-
-- Screenshot of my Feed
-- ![Nuget Feed](./docs/nuget01.png)
-
-## Service Principals
-
-Included is a helpful script to generate a SPN in Azure AD
+- [Build GitHub repositories](https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/github?view=azure-devops&tabs=yaml)
 
 
+## Let's get started
 
+### Azure Artifacts
+
+[Azure Artifacts Overview [External]](https://azure.microsoft.com/en-us/services/devops/artifacts/)  
+
+Create and share Maven, npm, NuGet, and Python package feeds from public and private sources.  This is important.  We are going to use a user generated powershell module 'AzTestPolicy'.   Follow this step by step process to create an Artifact feed and publish a powershell module in the nuget feed.
+
+[Azure Artifacts Walkthrough](./modules/README.md)
+
+### Service Principals
+
+We will use Service Principals to connect Azure DevOps with Azure.  You can, when using Azure Public or Azure Commercial, walk through a Service Principal connection wizard.  We are going to walk through the steps manually so you understand what is happening.
+
+I've included a helpful script to generate a SPN in Azure and assign it an initial RBAC authorization.
+You can find a walkthrough of the script and Azure details here: [Walkthrough](.\scripts\AzServicePrincipals\readme.md)
+
+### Azure Key Vault
+
+While many teams / organizations will place their secrets in Build / Release pipelines I find this very frustrating in terms of policies.  
+
+- Do the teams keep the secrets in plain text?  
+- Do the teams have to replicate these variables across many pipelines?
+- When a key changes, how does the development team receive a notification?
+- What is the rotation policy on any of those secrets?
+
+To address this issue I highly recommend variable groups and integration with a Key Vault.
 Service Connection `Variable Groups`
 Secrets, Passwords, can be stored in encrypted variables but a **_better_** option is to create an Azure Key Vault and store your secrets in a rotating store.
 
+A prerequisite for these steps is to have generated a Service Principal above.
+
+1. Navigate to Azure
 1. Create a Key Vault
-2. Associate the Service Principal we created earlier as a _Secret Permissions_ Get, List
+1. Associate the Service Principal we created earlier with **Secret Permissions** [Get, List]
+    - ![Key Vault Policies](./docs/var01.png)
+1. Create a _Secret_
+    - ![Key Vault Value](./docs/var02.png)
+1. Use Azure DevOps Pipeline libraries *click Libraries*
+    - ![Library](./docs/var03_01.png)
+1. Create a new Variable Group *common-keyvault*
+    - ![Variable group](./docs/var03_02.png)
+1. Enable 'Link secrets from an Azure key vault as variables'
+1. Choose the Azure subscription service principal we've already configured.
+1. If you've selected the correct SPN it should be able to find the Key Vault we created in step 2.
+    - ![Key Vault Group Usage](./docs/var03_03.png)
+1. You can name the group 'common-keyvault' to identify it as reusable variables
+1. Now click '+ Add' and it will query the secrets in the Vault
+    - ![Secrets in results](./docs/var03_04.png)
+1. Select a Key Vault secret _Notice the expiration if specified in the Key Vault_
+    - ![Key Vault Secret Usage](./docs/var04.png)
+    - ![Key Vault Secret with Expiration](./docs/var05.png)
 
-- ![Key Vault Policies](./docs/var01.png)
+Now we can use "Key Vault" secrets in our pipelines natively and gain the strength of rolling values and expirable values.
+&nbsp;
 
-3. Create a _Secret_
+&nbsp;
 
-- ![Key Vault Value](./docs/var02.png)
+### Azure DevOps Build Pipeline ***Classic***
 
-4. Use Key Vault in **_Variable Group_**
+Navigate to pipelines and let's create a *new* pipeline.
 
-- ![Key Vault Group Usage](./docs/var03.png)
+1. Click 'New pipeline'
+    - ![New pipeline](./docs/pipe01_01.png)
+1. Choose the 'Classic Editor' **The next outline will cover a yaml file**
+    - ![Classic pipeline](./docs/pipe01_02.png)
+1. If your code was cloned into DevOps or you want to run it from DevOps select your Project and Repo
+    - ![Sources](./docs/pipe01_04.png)
+1. For this demo I'm going to select GitHub.  
+    - ![Github source](./docs/pipe01_05.png)
+1. Note: ***I've previously authenticated to GitHub so shawnadrockleonard/azure appears.  You'll want to create a new service connection***
+    - ![Github new source](./docs/pipe01_06.png)
+1. Note: ***Once you have a service connection you can browse for your repos and target a specific branch*** then click 'Continue'
+    - ![Github repos](./docs/pipe01_07.png)
+1. We are using a 'Classic' pipeline so on the next step choose 'Empty job'
+    - ![Empty job](./docs/pipe01_08.png)
+1. Pipeline (use the default) and give it a name '*organization*-CI'
+    - ![Default](./docs/pipe01_03.png)
+1. Link to your existing Variables groups created earlier
+    - ![Link Variables](./docs/pipe01_09.png)
+1. Select the variable group we created earlier 'common-keyvault'
+    - ![Select variable group](./docs/pipe01_10.png)
+1. The list of variables we selected in the 'Library' steps are now available in the pipeline
+    - ![List of variables](./docs/pipe01_11.png)
+1. Let's rename the 'Run on agent' Agent job to 'Test policy and Initiative Definitions'
+1. Then click the '+' on the Agent job to add a tasks 'Powershell'
+    - ![Create first Task](./docs/task01_01.png)
+1. ![Powershell Task](./docs/task02.png)
+1. ![Save and Queue](./docs/task03.png)
+1. ![Agent, Pipeline, Run](./docs/task04.png)
+1. ![Running pipeline](./docs/task05.png)
 
-5. Select a Key Vault secret _Notice the expiration if specified in the Key Vault_
-
-- ![Key Vault Secret Usage](./docs/var04.png)
-- ![Key Vault Secret with Expiration](./docs/var05.png)
-
-Azure DevOps Build Pipeline
-
-- Choose the 'Classic Editor' **_unless you have a yaml file_**
-- Pipeline (use the default)
-- ![Default](./docs/pipe01.png)
-- ![Sources](./docs/pipe02.png)
-- Link to your existing Variables groups created earlier
-- ![Link Variables](./docs/pipe03.png)
-- ![Select variable group](./docs/pipe04.png)
-- ![List of variables](./docs/pipe05.png)
-- ![Create first Task](./docs/task01.png)
-- ![Powershell Task](./docs/task02.png)
-- ![Save and Queue](./docs/task03.png)
-- ![Agent, Pipeline, Run](./docs/task04.png)
-- ![Running pipeline](./docs/task05.png)
--
