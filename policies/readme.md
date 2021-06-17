@@ -126,8 +126,18 @@ Navigate to pipelines and let's create a *new* pipeline.
 1. Let's rename the 'Run on agent' Agent job to 'Test policy and Initiative Definitions'
 1. Then click the '+' on the Agent job to add a tasks 'Powershell'
     - ![Create first Task](./docs/task01_01.png)
-1. ![Powershell Task](./docs/task02.png)
-1. ![Save and Queue](./docs/task03.png)
-1. ![Agent, Pipeline, Run](./docs/task04.png)
-1. ![Running pipeline](./docs/task05.png)
-
+1. We will leave 'File path' selected.  As we've connected to this repo in the service connection when i click the elipse I'll navigate to the source code.  I've included a powershell script [Get-ArtifactFeedName.ps1](.\policies\Get-ArtifactFeedName.ps1)
+    - ![Powershell Task](./docs/task01_02.png)
+1. This particular screen has a dependency on a variable 'ArtifactsFeedName' which we need to set to our newly created Artifact Feed name.
+    - ![Artifact Feed](./docs/task01_03.png)
+    - ![Artifact Feed Variable](./docs/task01_03_01.png)
+1. In previous steps we added '*project* Build Service (*org*)' with permissions to Read the Artifact Feed.  We need to allow the authentication/handshake to enable connectivity. Navigate to 'Tasks' and click on the Agent job then check the box 'Allow scripts to access the OAuth token'
+    - ![OAuth tokens](./docs/task01_04.png)
+1. Save and Queue the build to validate our Pipeline
+    - ![Save and Queue](./docs/task01_05.png)
+1. Run the pipeline
+    - ![Agent, Pipeline, Run](./docs/task01_06.png)
+1. The pipeline is queued and awaiting a Microsoft hosted agent.
+    - ![Running pipeline](./docs/task01_07.png)
+1. Review the pipeline run log and validate each task/step
+    - ![Pipeline status](./docs/task01_08.png)
