@@ -51,9 +51,7 @@ After the feed is created we will change a few settings:
 Now that we have a feed we will want to publish the 'AzTestPolicy' module found in this repository.  
 If you have not already downloaded nuget and set it in your path do the following:
 
-- Download the latest nuget distro
-
-    [Nuget download](https://www.nuget.org/downloads)
+- Download the latest nuget distro [Nuget download](https://www.nuget.org/downloads)
 
 - Place it in a folder on your machine.
 - Update the 'Edit environment variables for your account' ***windows***
