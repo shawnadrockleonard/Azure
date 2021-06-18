@@ -1,0 +1,85 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultName": {
+            "type": "string"
+        },
+        "deploymentRegionLocation": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "userAssignedIdentity": {
+            "type": "object"
+        },
+        "permissionkeys": {
+            "type": "array",
+            "defaultValue": [
+            ]
+        },
+        "permissionsecrets": {
+            "type": "array",
+            "defaultValue": [
+                "Get",
+                "List"
+            ]
+        },
+        "permissioncertificates": {
+            "type": "array",
+            "defaultValue": [
+                "Get",
+                "List",
+                "Import"
+            ]
+        }
+    },
+    "variables": {
+        "assignedIdentity": "[resourceId(parameters('userAssignedIdentity').resourceGroup, 'Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentity').name)]",
+        "idApiVersion": "[first(providers('Microsoft.ManagedIdentity', 'userAssignedIdentities').apiVersions)]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.KeyVault/vaults/accessPolicies",
+            "name": "[concat(parameters('keyVaultName'), '/add')]",
+            "apiVersion": "2018-02-14",
+            "location": "[parameters('deploymentRegionLocation')]",
+            "properties": {
+                "tenantId": "[subscription().tenantId]",
+                "accessPolicies": [
+                    {
+                        "tenantId": "[subscription().tenantId]",
+                        "objectId": "[reference(variables('assignedIdentity'), variables('idApiVersion')).principalId]",
+                        "permissions": {
+                            "keys": "[parameters('permissionkeys')]",
+                            "secrets": "[parameters('permissionsecrets')]",
+                            "certificates": "[parameters('permissioncertificates')]"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {
+        "env": {
+            "type": "object",
+            "value": "[environment()]"
+        },
+        "envkeyvault": {
+            "type": "string",
+            "value": "[environment().suffixes.keyvaultDns]"
+        },
+        "userAssignedIdentities": {
+            "type": "object",
+            "value": "[providers('Microsoft.ManagedIdentity', 'userAssignedIdentities')]"
+        },
+        "userAssignedApiVersion": {
+            "type": "string",
+            "value": "[variables('idApiVersion')]"
+        },
+        "userAssignedResourceId": {
+
+            "type": "string",
+            "value": "[resourceId(parameters('userAssignedIdentity').resourceGroup, 'Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('userAssignedIdentity').name)]"
+        }
+    }
+}

@@ -1,0 +1,58 @@
+trigger:
+  branches:
+    include:
+    - refs/heads/master
+name: $(date:yyyyMMdd)$(rev:.r)
+jobs:
+- job: Phase_1
+  displayName: Phase 1
+  cancelTimeoutInMinutes: 1
+  pool:
+    vmImage: windows-2019
+  steps:
+  - checkout: self
+  - task: DotNetCoreCLI@2
+    displayName: dotnet restore
+    inputs:
+      command: restore
+      projects: '**/*.sln'
+      selectOrConfig: config
+      nugetConfigPath: PartsUnlimited-aspnet45\nuget.config
+  - task: VSBuild@1
+    displayName: Build solution **\PartsUnlimited.sln
+    inputs:
+      solution: '**\PartsUnlimited.sln'
+      msbuildArgs: /p:TreatWarningsAsErrors=True /p:DebugType=Full
+      platform: $(BuildPlatform)
+      configuration: $(BuildConfiguration)
+      msbuildArchitecture: x64
+  - task: DotNetCoreCLI@2
+    displayName: dotnet test
+    inputs:
+      command: test
+      projects: '**/*.UnitTests.csproj'
+  - task: CopyFiles@2
+    name: CopyFiles1
+    displayName: 'Copy Files: ARM Templates'
+    inputs:
+      SourceFolder: PartsUnlimited-aspnet45/env/DevTestLabs/Environments
+      Contents: '**/*.*'
+      TargetFolder: $(build.artifactstagingdirectory)/ARM
+  - task: CopyFiles@2
+    displayName: 'Copy Files: Javascript'
+    inputs:
+      SourceFolder: PartsUnlimited-aspnet45/src/PartsUnlimitedWebsite/wwwroot
+      TargetFolder: $(build.artifactstagingdirectory)/StaticWeb
+  - task: DotNetCoreCLI@2
+    displayName: dotnet publish
+    inputs:
+      command: publish
+      arguments: --configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory) --no-restore
+      workingDirectory: PartsUnlimited-aspnet45
+  - task: PublishBuildArtifacts@1
+    name: PublishBuildArtifacts_5
+    displayName: Publish Artifact
+    inputs:
+      PathtoPublish: $(build.artifactstagingdirectory)
+      TargetPath: '\\my\share\$(Build.DefinitionName)\$(Build.BuildNumber)'
+

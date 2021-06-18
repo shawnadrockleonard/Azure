@@ -1,4 +1,14 @@
 {
     "powershell.codeFormatting.addWhitespaceAroundPipe": true,
-    "editor.formatOnSave": true
+    "powershell.codeFormatting.newLineAfterOpenBrace": true,
+    "powershell.codeFormatting.openBraceOnSameLine": false,
+    "editor.formatOnSave": true,
+    "files.associations": {
+        "**/ci/*.yml": "azure-pipelines"
+    },
+    "azure-pipelines.customSchemaFile": "./docs/azdopipeline-schema.json",
+    "azure-pipelines.configure": true,
+    "[azure-pipelines]": {
+        "editor.defaultFormatter": "ms-azure-devops.azure-pipelines"
+    }
 }

@@ -1,9 +1,15 @@
 <#
-Create a Service Principal
+.DESCRIPTION
+    Create a Service Principal
 
 .EXAMPLE
     $securepassword = ConvertTo-SecureString -String "<a secure password>" -AsPlainText -Force 
-    .\create-azuread-svc-principal.ps1 -subscriptionName "SPL-MAG-AIRS" -password $securepassword -spnRole contributor -environmentName AzureUSGovernment -Verbose    
+    .\scripts\AzServicePrincipals\Create-AzADServicePrincipal.ps1 `
+        -subscriptionName "SPL-MAG-AIRS" `
+        -password $securepassword `
+        -spnRole contributor `
+        -environmentName AzureUSGovernment `
+        -Verbose    
 
 #>
 [CmdLetBinding(SupportsShouldProcess = $true)]
@@ -107,7 +113,6 @@ PROCESS
 
     #Create a new AD Application
     Write-Output "Creating a new Application in AAD (App URI - $identifierUri)" -Verbose
-    $plaintextpassword = Get-Password -securepassword $password
     $azureAdApplication = New-AzADApplication -DisplayName $displayName -HomePage $homePage -IdentifierUris $identifierUri -Password $password -Verbose
     $appId = $azureAdApplication.ApplicationId
     Write-Output "Azure AAD Application creation completed successfully (Application Id: $appId)" -Verbose
