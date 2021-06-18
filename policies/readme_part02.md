@@ -40,9 +40,55 @@ Tenant Id:
 Get-AzAdApplication -DisplayNameStartWith "AzDevOps."
 ```
 
-&nbsp;
-
-## Result of the script
+### Result of the script
 
 After you run the scriptlet you'll have a new "Enterprise App" in Azure.  The output of the scriptlet "Service Principal Id" is the "Application ID".  This value will be used in the manual configuration for the "Service Principal Id".  The output of the create svc principal scriptlet will be 1 application with 2 components (Enterprise Application and an App Registration)
 
+The Enterprise Application:
+
+- ![Enterprise App](./docs/spn01.png)
+
+Azure AD Application Registration.  In this area you will maintain 'Certificate & secret' keys which can be used for authentication.  An initial secret is created on your behalf during the scriptlet.
+
+- ![Azure Ad App](./docs/spn02.png)
+
+## Azure DevOps Labs
+
+A conveniently published series of screenshots is available on DevOps Labs
+[https://azuredevopslabs.com/labs/devopsserver/azureserviceprincipal/](Azure DevOps Service Principal)
+
+## Azure DevOps Manual configuration
+
+For Azure Government, Azure Germany, Azure China you'll need to connect a service connection via Manual steps.  Please run the powershell script identified above.  Capture the output from the script.  I tend to store the secrets in an Azure Key Vault for safe keeping.  You'll use those settings in these manual configuration steps.   Included below are the steps to connect your new SPN.
+
+### Screenshots for connecting the SPN in Az DevOps 'Service Connections'
+
+1. Create service connection
+
+    ![Step 01](./docs/spn04.png)
+
+1. Choose connection type 'Azure Resource Manager'
+
+    ![Step 02](./docs/spn05.png)
+
+1. \*\*\* if this is NOT Azure Commercial; choose `Service Principal (manual)`
+
+    ![Step 03](./docs/spn06.png)
+
+1. Enter service connection details from the powershell script output **_Ex: Azure Government_** then click Verify
+
+    ![Step 04](./docs/spn07.png)
+
+1. Enter a name for your service connection
+
+    ![Step 05](./docs/spn08.png)
+
+1. Service connections list
+
+    ![Step 06](./docs/spn09.png)
+
+&nbsp;
+
+## Return to main article
+
+[Main article](./readme.md)

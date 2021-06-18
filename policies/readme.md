@@ -1,4 +1,4 @@
-# Azure Subscription Management
+# Azure Subscription Management via DevOps
 
 This is a readme to extend a fantastic [Blog](https://blog.tyang.org/2019/05/19/deploying-azure-policy-definitions-via-azure-devops-part-1/) with respect to validating and deploying Policies to Azure.    This will be an attempt to extend that discussion with Azure RBAC, DevOps (pipelines), DevOps (Artifacts), and GitHub integrations.
 
@@ -21,6 +21,7 @@ Least privilege is an important topic.  You can assign individual policies to us
 - [Quickstart: Create a management group](https://docs.microsoft.com/en-us/azure/governance/management-groups/create-management-group-portal)
 - [Organizing resources / hierarchy](https://docs.microsoft.com/en-us/azure/governance/management-groups/overview#hierarchy-of-management-groups-and-subscriptions)
 - [Resource Policy Contributor](https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles#resource-policy-contributor)
+  ***Note: Resource Policy Contributor is required for our DevOps release success***
 
 ### Policies
 
@@ -38,25 +39,43 @@ We will build github repositories in a DevOps pipeline.  I'll take a few screens
 
 - [Build GitHub repositories](https://docs.microsoft.com/en-us/azure/devops/pipelines/repos/github?view=azure-devops&tabs=yaml)
 
+&nbsp;
 
 ## Let's get started
 
-### Azure Artifacts
+I'll break this into 7 parts.  At the end of the series you'll be able to use a full suite of products to ensure compliance and policies in your Azure environment.  You'll keep source code in GitHub in a public or private repository enabling hundreds of developers to participate.  You'll ensure the integrity of your policy definitions and ARM templates.  You'll have automated deployment into Azure or a gated deployment enabling a final approver to deploy the resulting builds.
+
+- Step 01: Azure Artifacts
+- Step 02: Service Principals
+- Step 03: Azure Key Vault
+- Step 04: Azure DevOps (Build)
+  - Classic Pipeline
+  - YAML pipeline
+- Step 05: Azure DevOps (Release)
+- Step 06: Azure Policies & Compliance reporting
+
+&nbsp;
+
+### Step 01: Azure Artifacts
 
 [Azure Artifacts Overview [External]](https://azure.microsoft.com/en-us/services/devops/artifacts/)  
 
 Create and share Maven, npm, NuGet, and Python package feeds from public and private sources.  This is important.  We are going to use a user generated powershell module 'AzTestPolicy'.   Follow this step by step process to create an Artifact feed and publish a powershell module in the nuget feed.
 
-[Azure Artifacts Walkthrough](./modules/README.md)
+[Azure Artifacts Walkthrough](./README_part01.md)
 
-### Service Principals
+&nbsp;
+
+### Step 02: Service Principals
 
 We will use Service Principals to connect Azure DevOps with Azure.  You can, when using Azure Public or Azure Commercial, walk through a Service Principal connection wizard.  We are going to walk through the steps manually so you understand what is happening.
 
 I've included a helpful script to generate a SPN in Azure and assign it an initial RBAC authorization.
-You can find a walkthrough of the script and Azure details here: [Walkthrough](.\scripts\AzServicePrincipals\readme.md)
+You can find a walkthrough of the script and Azure details here: [Walkthrough](./readme_part02.md)
 
-### Azure Key Vault
+&nbsp;
+
+### Step 03: Azure Key Vault
 
 While many teams / organizations will place their secrets in Build / Release pipelines I find this very frustrating in terms of policies.  
 
@@ -66,81 +85,45 @@ While many teams / organizations will place their secrets in Build / Release pip
 - What is the rotation policy on any of those secrets?
 
 To address this issue I highly recommend variable groups and integration with a Key Vault.
-Service Connection `Variable Groups`
-Secrets, Passwords, can be stored in encrypted variables but a **_better_** option is to create an Azure Key Vault and store your secrets in a rotating store.
-
-A prerequisite for these steps is to have generated a Service Principal above.
-
-1. Navigate to Azure
-1. Create a Key Vault
-1. Associate the Service Principal we created earlier with **Secret Permissions** [Get, List]
-    - ![Key Vault Policies](./docs/var01.png)
-1. Create a _Secret_
-    - ![Key Vault Value](./docs/var02.png)
-1. Use Azure DevOps Pipeline libraries *click Libraries*
-    - ![Library](./docs/var03_01.png)
-1. Create a new Variable Group *common-keyvault*
-    - ![Variable group](./docs/var03_02.png)
-1. Enable 'Link secrets from an Azure key vault as variables'
-1. Choose the Azure subscription service principal we've already configured.
-1. If you've selected the correct SPN it should be able to find the Key Vault we created in step 2.
-    - ![Key Vault Group Usage](./docs/var03_03.png)
-1. You can name the group 'common-keyvault' to identify it as reusable variables
-1. Now click '+ Add' and it will query the secrets in the Vault
-    - ![Secrets in results](./docs/var03_04.png)
-1. Select a Key Vault secret _Notice the expiration if specified in the Key Vault_
-    - ![Key Vault Secret Usage](./docs/var04.png)
-    - ![Key Vault Secret with Expiration](./docs/var05.png)
-
-Now we can use "Key Vault" secrets in our pipelines natively and gain the strength of rolling values and expirable values.
-&nbsp;
+You can find a walkthrough of the Azure Key Vault configuration here: [Walkthrough](./readme_part03.md)
 
 &nbsp;
 
-### Azure DevOps Build Pipeline ***Classic***
+### Step 04: Azure DevOps Build Pipeline (***Classic***)
 
-Navigate to pipelines and let's create a *new* pipeline.
+Build pipelines can be everything and anything.  You can have your build pipeline also deploy your artifacts.  For this step we are going to create a Classic UI pipeline to walk through the various components.  
 
-1. Click 'New pipeline'
-    - ![New pipeline](./docs/pipe01_01.png)
-1. Choose the 'Classic Editor' **The next outline will cover a yaml file**
-    - ![Classic pipeline](./docs/pipe01_02.png)
-1. If your code was cloned into DevOps or you want to run it from DevOps select your Project and Repo
-    - ![Sources](./docs/pipe01_04.png)
-1. For this demo I'm going to select GitHub.  
-    - ![Github source](./docs/pipe01_05.png)
-1. Note: ***I've previously authenticated to GitHub so shawnadrockleonard/azure appears.  You'll want to create a new service connection***
-    - ![Github new source](./docs/pipe01_06.png)
-1. Note: ***Once you have a service connection you can browse for your repos and target a specific branch*** then click 'Continue'
-    - ![Github repos](./docs/pipe01_07.png)
-1. We are using a 'Classic' pipeline so on the next step choose 'Empty job'
-    - ![Empty job](./docs/pipe01_08.png)
-1. Pipeline (use the default) and give it a name '*organization*-CI'
-    - ![Default](./docs/pipe01_03.png)
-1. Link to your existing Variables groups created earlier
-    - ![Link Variables](./docs/pipe01_09.png)
-1. Select the variable group we created earlier 'common-keyvault'
-    - ![Select variable group](./docs/pipe01_10.png)
-1. The list of variables we selected in the 'Library' steps are now available in the pipeline
-    - ![List of variables](./docs/pipe01_11.png)
-1. Let's rename the 'Run on agent' Agent job to 'Test policy and Initiative Definitions'
-1. Then click the '+' on the Agent job to add a tasks 'Powershell'
-    - ![Create first Task](./docs/task01_01.png)
-1. We will leave 'File path' selected.  As we've connected to this repo in the service connection when i click the elipse I'll navigate to the source code.  I've included a powershell script [Get-ArtifactsFeedName.ps1](.\policies\Get-ArtifactsFeedName.ps1)
-    - ![Powershell Task](./docs/task01_02.png)
-1. This particular script has a dependency on a variable 'ArtifactsFeedName' as well as a System variable.  To find the 'ArtifactsFeedName' navigate to the Artifact feed as we did when originally configuring the feed.
-    - ![Artifact Feed](./docs/task01_03.png)
-1. We need to set to our newly created Artifact Feed name as a pipeline variables.
-    - ![Artifact Feed Variable](./docs/task01_03_01.png)
-1. Then lets update the Task "Arguments" with the appropriate values. -ArtifactsFeedName "$(ArtifactsFeedName)" -TeamFoundationUri "$(System.TeamFoundationCollectionUri)"
-    - ![Powershell arguments from variable](./docs/task01_03_02.png)
-1. In previous steps we added '*project* Build Service (*org*)' with permissions to Read the Artifact Feed.  We need to allow the authentication/handshake to enable connectivity. Navigate to 'Tasks' and click on the Agent job then check the box 'Allow scripts to access the OAuth token'
-    - ![OAuth tokens](./docs/task01_04.png)
-1. Save and Queue the build to validate our Pipeline
-    - ![Save and Queue](./docs/task01_05.png)
-1. Run the pipeline
-    - ![Agent, Pipeline, Run](./docs/task01_06.png)
-1. The pipeline is queued and awaiting a Microsoft hosted agent.
-    - ![Running pipeline](./docs/task01_07.png)
-1. Review the pipeline run log and validate each task/step
-    - ![Pipeline status](./docs/task01_08.png)
+You can find a walkthrough of the configuration here: [Walkthrough](./readme_part04_v01.md)
+
+&nbsp;
+
+### Step 04: Azure DevOps Build Pipeline (***YAML***)
+
+Build pipelines can be everything and anything.  You can have your build pipeline also deploy your artifacts.  For this step we are going to leverage a YAML build definition to ensure our pipeline can be easily changed and its definition can be wrapped in source control.  This provide many benefits not to mention audit history, which item was changed and easy change history, and compliance based injection.  
+
+You can find a walkthrough of the configuration here: [Walkthrough](./readme_part04_v02.md)
+
+&nbsp;
+
+### Step 05: Azure DevOps Release Pipeline (with gated deployment)
+
+Release pipelines may not be what every developer advocates.  They may prefer to put 'Continous Deployment' in the YAML file.  However, Azure Releases have tremendous power to include authorization, validation, workflow, status, build retention, and issue tracking all out of the box (OOTB).
+
+You can find a walkthrough of the configuration here: [Walkthrough](./readme_part05.md)
+
+&nbsp;
+
+### Step 06: Review Azure deployment and compliance
+
+Azure is powerful.  You can enable workflows and concepts that were unphatomable a decade ago.  With that power and capability comes waste and an unscripted usage of resources.  Every organization has the power to assist developers while maintaining structure, compliance, and order.  With Policies you can claim the best of both worlds.  
+
+You can find an overview of the Azure portal policy and compliance reviews.  We'll even show a resource that is Non-Compliant and how to fix it: [Walkthrough](./readme_part06.md)
+
+&nbsp;
+
+## Summary
+
+I hope you've enjoyed this multi series walk through.  I cut out a number of items in this series.  If you have any issues with it or want me to address another series of items please feel free to create a Git Issue in this repository.
+
+Sincerely,
+Shawn Leonard
