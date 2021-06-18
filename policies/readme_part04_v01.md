@@ -51,7 +51,7 @@ Navigate to pipelines and let's create a *new* pipeline.
 
     ![Create first Task](./docs/task01_01.png)
 
-1. We will leave 'File path' selected.  As we've connected to this repo in the service connection when i click the elipse I'll navigate to the source code.  I've included a powershell script [Get-ArtifactsFeedName.ps1](.\policies\Get-ArtifactsFeedName.ps1)
+1. We will leave 'File path' selected.  As we've connected to this repo in the service connection when i click the elipse I'll navigate to the source code.  I've included a powershell script [Get-ArtifactsFeedName.ps1](./Get-ArtifactsFeedName.ps1)
 
     ![Powershell Task](./docs/task01_02.png)
 
@@ -97,4 +97,4 @@ Navigate to pipelines and let's create a *new* pipeline.
 
 ## Return to main article
 
-[Main article](./readme.md)
+[Main article](./readme.md#step-04-azure-devops-build-pipeline-yaml)

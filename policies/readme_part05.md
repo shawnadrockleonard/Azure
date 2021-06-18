@@ -157,4 +157,4 @@ This provides a tremendous about of oversight into what is built, how it is cont
 
 ## Return to main article
 
-[Main article](./readme.md)
+[Main article](./readme.md#step-06-review-azure-deployment-and-compliance)

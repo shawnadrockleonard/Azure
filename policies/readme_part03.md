@@ -56,4 +56,4 @@ Now we can use "Key Vault" secrets in our pipelines natively and gain the streng
 
 ## Return to main article
 
-[Main article](./readme.md)
+[Main article](./readme.md#step-04-azure-devops-build-pipeline-classic)

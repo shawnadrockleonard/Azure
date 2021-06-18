@@ -54,8 +54,7 @@ Azure AD Application Registration.  In this area you will maintain 'Certificate 
 
 ## Azure DevOps Labs
 
-A conveniently published series of screenshots is available on DevOps Labs
-[https://azuredevopslabs.com/labs/devopsserver/azureserviceprincipal/](Azure DevOps Service Principal)
+A conveniently published series of screenshots is available on DevOps Labs [Azure DevOps Service Principal](https://azuredevopslabs.com/labs/devopsserver/azureserviceprincipal/)
 
 ## Azure DevOps Manual configuration
 
@@ -91,4 +90,4 @@ For Azure Government, Azure Germany, Azure China you'll need to connect a servic
 
 ## Return to main article
 
-[Main article](./readme.md)
+[Main article](./readme.md#step-03-azure-key-vault)

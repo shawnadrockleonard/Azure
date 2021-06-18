@@ -73,4 +73,4 @@ Navigate to pipelines and let's create a *new* pipeline.  For the following exam
 
 ## Return to main article
 
-[Main article](./readme.md)
+[Main article](./readme.md#step-05-azure-devops-release-pipeline-with-gated-deployment)

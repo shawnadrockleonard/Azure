@@ -60,9 +60,9 @@ I'll break this into 7 parts.  At the end of the series you'll be able to use a 
 
 [Azure Artifacts Overview [External]](https://azure.microsoft.com/en-us/services/devops/artifacts/)  
 
-Create and share Maven, npm, NuGet, and Python package feeds from public and private sources.  This is important.  We are going to use a user generated powershell module 'AzTestPolicy'.   Follow this step by step process to create an Artifact feed and publish a powershell module in the nuget feed.
+Create and share Maven, npm, NuGet, and Python package feeds from public and private sources.  This is important.  We are going to use a user generated powershell module 'AzTestPolicy'.
 
-[Azure Artifacts Walkthrough](./README_part01.md)
+Follow this step by step process to create an Artifact feed and publish a powershell module in the nuget feed: [Walkthrough](./readme_part01.md)
 
 &nbsp;
 

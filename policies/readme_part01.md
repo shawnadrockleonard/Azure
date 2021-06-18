@@ -149,4 +149,4 @@ nuget push -Source "PowershellModules" -ApiKey AzureDevOpsServices ".\AzTestPoli
 
 ## Return to main article
 
-[Main article](./readme.md)
+[Main article](./readme.md#step-02-service-principals)
