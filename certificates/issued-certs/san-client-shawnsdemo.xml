@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Objects>
+  <Object Type="System.Management.Automation.PSCustomObject">
+    <Property Name="serialNumber" Type="System.String">
+    </Property>
+    <Property Name="usageExtension" Type="System.String">OID=1.3.6.1.5.5.7.3.2; Client Authentication</Property>
+    <Property Name="o" Type="System.String">asdf</Property>
+    <Property Name="cn" Type="System.String">shawnssubject</Property>
+    <Property Name="ou" Type="System.String">asdf</Property>
+    <Property Name="l" Type="System.String">asdf</Property>
+    <Property Name="template" Type="System.String">WorkstationAuthenticationCertAuth</Property>
+    <Property Name="base64" Type="System.String">
+    </Property>
+    <Property Name="c" Type="System.String">US</Property>
+    <Property Name="friendlyName" Type="System.String">shawnsdemo</Property>
+    <Property Name="dns" Type="System.Collections.ArrayList">
+      <Property Type="System.Management.Automation.PSCustomObject">
+        <Property Name="ref" Type="System.String">1212</Property>
+        <Property Name="dn" Type="System.String">shawns.hero.com</Property>
+      </Property>
+      <Property Type="System.Management.Automation.PSCustomObject">
+        <Property Name="ref" Type="System.String">1212</Property>
+        <Property Name="dn" Type="System.String">shawns.superhero.com</Property>
+      </Property>
+      <Property Type="System.Management.Automation.PSCustomObject">
+        <Property Name="ref" Type="System.String">12123</Property>
+        <Property Name="dn" Type="System.String">blabla.shawns.hero.com</Property>
+      </Property>
+    </Property>
+    <Property Name="st" Type="System.String">District of Columbia</Property>
+  </Object>
+</Objects>
