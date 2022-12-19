@@ -1,0 +1,16 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "hubqueuename": "coalitionhubqueuedev1",
+    "datapipelinesendcontainer": "processed",
+    "servicebustopicname": "topicforussubscribers",
+    "cosmosdblog": "AccountEndpoint=",
+    "tabledblogname": "funclogs",
+    "VaultUri": "https://.vault.usgovcloudapi.net/",
+    "Azure:ClientId": "----",
+    "Azure:TenantId": "----",
+    "Azure:SubscriptionId": "----",
+    "version": "1.0"
+  }
+}
