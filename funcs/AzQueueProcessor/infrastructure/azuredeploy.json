@@ -1,0 +1,206 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptionId": {
+            "type": "String"
+        },
+        "name": {
+            "type": "String"
+        },
+        "location": {
+            "type": "String",
+            "defaultValue": "[resourceGroup().location]"
+        },
+        "hostingPlanName": {
+            "type": "String"
+        },
+        "serverFarmResourceGroup": {
+            "type": "String"
+        },
+        "storageAccountName": {
+            "type": "String"
+        },
+        "use32BitWorkerProcess": {
+            "type": "Bool"
+        },
+        "linuxFxVersion": {
+            "type": "String"
+        },
+        "sku": {
+            "type": "String"
+        },
+        "skuCode": {
+            "type": "String"
+        },
+        "skuFamily": {
+            "type": "String"
+        },
+        "workerSize": {
+            "type": "String"
+        },
+        "workerSizeId": {
+            "type": "String"
+        },
+        "numberOfWorkers": {
+            "type": "String"
+        },
+        "applicationInsights": {
+            "type": "string"
+        },
+        "keyVaultName": {
+            "type": "string"
+        },
+        "creator": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "storageEndPoint": "[environment().suffixes.storage]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('storageAccountName')]",
+            "location": "[parameters('location')]",
+            "tags": {
+                "creator": "[parameters('creator')]",
+                "purpose": "process queue",
+                "customer": "jpo surge"
+            },
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "properties": {
+                "supportsHttpsTrafficOnly": true,
+                "minimumTlsVersion": "TLS1_2",
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('hostingPlanName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {
+                "creator": "[parameters('creator')]",
+                "purpose": "process queue",
+                "customer": "jpo surge"
+            },
+            "sku": {
+                "Tier": "[parameters('sku')]",
+                "Name": "[parameters('skuCode')]",
+                "size": "[parameters('skuCode')]",
+                "family": "[parameters('skuFamily')]",
+                "capacity": 0
+            },
+            "kind": "functionapp",
+            "properties": {
+                "name": "[parameters('hostingPlanName')]",
+                "workerSize": "[parameters('workerSize')]",
+                "workerSizeId": "[parameters('workerSizeId')]",
+                "numberOfWorkers": "[parameters('numberOfWorkers')]",
+                "reserved": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('name')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+            ],
+            "tags": {
+                "creator": "[parameters('creator')]",
+                "purpose": "process queue",
+                "customer": "jpo surge"
+            },
+            "kind": "functionapp,linux",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "name": "[parameters('name')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "FUNCTIONS_EXTENSION_VERSION",
+                            "value": "~3"
+                        },
+                        {
+                            "name": "FUNCTIONS_WORKER_RUNTIME",
+                            "value": "dotnet"
+                        },
+                        {
+                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                            "value": "[parameters('applicationInsights')]"
+                        },
+                        {
+                            "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                            "value": "[concat('InstrumentationKey=', parameters('applicationInsights'), ';EndpointSuffix=applicationinsights.us;IngestionEndpoint=https://usgovvirginia-0.in.applicationinsights.azure.us/')]"
+                        },
+                        {
+                            "name": "AzureWebJobsStorage",
+                            "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('storageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), '2019-06-01').keys[0].value,';EndpointSuffix=', variables('storageEndPoint'))]"
+                        },
+                        {
+                            "name": "VaultUri",
+                            "value": "[concat('https://', parameters('keyVaultName'), '.vault.usgovcloudapi.net/')]"
+                        },
+                        {
+                            "name": "coalitionhub1SERVICEBUS",
+                            "value": "[concat('@Microsoft.KeyVault(SecretUri=https://', parameters('keyVaultName'), '.vault.usgovcloudapi.net/secrets/coalitionhub1SERVICEBUS/)')]"
+                        },
+                        {
+                            "name": "version",
+                            "value": "cloud.1.0"
+                        },
+                        {
+                            "name": "tabledblogname",
+                            "value": "funclogs"
+                        },
+                        {
+                            "name": "servicebustopicname",
+                            "value": "topicforussubscribers"
+                        },
+                        {
+                            "name": "hubqueuename",
+                            "value": "coalitionhubqueue1"
+                        },
+                        {
+                            "name": "datapipelinesendcontainer",
+                            "value": "processed"
+                        }
+                    ],
+                    "use32BitWorkerProcess": "[parameters('use32BitWorkerProcess')]",
+                    "netFrameworkVersion": "v4.0",
+                    "linuxFxVersion": "[parameters('linuxFxVersion')]"
+                },
+                "serverFarmId": "[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+                "clientAffinityEnabled": false,
+                "reserved": true,
+                "isXenon": false,
+                "hyperV": false,
+                "localMySqlEnabled": false,
+                "clientCertEnabled": false,
+                "hostNamesDisabled": false,
+                "containerSize": 1536,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": false,
+                "http20Enabled": false,
+                "redundancyMode": "None"
+            }
+        }
+    ]
+}

@@ -1,0 +1,57 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptionId": {
+            "value": "88b99cc4-b96b-4d65-a9e0-924273ba9b34"
+        },
+        "name": {
+            "value": "queueProcessor1"
+        },
+        "location": {
+            "value": "usgovvirginia"
+        },
+        "hostingPlanName": {
+            "value": "ASP-coalitionhub-a89d"
+        },
+        "serverFarmResourceGroup": {
+            "value": "coalitionhub"
+        },
+        "storageAccountName": {
+            "value": "storageaccountcoali94c7"
+        },
+        "use32BitWorkerProcess": {
+            "value": false
+        },
+        "linuxFxVersion": {
+            "value": "DOTNET|3.1"
+        },
+        "sku": {
+            "value": "Dynamic"
+        },
+        "skuCode": {
+            "value": "Y1"
+        },
+        "skuFamily": {
+            "value": "Y"
+        },
+        "workerSize": {
+            "value": "0"
+        },
+        "workerSizeId": {
+            "value": "0"
+        },
+        "numberOfWorkers": {
+            "value": "1"
+        },
+        "applicationInsights": {
+            "value": "7295d5cc-d7e9-fe56-beef-4bcdbf86a219"
+        },
+        "keyVaultName": {
+            "value": "coalition1"
+        },
+        "creator": {
+            "value": "gregunger"
+        }
+    }
+}
