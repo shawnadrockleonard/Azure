@@ -32,6 +32,9 @@ namespace AzQueueProcessor
                 builder.ConfigurationBuilder.AddUserSecrets<Startup>(optional: true, reloadOnChange: false);
             }
             builder.ConfigurationBuilder.AddKeyVault();
+
+            // TODO
+            var root = builder.ConfigurationBuilder.Build();
         }
     }
 }

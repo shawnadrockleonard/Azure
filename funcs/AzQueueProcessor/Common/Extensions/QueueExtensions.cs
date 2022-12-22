@@ -10,7 +10,7 @@ namespace AzQueueProcessor.Common.Extensions
 {
     public static class QueueExtensions
     {
-        public static async Task WriteMessageAsync(this BlobClient destinationBlob, string destinationContainerName, string connectionString, string topicName, JPOFileInfo info, ILogger log)
+        public static async Task WriteMessageAsync(this BlobClient destinationBlob, string destinationContainerName, string connectionString, string topicName, ExpectedFileInfo info, ILogger log)
         {
             var destinationSasUri = destinationBlob.GetServiceSASUriForBlob(destinationContainerName, null, log);
 
@@ -20,7 +20,7 @@ namespace AzQueueProcessor.Common.Extensions
             // create a sender for the topic
             ServiceBusSender sender = client.CreateSender(topicName);
 
-            var payload = new JPOTopicInfo
+            var payload = new ExpectedTopicInfo
             {
                 FileName = info.FileName,
                 SasUri = destinationSasUri.ToString(),

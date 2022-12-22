@@ -43,7 +43,7 @@ namespace AzQueueProcessor.Common.Extensions
             return serializedData;
         }
 
-        public static async Task<BlobClient> CopyBlobAsync(this BlobClient sourceBlob, BlobContainerClient destContainer, JPOFileInfo info, ILogger log)
+        public static async Task<BlobClient> CopyBlobAsync(this BlobClient sourceBlob, BlobContainerClient destContainer, ExpectedFileInfo info, ILogger log)
         {
             try
             {

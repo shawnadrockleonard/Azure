@@ -2,15 +2,15 @@
   "IsEncrypted": false,
   "Values": {
     "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-    "hubqueuename": "coalitionhubqueuedev1",
+    "hubqueuename": "logicqueue",
     "datapipelinesendcontainer": "processed",
     "servicebustopicname": "topicforussubscribers",
     "cosmosdblog": "AccountEndpoint=",
     "tabledblogname": "funclogs",
-    "VaultUri": "https://.vault.usgovcloudapi.net/",
-    "Azure:ClientId": "----",
-    "Azure:TenantId": "----",
-    "Azure:SubscriptionId": "----",
+    "VaultUri": "https://multiappdemofactory9199.vault.azure.net/",
+    "Azure:ClientId": "875b9b25-1468-4332-8b7a-c31e7be94fd4",
+    "Azure:TenantId": "975f013f-7f24-47e8-a7d3-abc4752bf346",
+    "Azure:SubscriptionId": "81cfa30a-69e5-4a0c-9690-c571c19c1f9e",
     "version": "1.0"
   }
 }

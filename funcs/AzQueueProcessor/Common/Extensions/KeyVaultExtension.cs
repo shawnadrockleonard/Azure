@@ -1,6 +1,8 @@
 using Azure.Identity;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace AzQueueProcessor.Common.Extensions
 {
@@ -20,9 +22,10 @@ namespace AzQueueProcessor.Common.Extensions
                     var tenantId = builtConfig["Azure:TenantId"];
                     var tokenOptions = new TokenCredentialOptions()
                     {
-                        AuthorityHost = AzureAuthorityHosts.AzureGovernment
+                        AuthorityHost = AzureAuthorityHosts.AzurePublicCloud
                     };
-                    var credentials = new Azure.Identity.ClientSecretCredential(tenantId, clientId, clientSecret, tokenOptions);
+                    var clientCertificate = GetCertificate(clientSecret);
+                    var credentials = new Azure.Identity.ClientCertificateCredential(tenantId, clientId, clientCertificate, tokenOptions);
                     builder.AddAzureKeyVault(new Uri(vaultUri), credentials);
                 }
                 else
@@ -31,6 +34,24 @@ namespace AzQueueProcessor.Common.Extensions
                     builder.AddAzureKeyVault(new Uri(vaultUri), ManagedIdentityExtensions.GetMsiCredential());
                 }
             }
+        }
+
+
+        public static X509Certificate2 GetCertificate(string subjectAlternativeName)
+        {
+            using X509Store store = new(StoreName.My, StoreLocation.CurrentUser);
+            store.Open(OpenFlags.ReadOnly);
+
+            var certs = store.Certificates.Find(X509FindType.FindBySubjectName, subjectAlternativeName, false);
+
+            if (certs.Count == 0)
+            {
+                throw new InvalidOperationException($"Unable to find client cert with subject name '{subjectAlternativeName}'");
+            }
+
+            var clientCert = certs.Cast<X509Certificate2>().OrderBy(x => x.NotAfter).Last();
+
+            return clientCert;
         }
     }
 }

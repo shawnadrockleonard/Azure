@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AzQueueProcessor.Common.Models
 {
-    public class JPOTopicInfo
+    public class ExpectedTopicInfo
     {
         [JsonProperty("correlationId")]
         public Guid CorrelationId { get; set; }

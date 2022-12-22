@@ -3,7 +3,7 @@ using System;
 
 namespace AzQueueProcessor.Common.Models
 {
-    public class JPOFileInfo
+    public class ExpectedFileInfo
     {
         [JsonProperty("correlationid")]
         public Guid CorrelationId { get; set; }

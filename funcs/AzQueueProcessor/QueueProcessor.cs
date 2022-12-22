@@ -8,22 +8,22 @@ namespace AzQueueProcessor.Function
     using Microsoft.Extensions.Configuration;
     using System;
 
-    public class CoalitionQueueProcessor
+    public class QueueProcessor
     {
         private readonly IManagedIdentityExtensions msidentity;
         private readonly IConfiguration config;
 
-        public CoalitionQueueProcessor(IManagedIdentityExtensions identity, IConfiguration configuration)
+        public QueueProcessor(IManagedIdentityExtensions identity, IConfiguration configuration)
         {
             msidentity = identity;
             config = configuration;
         }
 
-        [FunctionName("CoalitionQueueProcessor")]
-        public void Run([ServiceBusTrigger(queueName: "%hubqueuename%", Connection = "coalitionhub1SERVICEBUS")] string smsg, ILogger log,
+        [FunctionName("QueueProcessor")]
+        public void Run([ServiceBusTrigger(queueName: "%hubqueuename%", Connection = "hub1SERVICEBUS")] string smsg, ILogger log,
             [Table("%tabledblogname%", Connection = "tabledblog")] out TableLogItem tableentry)
         {
-            var fileInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<JPOFileInfo>(smsg);
+            var fileInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<ExpectedFileInfo>(smsg);
             var sourceSasUri = fileInfo.SasUri;
             log.LogInformation($"ServiceBus queue trigger function processed message: {sourceSasUri}");
 
